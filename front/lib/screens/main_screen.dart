@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'alert/alert_screen.dart';
 import 'bookmark/bookmark_screen.dart';
 import 'mypage/mypage_screen.dart';
 import 'route/route_screen.dart';
