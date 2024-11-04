@@ -1,3 +1,18 @@
+// 프로젝트의 최상위 build.gradle 파일
+
+buildscript {
+    ext.kotlin_version = "1.9.24"
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" // Kotlin 플러그인 추가
+    }
+}
+
 allprojects {
     repositories {
         google()
