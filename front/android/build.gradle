@@ -1,7 +1,7 @@
 // 프로젝트의 최상위 build.gradle 파일
 
 buildscript {
-    ext.kotlin_version = "1.9.24"
+    ext.kotlin_version = "1.7.10"
 
     repositories {
         google()
@@ -9,6 +9,7 @@ buildscript {
     }
 
     dependencies {
+        classpath 'com.android.tools.build:gradle:7.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" // Kotlin 플러그인 추가
     }
 }
