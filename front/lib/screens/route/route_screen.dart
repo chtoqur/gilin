@@ -1,9 +1,8 @@
-// route_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:gilin/screens/route/myplace_screen.dart';
 import 'package:gilin/screens/route/myroute_screen.dart';
-import 'myplace_screen.dart';
-import 'myroute_screen.dart';
+import 'dart:async';
 import 'widgets/route_bottom_sheet.dart';
 
 class RouteScreen extends StatefulWidget {
@@ -15,19 +14,26 @@ class RouteScreen extends StatefulWidget {
 
 class _RouteScreenState extends State<RouteScreen> {
   bool isPlaceTab = true;  // true: 장소 탭, false: 경로 탭
+  final Completer<NaverMapController> mapControllerCompleter = Completer();
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // 지도 영역 (나중에 실제 지도로 교체)
-        const Center(
-          child: Text('Map Area'),
+        NaverMap(
+          options: const NaverMapViewOptions(
+            indoorEnable: true,
+            locationButtonEnable: false,
+            consumeSymbolTapEvents: false,
+          ),
+          onMapReady: (controller) async {
+            mapControllerCompleter.complete(controller);
+          },
         ),
         // 바텀 시트
         RouteBottomSheet(
-          child: SizedBox( // Column을 SizedBox로 감싸기
-            height: MediaQuery.of(context).size.height * 0.7, // 적절한 높이 설정
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.7,
             child: Column(
               children: [
                 // 탭 버튼들

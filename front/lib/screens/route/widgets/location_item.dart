@@ -1,4 +1,3 @@
-// widgets/location_item.dart
 import 'package:flutter/material.dart';
 
 class LocationItem extends StatelessWidget {
