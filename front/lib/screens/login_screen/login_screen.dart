@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 //import 'package:gilin/screens/bookmark/bookmark_screen.dart';
-import 'package:gilin/screens/mypage/mypage_screen.dart';
+//import 'package:gilin/screens/mypage/mypage_screen.dart';
 import 'package:gilin/screens/route/route_screen.dart';
 import 'package:gilin/screens/schedule/schedule_screen.dart';
 
