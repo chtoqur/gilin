@@ -1,4 +1,3 @@
-// myplace_screen.dart
 import 'package:flutter/material.dart';
 import 'widgets/location_item.dart';
 
@@ -18,7 +17,7 @@ class MyplaceScreen extends StatelessWidget {
           onTap: () {},
         ),
         LocationItem(
-          title: '이사네',
+          title: '서영이네',
           onTap: () {},
         ),
         LocationItem(
