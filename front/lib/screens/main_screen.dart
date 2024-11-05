@@ -1,43 +1,39 @@
 import 'package:flutter/material.dart';
-import 'alert/alert_screen.dart';
-import 'mypage/mypage_screen.dart';
-import 'route/route_screen.dart';
-import 'schedule/schedule_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'shared/providers/navigation_provider.dart';
+import 'package:go_router/go_router.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
-
-  @override
-  State<MainScreen> createState() => _MainNavigationState();
-}
-
-class _MainNavigationState extends State<MainScreen> {
-  // 초기화면: 지도
-  int _selectedIndex = 0;
-
-  // 표시할 화면 리스트
-  final List<Widget> _screens = [
-    const RouteScreen(),
-    const ScheduleScreen(),
-    const AlertScreen(),
-    const MypageScreen(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+class MainScreen extends ConsumerWidget {
+  final Widget child;
+  const MainScreen({Key? key, required this.child}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentIndex = ref.watch(bottomNavProvider);
+
     return Scaffold(
       body: SafeArea(
-        child: _screens[_selectedIndex],
+        child: child,  // _screens[currentIndex] 대신 child 사용
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        currentIndex: currentIndex,
+        onTap: (index) {
+          ref.read(bottomNavProvider.notifier).setPage(index);
+          switch (index) {  // index에 따라 경로 이동
+            case 0:
+              context.go('/');
+              break;
+            case 1:
+              context.go('/schedule');
+              break;
+            case 2:
+              context.go('/alert');
+              break;
+            case 3:
+              context.go('/mypage');
+              break;
+          }
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
@@ -56,13 +52,9 @@ class _MainNavigationState extends State<MainScreen> {
             label: 'MY',
           ),
         ],
-        // 선택된 아이템 색상
         selectedItemColor: const Color(0xfff4a700),
-        // 선택되지 않은 아이템 색상
         unselectedItemColor: const Color(0xff3a3a3a),
-        // 선택된 라벨 스타일
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        // 아이템이 3개 이상일 때 필요
         type: BottomNavigationBarType.fixed,
       ),
     );
