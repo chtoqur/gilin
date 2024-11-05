@@ -6,7 +6,7 @@ class AlertScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('Route Home Screen'),
+      child: Text('Alert Home Screen'),
     );
   }
 }

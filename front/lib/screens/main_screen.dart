@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'bookmark/bookmark_screen.dart';
+import 'alert/alert_screen.dart';
 import 'mypage/mypage_screen.dart';
 import 'route/route_screen.dart';
 import 'schedule/schedule_screen.dart';
@@ -13,14 +13,13 @@ class MainScreen extends StatefulWidget {
 
 class _MainNavigationState extends State<MainScreen> {
   // 초기화면: 지도
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   // 표시할 화면 리스트
   final List<Widget> _screens = [
-    // const AlertScreen(),
-    const BookmarkScreen(),
     const RouteScreen(),
     const ScheduleScreen(),
+    const AlertScreen(),
     const MypageScreen(),
   ];
 
@@ -41,16 +40,16 @@ class _MainNavigationState extends State<MainScreen> {
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: '저장',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.map),
             label: '지도',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_month),
             label: '달력',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: '알림',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
