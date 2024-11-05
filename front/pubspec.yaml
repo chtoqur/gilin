@@ -59,11 +59,11 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
-  assets:
-    - assets/font/pdf/
-    - assets/images/
-    - assets/lottie/
+  # 추후 assets 사용시 주석 해제
+#  assets:
+#    - assets/font/pdf/
+#    - assets/images/
+#    - assets/lottie/
 
   #   - images/a_dot_ham.jpeg
 
