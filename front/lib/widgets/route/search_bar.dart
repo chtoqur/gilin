@@ -12,8 +12,8 @@ class CustomSearchBar extends StatelessWidget {
     this.controller,
     this.onTap,
     this.onSubmitted,
-    this.hintText = 'Àå¼Ò¸¦ °Ë»öÇØº¸¼¼¿ä',
-    this.readOnly = true,  // ¸ŞÀÎ È­¸é¿¡¼­´Â readOnly·Î ¼³Á¤
+    this.hintText = 'ì¥ì†Œë¥¼ ê²€ìƒ‰í•´ë³´ì„¸ìš”',
+    this.readOnly = true,  // ë©”ì¸ í™”ë©´ì—ì„œëŠ” readOnlyë¡œ ì„¤ì •
   }) : super(key: key);
 
   @override
@@ -74,7 +74,7 @@ class CustomSearchBar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Text(
-                '°Ë»ö',
+                'ê²€ìƒ‰',
                 style: TextStyle(
                   color: Color(0xFF463C33),
                   fontWeight: FontWeight.w600,

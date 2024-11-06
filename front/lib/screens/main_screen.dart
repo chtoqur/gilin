@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'shared/providers/navigation_provider.dart';
+import 'package:gilin/state/providers/navigation_provider.dart';
 import 'package:go_router/go_router.dart';
 
 class MainScreen extends ConsumerWidget {

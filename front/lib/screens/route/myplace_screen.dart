@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/location_item.dart';
+import 'package:gilin/widgets/route/location_item.dart';
 
 class MyplaceScreen extends StatelessWidget {
   const MyplaceScreen({Key? key}) : super(key: key);
