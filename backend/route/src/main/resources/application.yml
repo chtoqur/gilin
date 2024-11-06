@@ -23,4 +23,6 @@ logging:
     org.springframework.web: "info"
     org.hibernate: "info"
   file:
-    name: app/logs/application.log
+    name: app/logs/application.logapikey:
+  odsays:
+    ${ODSAY_API_CSK}
