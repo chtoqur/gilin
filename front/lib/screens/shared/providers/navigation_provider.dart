@@ -1,27 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class BottomNavState extends StateNotifier<int> {
   BottomNavState() : super(0);
 
-  void setPage(int index) {
+  void navigateToPage(BuildContext context, int index, String route) {
     state = index;
-  }
-
-  void updateIndexFromPath(String path) {
-    switch (path) {
-      case '/route':
-        state = 0;
-        break;
-      case '/schedule':
-        state = 1;
-        break;
-      case '/alert':
-        state = 2;
-        break;
-      case '/mypage':
-        state = 3;
-        break;
-    }
+    context.go(route);
   }
 }
 

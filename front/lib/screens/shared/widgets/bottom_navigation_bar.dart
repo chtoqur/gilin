@@ -11,7 +11,14 @@ class CustomBottomNavigationBar extends ConsumerWidget {
 
     return BottomNavigationBar(
       currentIndex: currentIndex,
-      onTap: (index) => ref.read(bottomNavProvider.notifier).setPage(index),
+      onTap: (index) {
+        final routes = ['/route', '/schedule', '/alert', '/mypage'];
+        ref.read(bottomNavProvider.notifier).navigateToPage(
+            context,
+            index,
+            routes[index],
+        );
+      },
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.map),
