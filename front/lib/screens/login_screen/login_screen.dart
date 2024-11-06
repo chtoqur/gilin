@@ -28,41 +28,41 @@ class _LoginNavigationState extends State<LoginScreen> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: _screens[_selectedIndex], // 현재 선택된 화면을 표시
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: '저장',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: '지도',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: '달력',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'MY',
-          ),
-        ],
-        selectedItemColor: const Color(0xfff4a700),
-        unselectedItemColor: const Color(0xff3a3a3a),
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        type: BottomNavigationBarType.fixed,
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: SafeArea(
+//         child: _screens[_selectedIndex], // 현재 선택된 화면을 표시
+//       ),
+//       bottomNavigationBar: BottomNavigationBar(
+//         currentIndex: _selectedIndex,
+//         onTap: _onItemTapped,
+//         items: const [
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.bookmark),
+//             label: '저장',
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.map),
+//             label: '지도',
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.calendar_month),
+//             label: '달력',
+//           ),
+//           BottomNavigationBarItem(
+//             icon: Icon(Icons.person),
+//             label: 'MY',
+//           ),
+//         ],
+//         selectedItemColor: const Color(0xfff4a700),
+//         unselectedItemColor: const Color(0xff3a3a3a),
+//         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+//         type: BottomNavigationBarType.fixed,
+//       ),
+//     );
+//   }
+// }
 
 // 로그인 UI를 포함하는 별도 위젯
 class LoginScreenUI extends StatelessWidget {
