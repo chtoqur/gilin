@@ -40,6 +40,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const TestScreen(),
           ),
         ],
+
       ),
     ],
     initialLocation: '/route',

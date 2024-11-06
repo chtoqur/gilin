@@ -18,21 +18,12 @@ class MainScreen extends ConsumerWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (index) {
-          ref.read(bottomNavProvider.notifier).setPage(index);
-          switch (index) {  // index에 따라 경로 이동
-            case 0:
-              context.go('/route');
-              break;
-            case 1:
-              context.go('/schedule');
-              break;
-            case 2:
-              context.go('/alert');
-              break;
-            case 3:
-              context.go('/mypage');
-              break;
-          }
+          final routes = ['/route', '/schedule', '/alert', '/mypage'];
+          ref.read(bottomNavProvider.notifier).navigateToPage(
+            context,
+            index,
+            routes[index],
+          );
         },
         items: const [
           BottomNavigationBarItem(

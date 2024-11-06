@@ -1,24 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../shared/providers/navigation_provider.dart';  // Riverpod import 추가
 
-class ScheduleScreen extends StatelessWidget {
+// StatelessWidget을 ConsumerWidget으로 변경
+class ScheduleScreen extends ConsumerWidget {
   const ScheduleScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {  // WidgetRef ref 추가
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text('Schedule Home Screen'),
-          const SizedBox(height: 20), // 버튼과 텍스트 사이 간격
+          const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => context.go('/route'), // go_router를 사용한 네비게이션
+            // 첫 번째 버튼도 navigateToPage로 변경
+            onPressed: () => ref.read(bottomNavProvider.notifier).navigateToPage(
+                context,
+                0,  // route 화면의 인덱스
+                '/route'
+            ),
             child: const Text('Go to Route'),
           ),
-          const SizedBox(height: 20), // 버튼과 텍스트 사이 간격
+          const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: () => context.go('/test'), // go_router를 사용한 네비게이션
+            onPressed: () => ref.read(bottomNavProvider.notifier).navigateToPage(
+                context,
+                3,
+                '/test'
+            ),
             child: const Text('Go to test Screen'),
           ),
         ],
