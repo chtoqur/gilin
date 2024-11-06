@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:gilin/screens/route/myplace_screen.dart';
 import 'package:gilin/screens/route/myroute_screen.dart';
-import 'package:gilin/screens/route/widgets/search_bar.dart';
+import 'package:gilin/widgets/route/search_bar.dart';
 import 'package:gilin/screens/search/search_screen.dart';
 import 'dart:async';
-import 'widgets/route_bottom_sheet.dart';
+import 'package:gilin/widgets/route//route_bottom_sheet.dart';
 
 class RouteScreen extends StatefulWidget {
   const RouteScreen({Key? key}) : super(key: key);

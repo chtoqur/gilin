@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../route/widgets/search_bar.dart';
+import 'package:gilin/widgets/route/search_bar.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -20,18 +20,18 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar¸¦ Á¦°ÅÇÏ°í body¸¦ StackÀ¸·Î º¯°æ
+      // appBarë¥¼ ì œê±°í•˜ê³  bodyë¥¼ Stackìœ¼ë¡œ ë³€ê²½
       body: Stack(
         children: [
-          // °Ë»ö °á°ú ¸®½ºÆ®
+          // ê²€ìƒ‰ ê²°ê³¼ ë¦¬ìŠ¤íŠ¸
           Padding(
             padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 60, // SearchBar ³ôÀÌ + ¿©¹é °í·Á
+              top: MediaQuery.of(context).padding.top + 60, // SearchBar ë†’ì´ + ì—¬ë°± ê³ ë ¤
             ),
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: const [
-                // °Ë»ö °á°ú ¾ÆÀÌÅÛµé
+                // ê²€ìƒ‰ ê²°ê³¼ ì•„ì´í…œë“¤
               ],
             ),
           ),
@@ -40,14 +40,14 @@ class _SearchScreenState extends State<SearchScreen> {
           CustomSearchBar(
             controller: _searchController,
             readOnly: false,
-            hintText: 'Àå¼Ò¸¦ °Ë»öÇØº¸¼¼¿ä',
+            hintText: 'ì¥ì†Œë¥¼ ê²€ìƒ‰í•´ë³´ì„¸ìš”',
             onSubmitted: (value) {
-              // °Ë»ö ·ÎÁ÷ ±¸Çö
+              // ê²€ìƒ‰ ë¡œì§ êµ¬í˜„
               print('Searching for: $value');
             },
           ),
 
-          // µÚ·Î°¡±â ¹öÆ° (¼±ÅÃ»çÇ×)
+          // ë’¤ë¡œê°€ê¸° ë²„íŠ¼ (ì„ íƒì‚¬í•­)
           Positioned(
             top: MediaQuery.of(context).padding.top + 10,
             left: 0,
