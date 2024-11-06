@@ -21,7 +21,7 @@ class MainScreen extends ConsumerWidget {
           ref.read(bottomNavProvider.notifier).setPage(index);
           switch (index) {  // index에 따라 경로 이동
             case 0:
-              context.go('/');
+              context.go('/route');
               break;
             case 1:
               context.go('/schedule');

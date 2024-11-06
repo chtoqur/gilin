@@ -13,8 +13,13 @@ class ScheduleScreen extends StatelessWidget {
           const Text('Schedule Home Screen'),
           const SizedBox(height: 20), // 버튼과 텍스트 사이 간격
           ElevatedButton(
-            onPressed: () => context.go('/'), // go_router를 사용한 네비게이션
+            onPressed: () => context.go('/route'), // go_router를 사용한 네비게이션
             child: const Text('Go to Route'),
+          ),
+          const SizedBox(height: 20), // 버튼과 텍스트 사이 간격
+          ElevatedButton(
+            onPressed: () => context.go('/test'), // go_router를 사용한 네비게이션
+            child: const Text('Go to test Screen'),
           ),
         ],
       ),

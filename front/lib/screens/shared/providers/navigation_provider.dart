@@ -9,7 +9,7 @@ class BottomNavState extends StateNotifier<int> {
 
   void updateIndexFromPath(String path) {
     switch (path) {
-      case '/':
+      case '/route':
         state = 0;
         break;
       case '/schedule':

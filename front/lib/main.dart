@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:gilin/screens/mypage/test_screen.dart';
 import 'dart:developer';
 import 'package:go_router/go_router.dart';
 
@@ -19,7 +20,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
         routes: [
           GoRoute(
-            path: '/',
+            path: '/route',
             builder: (context, state) => const RouteScreen(),
           ),
           GoRoute(
@@ -34,9 +35,14 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/mypage',
             builder: (context, state) => const MypageScreen(),
           ),
+          GoRoute(
+            path: '/test',
+            builder: (context, state) => const TestScreen(),
+          ),
         ],
       ),
     ],
+    initialLocation: '/route',
   );
 });
 
