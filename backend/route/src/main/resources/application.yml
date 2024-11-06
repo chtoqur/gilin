@@ -22,7 +22,9 @@ logging:
   level:
     org.springframework.web: "info"
     org.hibernate: "info"
+    com.gilin: debug
   file:
-    name: app/logs/application.logapikey:
+    name: app/logs/application.log
+apikey:
   odsays:
     ${ODSAY_API_CSK}
