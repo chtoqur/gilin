@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gilin/screens/route/myplace_screen.dart';
 import 'package:gilin/screens/route/myroute_screen.dart';
 import 'package:gilin/widgets/route/search_bar.dart';
 import 'package:gilin/screens/search/search_screen.dart';
-import 'dart:async';
 import 'package:gilin/widgets/route//route_bottom_sheet.dart';
+import 'package:gilin/widgets/route/bookmark_container.dart';
+import 'package:gap/gap.dart';
+import 'dart:async';
 
 class RouteScreen extends StatefulWidget {
   const RouteScreen({Key? key}) : super(key: key);
@@ -32,10 +35,7 @@ class _RouteScreenState extends State<RouteScreen> {
             mapControllerCompleter.complete(controller);
           },
         ),
-        const CustomSearchBar(),  // SearchBar -> CustomSearchBar로 변경
-        // 또는
-        // RouteScreen에서
-        // RouteScreen에서
+        const CustomSearchBar(),
         CustomSearchBar(
           readOnly: true,
           onTap: () {
@@ -68,26 +68,40 @@ class _RouteScreenState extends State<RouteScreen> {
                             TextSpan(
                               text: '사용자',  // 나중에 서버에서 받아올 사용자 이름
                               style: TextStyle(
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             TextSpan(
                               text: '님, 어디가시나요?',
+                              style: TextStyle(
+                                fontSize: 20,
+                              )
                             ),
                           ],
                         ),
                       ),
-                      Row(
-                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          bookmarkContainer(title: '집', iconData: 'home'),
-                          bookmarkContainer(title: '회사/학교', iconData: 'home'),
-                          bookmarkContainer(title: '추가하기', iconData: 'home'),
-                        ],
-                      )
+                      const Gap(10),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Row의 전체 너비를 가져와 5등분한 크기를 각 컨테이너의 너비로 설정
+                          double containerWidth = (constraints.maxWidth / 5) - 20;
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              BookmarkContainer(title: '집', iconData: 'home', width: containerWidth),
+                              const SizedBox(width: 10), // 요소 간 간격
+                              BookmarkContainer(title: '회사/학교', iconData: 'building', width: containerWidth),
+                              const SizedBox(width: 10),
+                              BookmarkContainer(title: '추가하기', iconData: 'add', width: containerWidth),
+                            ],
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
+                const Gap(20),
                 // 탭 버튼들
                 Container(
                   decoration: BoxDecoration(
@@ -106,7 +120,7 @@ class _RouteScreenState extends State<RouteScreen> {
                               color: isPlaceTab ? Color(0xFF463C33) : Colors.transparent,
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: const Center(child: Text('장소')),
+                            child: const Center(child: Text('장소', style: TextStyle(fontSize: 14),)),
                           ),
                         ),
                       ),
@@ -119,7 +133,7 @@ class _RouteScreenState extends State<RouteScreen> {
                               color: !isPlaceTab ? Color(0xFF463C33) : Colors.transparent,
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: const Center(child: Text('경로')),
+                            child: const Center(child: Text('경로', style: TextStyle(fontSize: 14),)),
                           ),
                         ),
                       ),
@@ -138,13 +152,4 @@ class _RouteScreenState extends State<RouteScreen> {
       ],
     );
   }
-}
-
-Widget bookmarkContainer({String title = '집', String iconData = 'home'}) {
-  return Container(
-    height: 50,
-    child: Center(
-      child: Text(title),
-    ),
-  );
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../shared/providers/navigation_provider.dart';  // Riverpod import 추가
+import 'package:gilin/state/navigation/navigation_provider.dart';  // Riverpod import 추가
 
 // StatelessWidget을 ConsumerWidget으로 변경
 class ScheduleScreen extends ConsumerWidget {
