@@ -66,7 +66,7 @@ public class SearchPubTransPathResponse {
             private double distance;
             private int sectionTime;
             private Integer stationCount;
-            private List<Lane> laneList;
+            private List<Lane> lane;
             private int intervalTime;
             private String startName;
             private String startNameKor;
