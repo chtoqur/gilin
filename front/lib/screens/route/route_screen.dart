@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:gilin/screens/route/myplace_screen.dart';
 import 'package:gilin/screens/route/myroute_screen.dart';
+import 'package:gilin/screens/route/widgets/search_bar.dart';
+import 'package:gilin/screens/search/search_screen.dart';
 import 'dart:async';
 import 'widgets/route_bottom_sheet.dart';
 
@@ -30,7 +32,26 @@ class _RouteScreenState extends State<RouteScreen> {
             mapControllerCompleter.complete(controller);
           },
         ),
-        // 바텀 시트
+        const CustomSearchBar(),  // SearchBar -> CustomSearchBar로 변경
+        // 또는
+        // RouteScreen에서
+        // RouteScreen에서
+        CustomSearchBar(
+          readOnly: true,
+          onTap: () {
+            Navigator.of(context).push(
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => const SearchScreen(),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  );
+                },
+              ),
+            );
+          },
+        ),
         RouteBottomSheet(
           child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.7,
