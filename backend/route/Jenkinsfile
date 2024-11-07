@@ -74,18 +74,18 @@ pipeline {
         stage('EC2 Pull') {
             steps {
                 sshagent (credentials: ['ec2_ssh']) {
-                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD'), string(credentialsId: $ENV_CREDENTIALS_ID, variable: 'ENV_CONTENT')]) {
-                        sh """
-                            # .env 내용을 EC2 서버로 복사
-                            echo "$ENV_CONTENT" | ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN 'cat > /home/ubuntu/.env'
-                            ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN << 'EOF'
-                            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-                            docker pull ${IMAGE_TAG}
-                            docker pull ${DOCKER_HUB_REPO}:latest
-                            docker logout
-                            EOF
-                        """
-                    }
+                   withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD'), file(credentialsId: ENV_CREDENTIALS_ID, variable: 'ENV_FILE')]) {
+                       sh """
+                           # .env 파일을 EC2 서버로 복사
+                           scp -o StrictHostKeyChecking=no $ENV_FILE $SERVER_ID@$SERVER_DOMAIN:/home/ubuntu/.env
+                           ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN << 'EOF'
+                           echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+                           docker pull ${IMAGE_TAG}
+                           docker pull ${DOCKER_HUB_REPO}:latest
+                           docker logout
+                           EOF
+                       """
+                   }
                 }
             }
         }
