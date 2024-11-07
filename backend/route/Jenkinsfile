@@ -15,17 +15,21 @@ pipeline {
         stage('Clone') {
             steps {
                 script {
-                    git branch: 'dev-backend', url: 'https://lab.ssafy.com/s11-ai-image-sub1/S11P21A302.git', credentialsId: GITLAB_CREDENTIALS_ID
+                    git branch: 'be/test', url: 'https://lab.ssafy.com/s11-final/S11P31A306', credentialsId: GITLAB_CREDENTIALS_ID
                 }
             }
         }
 
         stage('Build') {
             steps {
-                script {
+                withCredentials([file(credentialsId: ENV_CREDENTIALS_ID, variable: 'ENV_FILE')]) {
                     dir('backend/route') {
-                        sh 'chmod +x ./gradlew'
-                        sh './gradlew clean build'
+                        // .env 파일을 로드하여 환경 변수로 설정한 후 빌드 실행
+                        sh '''
+                            export $(cat $ENV_FILE | xargs)
+                            chmod +x ./gradlew
+                            ./gradlew clean build
+                        '''
                     }
                 }
             }
@@ -72,18 +76,20 @@ pipeline {
         stage('EC2 Pull') {
             steps {
                 sshagent (credentials: ['ec2_ssh']) {
-                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD'), string(credentialsId: $ENV_CREDENTIALS_ID, variable: 'ENV_CONTENT')]) {
-                        sh """
-                            # .env 내용을 EC2 서버로 복사
-                            echo "$ENV_CONTENT" | ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN 'cat > /home/ubuntu/.env'
-                            ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN << 'EOF'
-                            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-                            docker pull ${IMAGE_TAG}
-                            docker pull ${DOCKER_HUB_REPO}:latest
-                            docker logout
-                            EOF
-                        """
-                    }
+                   withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD'), file(credentialsId: ENV_CREDENTIALS_ID, variable: 'ENV_FILE')]) {
+                       sh """
+                           # .env 파일을 임시 디렉토리에 복사한 후 이동
+                           scp -o StrictHostKeyChecking=no $ENV_FILE $SERVER_ID@$SERVER_DOMAIN:/tmp/.env
+                           ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN <<EOF
+                           sudo mv /tmp/.env /home/ubuntu/.env
+                           sudo chown ubuntu:ubuntu /home/ubuntu/.env
+                           echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+                           docker pull ${IMAGE_TAG}
+                           docker pull ${DOCKER_HUB_REPO}:latest
+                           docker logout
+EOF
+                       """
+                   }
                 }
             }
         }
@@ -92,11 +98,11 @@ pipeline {
             steps {
                 sshagent(credentials: ['ec2_ssh']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN << 'EOF'
+                        ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN <<EOF
                         docker stop route-backend || true
                         docker rm route-backend || true
-                        docker run -d --name route-backend --env-file /home/ubuntu/.env ${DOCKER_HUB_REPO}:latest
-                        EOF
+                        docker run -d --name route-backend --network npm_gilin --env-file /home/ubuntu/.env ${DOCKER_HUB_REPO}:latest
+EOF
                     """
                 }
             }
