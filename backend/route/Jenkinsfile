@@ -80,12 +80,12 @@ pipeline {
                        sh """
                            # .env 파일을 EC2 서버로 복사
                            scp -o StrictHostKeyChecking=no $ENV_FILE $SERVER_ID@$SERVER_DOMAIN:/home/ubuntu/.env
-                           ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN << 'EOF'
+                           ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN <<EOF
                            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
                            docker pull ${IMAGE_TAG}
                            docker pull ${DOCKER_HUB_REPO}:latest
                            docker logout
-                           EOF
+EOF
                        """
                    }
                 }
@@ -96,11 +96,11 @@ pipeline {
             steps {
                 sshagent(credentials: ['ec2_ssh']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN << 'EOF'
+                        ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN <<EOF
                         docker stop route-backend || true
                         docker rm route-backend || true
                         docker run -d --name route-backend --env-file /home/ubuntu/.env ${DOCKER_HUB_REPO}:latest
-                        EOF
+EOF
                     """
                 }
             }
