@@ -26,7 +26,8 @@ class _SearchScreenState extends State<SearchScreen> {
           // 검색 결과 리스트
           Padding(
             padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 60, // SearchBar 높이 + 여백 고려
+              top: MediaQuery.of(context).padding.top +
+                  60, // SearchBar 높이 + 여백 고려
             ),
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16),

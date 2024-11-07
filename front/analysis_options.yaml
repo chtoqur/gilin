@@ -35,9 +35,7 @@ linter:
     prefer_const_constructors: true
     always_declare_return_types: true
     always_require_non_null_named_parameters: true
-    avoid_types_on_closure_parameters: true
     avoid_annotating_with_dynamic: true
-    avoid_escaping_inner_quotes: true
     annotate_overrides: true
     unawaited_futures: true
     unnecessary_final: true

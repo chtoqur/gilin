@@ -6,6 +6,7 @@ class LoginTextField extends StatelessWidget {
   final FormFieldValidator<String?> validator;
   final String? hintText;
   final bool obscureText;
+
   const LoginTextField({
     required this.onSaved,
     required this.validator,
@@ -13,13 +14,13 @@ class LoginTextField extends StatelessWidget {
     this.hintText,
     Key? key,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       onSaved: onSaved,
       validator: validator,
       cursorColor: gray,
-
       obscureText: obscureText,
       decoration: InputDecoration(
         fillColor: white,

@@ -18,7 +18,7 @@ class RouteScreen extends StatefulWidget {
 }
 
 class _RouteScreenState extends State<RouteScreen> {
-  bool isPlaceTab = true;  // true: 장소 탭, false: 경로 탭
+  bool isPlaceTab = true; // true: 장소 탭, false: 경로 탭
   final Completer<NaverMapController> mapControllerCompleter = Completer();
 
   @override
@@ -41,8 +41,10 @@ class _RouteScreenState extends State<RouteScreen> {
           onTap: () {
             Navigator.of(context).push(
               PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => const SearchScreen(),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    const SearchScreen(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
                   return FadeTransition(
                     opacity: animation,
                     child: child,
@@ -65,18 +67,17 @@ class _RouteScreenState extends State<RouteScreen> {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: '사용자',  // 나중에 서버에서 받아올 사용자 이름
+                            text: '사용자', // 나중에 서버에서 받아올 사용자 이름
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           TextSpan(
-                            text: '님, 어디가시나요?',
-                            style: TextStyle(
-                              fontSize: 20,
-                            )
-                          ),
+                              text: '님, 어디가시나요?',
+                              style: TextStyle(
+                                fontSize: 20,
+                              )),
                         ],
                       ),
                     ),
@@ -88,11 +89,20 @@ class _RouteScreenState extends State<RouteScreen> {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            BookmarkContainer(title: '집', iconData: 'home', width: containerWidth),
+                            BookmarkContainer(
+                                title: '집',
+                                iconData: 'home',
+                                width: containerWidth),
                             const SizedBox(width: 20), // 요소 간 간격
-                            BookmarkContainer(title: '회사/학교', iconData: 'building', width: containerWidth),
+                            BookmarkContainer(
+                                title: '회사/학교',
+                                iconData: 'building',
+                                width: containerWidth),
                             const SizedBox(width: 20),
-                            BookmarkContainer(title: '추가하기', iconData: 'add', width: containerWidth),
+                            BookmarkContainer(
+                                title: '추가하기',
+                                iconData: 'add',
+                                width: containerWidth),
                           ],
                         );
                       },
@@ -115,7 +125,9 @@ class _RouteScreenState extends State<RouteScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: isPlaceTab ? const Color(0xFF463C33) : Colors.transparent,
+                              color: isPlaceTab
+                                  ? const Color(0xFF463C33)
+                                  : Colors.transparent,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Row(
@@ -136,8 +148,9 @@ class _RouteScreenState extends State<RouteScreen> {
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: isPlaceTab ? Colors.white : Colors.black
-                                  ),
+                                      color: isPlaceTab
+                                          ? Colors.white
+                                          : Colors.black),
                                 )
                               ],
                             ),
@@ -150,7 +163,9 @@ class _RouteScreenState extends State<RouteScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: BoxDecoration(
-                              color: !isPlaceTab ? const Color(0xff463C33) : Colors.transparent,
+                              color: !isPlaceTab
+                                  ? const Color(0xff463C33)
+                                  : Colors.transparent,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Row(
@@ -169,9 +184,11 @@ class _RouteScreenState extends State<RouteScreen> {
                                 Text(
                                   '경로',
                                   style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: !isPlaceTab ? Colors.white : Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: !isPlaceTab
+                                        ? Colors.white
+                                        : Colors.black,
                                   ),
                                 )
                               ],
@@ -185,7 +202,9 @@ class _RouteScreenState extends State<RouteScreen> {
 
                 // 탭 내용
                 Expanded(
-                  child: isPlaceTab ? const MyplaceScreen() : const MyrouteScreen(),
+                  child: isPlaceTab
+                      ? const MyplaceScreen()
+                      : const MyrouteScreen(),
                 ),
               ],
             ),

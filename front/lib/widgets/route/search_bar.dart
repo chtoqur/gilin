@@ -13,7 +13,7 @@ class CustomSearchBar extends StatelessWidget {
     this.onTap,
     this.onSubmitted,
     this.hintText = '장소를 검색해보세요',
-    this.readOnly = true,  // 메인 화면에서는 readOnly로 설정
+    this.readOnly = true, // 메인 화면에서는 readOnly로 설정
   }) : super(key: key);
 
   @override

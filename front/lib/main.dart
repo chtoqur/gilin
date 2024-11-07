@@ -18,8 +18,7 @@ Future<void> _initialize() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NaverMapSdk.instance.initialize(
       clientId: 'w5yq6v1x69',
-      onAuthFailed: (e) => log("네이버맵 인증오류: $e", name: "onAuthFailed")
-  );
+      onAuthFailed: (e) => log("네이버맵 인증오류: $e", name: "onAuthFailed"));
 }
 
 class MyApp extends ConsumerWidget {
@@ -32,9 +31,7 @@ class MyApp extends ConsumerWidget {
     return MaterialApp.router(
       routerConfig: router,
       title: 'GilIn',
-      theme: ThemeData(
-          primaryColor: Colors.white
-      ),
+      theme: ThemeData(primaryColor: Colors.white),
     );
   }
 }
