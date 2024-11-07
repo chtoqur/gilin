@@ -1,4 +1,4 @@
-package com.gilin.route.domain.route.client.odsay.response;
+package com.gilin.route.global.client.odsay.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

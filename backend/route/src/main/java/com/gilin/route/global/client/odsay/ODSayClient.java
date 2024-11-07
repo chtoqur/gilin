@@ -1,7 +1,7 @@
-package com.gilin.route.domain.route.client.odsay;
+package com.gilin.route.global.client.odsay;
 
-import com.gilin.route.domain.route.client.odsay.request.SearchPubTransPathRequest;
-import com.gilin.route.domain.route.client.odsay.response.SearchPubTransPathResponse;
+import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
+import com.gilin.route.global.client.odsay.request.SearchPubTransPathRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
