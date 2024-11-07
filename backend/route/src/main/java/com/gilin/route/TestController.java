@@ -3,6 +3,8 @@ package com.gilin.route;
 import com.gilin.route.global.client.odsay.ODSayClient;
 import com.gilin.route.global.client.odsay.request.SearchPubTransPathRequest;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
+import com.gilin.route.global.client.seoul.SeoulClient;
+import com.gilin.route.global.client.seoul.response.FetchPublicBikeStationResponse;
 import com.gilin.route.global.config.APIKeyConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     private final ODSayClient odSayClient;
+    private final SeoulClient seoulClient;
     private final APIKeyConfig apiKeyConfig;
 
     @GetMapping("/odsay/path")
@@ -37,5 +40,16 @@ public class TestController {
                         .EX(ex)
                         .EY(ey)
                         .build()));
+    }
+
+    @GetMapping("/seoul/bikeStations")
+    @Operation(description = "서울시 공공자전거 보관소 현황 호출입니다.")
+    public ResponseEntity<FetchPublicBikeStationResponse> seoulBikeStations(
+            @RequestParam(defaultValue = "1") int start,
+            @RequestParam(defaultValue = "10") int end
+    ) {
+        return ResponseEntity.ok(seoulClient.fetchPublicBikeStation(
+                apiKeyConfig.getSeoulKey(), start, end
+        ));
     }
 }
