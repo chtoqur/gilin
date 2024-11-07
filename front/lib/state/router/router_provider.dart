@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gilin/screens/alert/alert_screen.dart';
@@ -13,9 +12,9 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       ShellRoute(
         builder: (context, state, child) => MainScreen(
-          child: child,
-          // 네브바가 없어야 하는 페이지 설정
+          // 네브바가 없어야 하는 페이지
           showBottomNav: !state.uri.path.contains('/test'),
+          child: child,
         ),
         routes: [
           GoRoute(

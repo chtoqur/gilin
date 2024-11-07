@@ -86,7 +86,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: const Color(0xffF8F5F0),
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(20),
             ),

@@ -12,6 +12,11 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   plugins:
     - custom_lint
+    # implicit-casts: false
+    # implicit-dynamic: false
+  exclude:
+  errors:
+    invalid_annotation_target: ignore
 
 linter:
   # The lint rules applied to this project can be customized in the
@@ -27,6 +32,23 @@ linter:
   rules:
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
-
+    prefer_const_constructors: true
+    always_declare_return_types: true
+    always_require_non_null_named_parameters: true
+    avoid_types_on_closure_parameters: true
+    avoid_annotating_with_dynamic: true
+    avoid_escaping_inner_quotes: true
+    annotate_overrides: true
+    unawaited_futures: true
+    unnecessary_final: true
+    unnecessary_parenthesis: true
+    conditional_uri_does_not_exist: true
+    avoid_empty_else: true
+    prefer_void_to_null: true
+    use_key_in_widget_constructors: true
+    sort_constructors_first: false
+    use_super_parameters: false
+    avoid_print: false # 개발 중에만 false > 추후 true로 변경
+#   - await_only_futures # await 키워드 사용을 Future 객체에 한정
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

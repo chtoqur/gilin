@@ -15,7 +15,7 @@ class MainScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = ref.watch(bottomNavProvider);
+    var currentIndex = ref.watch(bottomNavProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -24,7 +24,7 @@ class MainScreen extends ConsumerWidget {
       bottomNavigationBar: showBottomNav ? BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (index) {
-          final routes = ['/route', '/schedule', '/alert', '/mypage'];
+          var routes = ['/route', '/schedule', '/alert', '/mypage'];
           ref.read(bottomNavProvider.notifier).navigateToPage(
             context,
             index,
