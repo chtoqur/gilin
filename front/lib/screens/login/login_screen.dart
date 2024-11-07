@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gilin/themes/color.dart';
 import 'package:gilin/widgets/login/login_text_field.dart';
 
-
-
 // 로그인 UI
 class LoginScreenUI extends StatelessWidget {
   const LoginScreenUI({Key? key}) : super(key: key);
@@ -21,23 +19,24 @@ class LoginScreenUI extends StatelessWidget {
               alignment: Alignment.center,
               child: Image.asset(
                 'assets/img/logo.png',
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.5,
+                width: MediaQuery.of(context).size.width * 0.5,
               ),
             ),
             const SizedBox(height: 16.0),
             LoginTextField(
               onSaved: (String? val) {},
-              validator: (String? val) {},
+              validator: (String? val) {
+                return null; // null을 반환하면 유효성 검사 통과
+              },
               hintText: '이메일 입력',
             ),
             const SizedBox(height: 8.0),
             LoginTextField(
               obscureText: true,
               onSaved: (String? val) {},
-              validator: (String? val) {},
+              validator: (String? val) {
+                return null; // null을 반환하면 유효성 검사 통과
+              },
               hintText: '비밀번호 입력',
             ),
             const SizedBox(height: 16.0),
@@ -72,8 +71,6 @@ class LoginScreenUI extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 16.0),
-
-
                   Text(
                     '비밀번호 찾기',
                     style: TextStyle(
@@ -85,7 +82,6 @@ class LoginScreenUI extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 16.0),
-
                   Text(
                     '회원가입',
                     style: TextStyle(
@@ -97,7 +93,6 @@ class LoginScreenUI extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 16.0),
-
                 ],
               ),
             )

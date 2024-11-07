@@ -31,14 +31,15 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final height = screenHeight * (isDragging
-        ? currentDragHeight.clamp(minHeight, maxHeight)
-        : (currentHeight == SheetHeight.min
-        ? minHeight
-        : currentHeight == SheetHeight.mid
-        ? midHeight
-        : maxHeight));
+    var screenHeight = MediaQuery.of(context).size.height;
+    var height = screenHeight *
+        (isDragging
+            ? currentDragHeight.clamp(minHeight, maxHeight)
+            : (currentHeight == SheetHeight.min
+                ? minHeight
+                : currentHeight == SheetHeight.mid
+                    ? midHeight
+                    : maxHeight));
 
     return Positioned(
       left: 0,
@@ -52,27 +53,27 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
           currentDragHeight = currentHeight == SheetHeight.min
               ? minHeight
               : currentHeight == SheetHeight.mid
-              ? midHeight
-              : maxHeight;
+                  ? midHeight
+                  : maxHeight;
         },
         onVerticalDragUpdate: (details) {
           if (scrollController.offset <= 0) {
-            final dragDistance = details.globalPosition.dy - dragStartY;
-            final heightDelta = -dragDistance / screenHeight;
+            var dragDistance = details.globalPosition.dy - dragStartY;
+            var heightDelta = -dragDistance / screenHeight;
 
             setState(() {
               currentDragHeight = (currentHeight == SheetHeight.min
-                  ? minHeight
-                  : currentHeight == SheetHeight.mid
-                  ? midHeight
-                  : maxHeight) +
+                      ? minHeight
+                      : currentHeight == SheetHeight.mid
+                          ? midHeight
+                          : maxHeight) +
                   heightDelta;
             });
           }
         },
         onVerticalDragEnd: (details) {
           isDragging = false;
-          final currentSize = currentDragHeight.clamp(minHeight, maxHeight);
+          var currentSize = currentDragHeight.clamp(minHeight, maxHeight);
 
           setState(() {
             if (currentSize > (midHeight + maxHeight) / 2) {
@@ -86,7 +87,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: const Color(0xffF8F5F0),
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(20),
             ),
@@ -115,7 +116,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
                 child: SingleChildScrollView(
                   controller: scrollController,
                   physics: (currentHeight == SheetHeight.min ||
-                      currentHeight == SheetHeight.mid)
+                          currentHeight == SheetHeight.mid)
                       ? const NeverScrollableScrollPhysics()
                       : const ClampingScrollPhysics(),
                   child: Padding(
