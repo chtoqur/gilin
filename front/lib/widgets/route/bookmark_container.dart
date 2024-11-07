@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gap/gap.dart';
 
 class BookmarkContainer extends StatelessWidget {
   final String title;
@@ -15,30 +16,36 @@ class BookmarkContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: width,
-          height: width,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.black, width: 1),
-          ),
-          child: Center(
-            child: SvgPicture.asset(
-              'assets/images/streamline/$iconData.svg',
-              width: width * 0.5,
-              height: width * 0.5,
+    return Container(
+      width: width,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: width * 0.3,
+            height: width * 0.3,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.black, width: 1),
+            ),
+            child: Center(
+              child: SvgPicture.asset(
+                'assets/images/streamline/$iconData.svg',
+                width: width * 0.15,
+                height: width * 0.15,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          title,
-          style: const TextStyle(fontSize: 14),
-        ),
-      ],
+          const Gap(5),
+          Column(
+            children: [],
+          ),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 14),
+          ),
+        ],
+      ),
     );
   }
 }

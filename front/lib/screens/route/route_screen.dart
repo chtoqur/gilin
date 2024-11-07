@@ -85,7 +85,7 @@ class _RouteScreenState extends State<RouteScreen> {
                     LayoutBuilder(
                       builder: (context, constraints) {
                         // Row의 전체 너비를 가져와 5등분한 크기를 각 컨테이너의 너비로 설정
-                        double containerWidth = (constraints.maxWidth / 5) - 20;
+                        double containerWidth = (constraints.maxWidth / 3) - 20;
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -97,11 +97,6 @@ class _RouteScreenState extends State<RouteScreen> {
                             BookmarkContainer(
                                 title: '회사/학교',
                                 iconData: 'building',
-                                width: containerWidth),
-                            const SizedBox(width: 20),
-                            BookmarkContainer(
-                                title: '추가하기',
-                                iconData: 'add',
                                 width: containerWidth),
                           ],
                         );

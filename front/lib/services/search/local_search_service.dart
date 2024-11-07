@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 import '../../models/search/local_search_result.dart';
 
 class LocalSearchService {
-  static const String baseUrl = 'https://openapi.naver.com/v1/search/local.json';
+  static const String baseUrl =
+      'https://openapi.naver.com/v1/search/local.json';
   final String clientId;
   final String clientSecret;
 
@@ -21,7 +22,8 @@ class LocalSearchService {
   }) async {
     try {
       final encodedQuery = Uri.encodeComponent(query);
-      final uri = Uri.parse('$baseUrl?query=$encodedQuery&display=$display&start=$start&sort=$sort');
+      final uri = Uri.parse(
+          '$baseUrl?query=$encodedQuery&display=$display&start=$start&sort=$sort');
 
       if (kDebugMode) {
         print('Requesting URL: $uri');

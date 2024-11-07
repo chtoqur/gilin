@@ -1,5 +1,4 @@
-
-class LocalSearchResult{
+class LocalSearchResult {
   final String title;
   final String category;
   final String description;
@@ -16,7 +15,7 @@ class LocalSearchResult{
     required this.roadAddress,
     required this.mapx,
     required this.mapy,
-});
+  });
 
   factory LocalSearchResult.fromJson(Map<String, dynamic> json) {
     return LocalSearchResult(
@@ -30,4 +29,3 @@ class LocalSearchResult{
     );
   }
 }
-

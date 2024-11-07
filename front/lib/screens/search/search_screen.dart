@@ -82,41 +82,42 @@ class _SearchScreenState extends State<SearchScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _error != null
-                ? Center(child: Text(_error!))
-                : ListView.builder(
-              itemCount: _searchResults.length,
-              itemBuilder: (context, index) {
-                final result = _searchResults[index];
+                    ? Center(child: Text(_error!))
+                    : ListView.builder(
+                        itemCount: _searchResults.length,
+                        itemBuilder: (context, index) {
+                          final result = _searchResults[index];
 
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: ListTile(
-                    title: Text(result.title),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(result.category),
-                        Text(result.roadAddress),
-                      ],
-                    ),
-                    onTap: () {
-                      print('Selected result: ${result.mapx}, ${result.mapy}');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SearchResultMap(
-                            searchResult: result,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
+                          return Card(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            child: ListTile(
+                              title: Text(result.title),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(result.category),
+                                  Text(result.roadAddress),
+                                ],
+                              ),
+                              onTap: () {
+                                print(
+                                    'Selected result: ${result.mapx}, ${result.mapy}');
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SearchResultMap(
+                                      searchResult: result,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
           ),
         ],
       ),
