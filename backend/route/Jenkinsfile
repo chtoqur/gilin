@@ -22,11 +22,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                script {
-                    dir('backend/route') {
-                        sh 'chmod +x ./gradlew'
-                        sh './gradlew clean build'
-                    }
+                withCredentials([file(credentialsId: ENV_CREDENTIALS_ID, variable: 'ENV_FILE')]) {
+                    // .env 파일을 로드하여 환경 변수로 설정한 후 빌드 실행
+                    sh '''
+                        export $(cat $ENV_FILE | xargs)
+                        chmod +x ./gradlew
+                        ./gradlew clean build
+                    '''
                 }
             }
         }
