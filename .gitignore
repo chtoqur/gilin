@@ -49,6 +49,7 @@ gen-external-apklibs
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+custom_lint.log
 .fvm/flutter_sdk
 .packages
 .pub-cache/

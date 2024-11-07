@@ -1,5 +1,6 @@
 // widgets/location_item.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class LocationItem extends StatelessWidget {
   final String title;
@@ -16,20 +17,23 @@ class LocationItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 4),
         child: Row(
           children: [
-            const Icon(Icons.place, size: 20),
+            SvgPicture.asset(
+              'assets/images/icons/pin_2.svg',
+              width: 24,
+              height: 24,
+            ),
             const SizedBox(width: 8),
-            Expanded(child: Text(title)),
-            TextButton(
-              onPressed: () {},
-              child: const Text('편집'),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text('삭제'),
-            ),
+            Expanded(
+                child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            )),
           ],
         ),
       ),

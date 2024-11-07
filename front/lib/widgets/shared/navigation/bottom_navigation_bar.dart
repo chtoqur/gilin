@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gilin/state/providers/navigation_provider.dart';
+import 'package:gilin/state/navigation/navigation_provider.dart';
 
 class CustomBottomNavigationBar extends ConsumerWidget {
   const CustomBottomNavigationBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = ref.watch(bottomNavProvider);
+    var currentIndex = ref.watch(bottomNavProvider);
 
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: (index) {
-        final routes = ['/route', '/schedule', '/alert', '/mypage'];
+        var routes = ['/route', '/schedule', '/alert', '/mypage'];
         ref.read(bottomNavProvider.notifier).navigateToPage(
-            context,
-            index,
-            routes[index],
-        );
+              context,
+              index,
+              routes[index],
+            );
       },
       items: const [
         BottomNavigationBarItem(

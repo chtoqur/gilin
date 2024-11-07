@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-
 const white = Color(0xffFFFFFF);
-const gray  = Color(0xff989898);
+const gray = Color(0xff989898);
 const veryDarkGray = Color(0xff3A3A3A);
 const black = Color(0xff000000);
 const strokeBlack = Color(0x66000000);
@@ -22,7 +21,6 @@ const brown = Color(0xff463C33);
 const pureOrange = Color(0xfff4a700);
 const darkGrayishOrange = Color(0xff75695f);
 const mostlyDesaturatedDarkOrange = Color(0xffa48365);
-
 
 //lower camel case (첫 글자 소문자 그 뒤에 오는 단어 대문자 ex: yellowOlive)로 수정
 // 241107_1020
