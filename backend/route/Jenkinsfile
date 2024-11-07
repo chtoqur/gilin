@@ -101,7 +101,7 @@ EOF
                         ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN <<EOF
                         docker stop route-backend || true
                         docker rm route-backend || true
-                        docker run -d --name route-backend --env-file /home/ubuntu/.env ${DOCKER_HUB_REPO}:latest
+                        docker run -d --name route-backend --network gilin --env-file /home/ubuntu/.env ${DOCKER_HUB_REPO}:latest
 EOF
                     """
                 }
