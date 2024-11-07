@@ -113,7 +113,7 @@ class _RouteScreenState extends State<RouteScreen> {
                 // 탭 버튼들
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xffF8EAAB),
+                    color: const Color(0xFFFFF6D9),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   padding: const EdgeInsets.all(8),
