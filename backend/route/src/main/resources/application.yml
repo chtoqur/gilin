@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /api
 spring:
+  redis:
+    host: localhost
   config:
     import: optional:file:.env[.properties]
   application:
@@ -18,6 +20,11 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: ${DDL_OPTION}
+  data:
+    redis:
+      port: ${REDIS_PORT}
+      host: ${HOST}
+      password: ${REDIS_PW}
 logging:
   level:
     org.springframework.web: "info"
