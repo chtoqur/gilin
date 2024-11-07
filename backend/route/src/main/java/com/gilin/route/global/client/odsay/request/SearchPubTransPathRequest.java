@@ -1,4 +1,4 @@
-package com.gilin.route.domain.route.client.odsay.request;
+package com.gilin.route.global.client.odsay.request;
 
 
 import lombok.Builder;
