@@ -28,3 +28,5 @@ logging:
 apikey:
   odsays:
     ${ODSAY_API_CSK}
+  seouls:
+    ${SEOUL_API_CSK}
