@@ -32,10 +32,8 @@ class _RouteScreenState extends State<RouteScreen> {
             mapControllerCompleter.complete(controller);
           },
         ),
-        const CustomSearchBar(),  // SearchBar -> CustomSearchBar로 변경
-        // 또는
-        // RouteScreen에서
-        // RouteScreen에서
+        const CustomSearchBar(),
+
         CustomSearchBar(
           readOnly: true,
           onTap: () {

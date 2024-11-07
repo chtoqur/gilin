@@ -49,13 +49,12 @@ class LocalSearchService {
         }
       }
 
-      // 응답이 200이 아니거나 items가 없는 경우 빈 리스트 반환
       return [];
     } catch (e) {
       if (kDebugMode) {
         print('Error in searchLocal: $e');
       }
-      // 에러 발생 시 빈 리스트 반환
+
       return [];
     }
   }

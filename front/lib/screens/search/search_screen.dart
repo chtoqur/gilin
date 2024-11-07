@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../models/search/local_search_result.dart';
 import '../../services/search/local_search_service.dart';
-import '../../widgets/search/search_result_item.dart';
+import '../search/search_result_map.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -87,6 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
               itemCount: _searchResults.length,
               itemBuilder: (context, index) {
                 final result = _searchResults[index];
+
                 return Card(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -101,6 +102,17 @@ class _SearchScreenState extends State<SearchScreen> {
                         Text(result.roadAddress),
                       ],
                     ),
+                    onTap: () {
+                      print('Selected result: ${result.mapx}, ${result.mapy}');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SearchResultMap(
+                            searchResult: result,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 );
               },
