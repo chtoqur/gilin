@@ -78,9 +78,11 @@ pipeline {
                 sshagent (credentials: ['ec2_ssh']) {
                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD'), file(credentialsId: ENV_CREDENTIALS_ID, variable: 'ENV_FILE')]) {
                        sh """
-                           # .env 파일을 EC2 서버로 복사
-                           scp -o StrictHostKeyChecking=no $ENV_FILE $SERVER_ID@$SERVER_DOMAIN:/home/ubuntu/.env
+                           # .env 파일을 임시 디렉토리에 복사한 후 이동
+                           scp -o StrictHostKeyChecking=no $ENV_FILE $SERVER_ID@$SERVER_DOMAIN:/tmp/.env
                            ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN <<EOF
+                           sudo mv /tmp/.env /home/ubuntu/.env
+                           sudo chown ubuntu:ubuntu /home/ubuntu/.env
                            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
                            docker pull ${IMAGE_TAG}
                            docker pull ${DOCKER_HUB_REPO}:latest
