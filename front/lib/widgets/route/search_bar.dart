@@ -6,6 +6,7 @@ class CustomSearchBar extends StatelessWidget {
   final Function(String)? onSubmitted;
   final String hintText;
   final bool readOnly;
+  final bool isRouteScreen;
 
   const CustomSearchBar({
     Key? key,
@@ -13,7 +14,8 @@ class CustomSearchBar extends StatelessWidget {
     this.onTap,
     this.onSubmitted,
     this.hintText = '장소를 검색해보세요',
-    this.readOnly = true, // 메인 화면에서는 readOnly로 설정
+    this.readOnly = true,
+    this.isRouteScreen = false, // true: 검색 아이콘, false: 뒤로 가기 버튼
   }) : super(key: key);
 
   @override
@@ -39,10 +41,14 @@ class CustomSearchBar extends StatelessWidget {
         child: Row(
           children: [
             const SizedBox(width: 16),
-            const Icon(
-              Icons.search,
-              color: Color(0xFF463C33),
-              size: 24,
+            // 동적으로 아이콘 변경
+            GestureDetector(
+              onTap: isRouteScreen ? null : () => Navigator.pop(context),
+              child: Icon(
+                isRouteScreen ? Icons.search : Icons.arrow_back,
+                color: const Color(0xFF463C33),
+                size: 24,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(

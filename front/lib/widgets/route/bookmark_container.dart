@@ -16,14 +16,14 @@ class BookmarkContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: width,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: width * 0.3,
-            height: width * 0.3,
+            width: width * 0.35,
+            height: width * 0.35,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: Colors.black, width: 1),
@@ -31,19 +31,29 @@ class BookmarkContainer extends StatelessWidget {
             child: Center(
               child: SvgPicture.asset(
                 'assets/images/streamline/$iconData.svg',
-                width: width * 0.15,
-                height: width * 0.15,
+                width: width * 0.2,
+                height: width * 0.2,
               ),
             ),
           ),
           const Gap(5),
           Column(
-            children: [],
-          ),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 14),
-          ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(fontSize: 14),
+              ),
+              const Text(
+                '주소 설정',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );
