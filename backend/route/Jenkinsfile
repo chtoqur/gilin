@@ -15,7 +15,7 @@ pipeline {
         stage('Clone') {
             steps {
                 script {
-                    git branch: 'be/test', url: 'https://lab.ssafy.com/s11-final/S11P31A306', credentialsId: GITLAB_CREDENTIALS_ID
+                    git branch: 'be/dev', url: 'https://lab.ssafy.com/s11-final/S11P31A306', credentialsId: GITLAB_CREDENTIALS_ID
                 }
             }
         }
