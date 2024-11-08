@@ -22,6 +22,7 @@ class LocalSearchService {
   }) async {
     try {
       var encodedQuery = Uri.encodeComponent(query);
+
       var uri = Uri.parse(
           '$baseUrl?query=$encodedQuery&display=$display&start=$start&sort=$sort');
 
