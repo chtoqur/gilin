@@ -41,7 +41,7 @@ public class MetroServiceImpl implements MetroService{
         Map<String, String> entries = hashOperations.entries(key);
         return  MetroLinkDto.builder()
                             .startId(Integer.valueOf(entries.get("startId")))
-                            .startName(entries.get("startName"))
+                            .startName(entries.get("\uFEFFstartName"))
                             .startX(Double.valueOf(entries.get("startX")))
                             .startY(Double.valueOf(entries.get("startY")))
                             .endId(Integer.valueOf(entries.get("endId")))
