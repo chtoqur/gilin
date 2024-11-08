@@ -47,7 +47,7 @@ public class TestController {
     @GetMapping("/bus/subPath")
     @Operation(description = "서브 패스 잘 가져오나 확인하기")
     public ResponseEntity<List<Coordinate>> subPath(
-            @RequestParam(defaultValue = "234001574") Long routeId,
+            @RequestParam(defaultValue = "240000007") Long routeId,
             @RequestParam(defaultValue = "127.1032167") double sx,
             @RequestParam(defaultValue = "37.5441833") double sy,
             @RequestParam(defaultValue = "127.09355") double ex,
