@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../models/search/local_search_result.dart';
 import '../../services/search/local_search_service.dart';
@@ -30,7 +29,7 @@ class _SearchScreenState extends State<SearchScreen> {
     });
 
     try {
-      final results = await _searchService.searchLocal(query: query);
+      var results = await _searchService.searchLocal(query: query);
 
       setState(() {
         _searchResults = results;
@@ -86,7 +85,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 : ListView.builder(
               itemCount: _searchResults.length,
               itemBuilder: (context, index) {
-                final result = _searchResults[index];
+                var result = _searchResults[index];
 
                 return Card(
                   margin: const EdgeInsets.symmetric(

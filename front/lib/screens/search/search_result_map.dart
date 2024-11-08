@@ -24,8 +24,8 @@ class _SearchResultMapState extends ConsumerState<SearchResultMap> {
   Future<void> initializeMarkerAndInfoWindow(NaverMapController controller) async {
     try {
 
-      final lat = widget.searchResult.mapy / 10000000;
-      final lng = widget.searchResult.mapx / 10000000;
+      var lat = widget.searchResult.mapy / 10000000;
+      var lng = widget.searchResult.mapx / 10000000;
 
       print('Converting coordinates to lat/lng: $lat, $lng');
 
@@ -33,7 +33,7 @@ class _SearchResultMapState extends ConsumerState<SearchResultMap> {
         throw Exception('Invalid coordinates: lat=$lat, lng=$lng');
       }
 
-      final position = NLatLng(lat, lng);
+      var position = NLatLng(lat, lng);
 
       currentMarker = NMarker(
         id: 'marker_${widget.searchResult.title}',
