@@ -18,7 +18,7 @@ class RouteScreen extends StatefulWidget {
 }
 
 class _RouteScreenState extends State<RouteScreen> {
-  bool isPlaceTab = true; // true: 장소 탭, false: 경로 탭
+  bool isPlaceTab = true;
   final Completer<NaverMapController> mapControllerCompleter = Completer();
 
   @override
@@ -35,9 +35,9 @@ class _RouteScreenState extends State<RouteScreen> {
             mapControllerCompleter.complete(controller);
           },
         ),
-        const CustomSearchBar(),
         CustomSearchBar(
           readOnly: true,
+          isRouteScreen: true, // 이 속성 추가
           onTap: () {
             Navigator.of(context).push(
               PageRouteBuilder(
@@ -67,7 +67,7 @@ class _RouteScreenState extends State<RouteScreen> {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: '사용자', // 나중에 서버에서 받아올 사용자 이름
+                            text: '사용자',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -84,8 +84,7 @@ class _RouteScreenState extends State<RouteScreen> {
                     const Gap(10),
                     LayoutBuilder(
                       builder: (context, constraints) {
-                        // Row의 전체 너비를 가져와 5등분한 크기를 각 컨테이너의 너비로 설정
-                        double containerWidth = (constraints.maxWidth / 5) - 20;
+                        double containerWidth = (constraints.maxWidth / 2.7) - 20;
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -93,15 +92,10 @@ class _RouteScreenState extends State<RouteScreen> {
                                 title: '집',
                                 iconData: 'home',
                                 width: containerWidth),
-                            const SizedBox(width: 20), // 요소 간 간격
+                            const Gap(20),
                             BookmarkContainer(
                                 title: '회사/학교',
                                 iconData: 'building',
-                                width: containerWidth),
-                            const SizedBox(width: 20),
-                            BookmarkContainer(
-                                title: '추가하기',
-                                iconData: 'add',
                                 width: containerWidth),
                           ],
                         );
@@ -110,7 +104,6 @@ class _RouteScreenState extends State<RouteScreen> {
                   ],
                 ),
                 const Gap(20),
-                // 탭 버튼들
                 Container(
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFF6D9),
@@ -199,8 +192,6 @@ class _RouteScreenState extends State<RouteScreen> {
                     ],
                   ),
                 ),
-
-                // 탭 내용
                 Expanded(
                   child: isPlaceTab
                       ? const MyplaceScreen()
