@@ -323,3 +323,4 @@ lib/generated_plugin_registrant.dart
 **/ios/**/Icon?
 **/ios/**/Pods/
 **/ios/**/.symlinks/
+backend/bus/resources/gyeonggi_busdata.CSV
