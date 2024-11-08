@@ -45,7 +45,7 @@ public class TestController {
     }
 
     @GetMapping("/bus/subPath")
-    @Operation(description = "서브 패스 잘 가져오나 확인하기")
+    @Operation(description = "서브 패스 잘 가져오나 확인하기 -> 광나루역에서 강변역 2000-1 번 버스")
     public ResponseEntity<List<Coordinate>> subPath(
             @RequestParam(defaultValue = "240000007") Long routeId,
             @RequestParam(defaultValue = "127.1032167") double sx,
