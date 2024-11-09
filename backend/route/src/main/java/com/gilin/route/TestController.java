@@ -1,5 +1,7 @@
 package com.gilin.route;
 
+import com.gilin.route.domain.bus.dto.Coordinate;
+import com.gilin.route.domain.bus.service.BusService;
 import com.gilin.route.global.client.odsay.ODSayClient;
 import com.gilin.route.global.client.odsay.request.SearchPubTransPathRequest;
 import com.gilin.route.global.client.odsay.request.SubwayStationInfoRequest;
@@ -7,6 +9,7 @@ import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
 import com.gilin.route.global.client.odsay.response.SubwayStationInfoResponse;
 import com.gilin.route.global.config.APIKeyConfig;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,7 @@ public class TestController {
 
     private final ODSayClient odSayClient;
     private final APIKeyConfig apiKeyConfig;
+    private final BusService busService;
 
     @GetMapping("/odsay/path")
     @Operation(description = "오디세이 호출입니다. https://lab.odsay.com/guide/releaseReference#searchPubTransPathT")
@@ -56,4 +60,17 @@ public class TestController {
         ));
     }
 
+    @GetMapping("/bus/subPath")
+    @Operation(description = "서브 패스 잘 가져오나 확인하기 -> 광나루역에서 강변역 2000-1 번 버스")
+    public ResponseEntity<List<Coordinate>> subPath(
+        @RequestParam(defaultValue = "240000007") Long routeId,
+        @RequestParam(defaultValue = "127.1032167") double sx,
+        @RequestParam(defaultValue = "37.5441833") double sy,
+        @RequestParam(defaultValue = "127.09355") double ex,
+        @RequestParam(defaultValue = "37.53615") double ey
+    ) {
+        Coordinate startStation = new Coordinate(sy, sx);
+        Coordinate endStation = new Coordinate(ey, ex);
+        return ResponseEntity.ok(busService.getSubPath(routeId, startStation, endStation));
+    }
 }
