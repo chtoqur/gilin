@@ -14,23 +14,52 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   final LocalSearchService _searchService = LocalSearchService(
-    clientId: 'v4kMJLqjdp4lbZVvGtGg',
-    clientSecret: 'PzZBG3URHV',
+    apiKey: '4611747a9ec4e2703671ba7df3cb5ca9',
   );
+
   List<LocalSearchResult> _searchResults = [];
   bool _isLoading = false;
   String? _error;
 
+  int _currentPage = 1;
+  static const int _itemsPerPage = 15;
+  bool _hasMoreItems = true;
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
-    // 인풋값이 변경될 때마다 검색
+
     _searchController.addListener(() {
+      _resetSearch();
       _performSearch(_searchController.text);
     });
+
+    _scrollController.addListener(_scrollListener);
   }
 
-  Future<void> _performSearch(String query) async {
+  void _scrollListener() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (!_isLoading && _hasMoreItems) {
+        _loadMoreItems();
+      }
+    }
+  }
+
+  void _resetSearch() {
+    _currentPage = 1;
+    _hasMoreItems = true;
+    _searchResults = [];
+  }
+
+  Future<void> _loadMoreItems() async {
+    if (_searchController.text.isEmpty) return;
+
+    _currentPage++;
+    await _performSearch(_searchController.text, isLoadingMore: true);
+  }
+
+  Future<void> _performSearch(String query, {bool isLoadingMore = false}) async {
     if (query.isEmpty) {
       setState(() {
         _searchResults = [];
@@ -39,20 +68,31 @@ class _SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+    if (!isLoadingMore) {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+    }
 
     try {
-      var results = await _searchService.searchLocal(query: query);
+      var results = await _searchService.searchLocal(
+        query: query,
+        size: _itemsPerPage,
+        page: _currentPage,
+      );
 
       setState(() {
-        _searchResults = results;
+        if (isLoadingMore) {
+          _searchResults.addAll(results);
+        } else {
+          _searchResults = results;
+        }
         _isLoading = false;
+        _hasMoreItems = results.length == _itemsPerPage;
       });
 
-      if (results.isEmpty) {
+      if (_searchResults.isEmpty) {
         setState(() {
           _error = '검색 결과가 없습니다.';
         });
@@ -61,7 +101,9 @@ class _SearchScreenState extends State<SearchScreen> {
       setState(() {
         _error = '검색 중 오류가 발생했습니다: $e';
         _isLoading = false;
-        _searchResults = [];
+        if (!isLoadingMore) {
+          _searchResults = [];
+        }
       });
     }
   }
@@ -96,43 +138,52 @@ class _SearchScreenState extends State<SearchScreen> {
               children: [
                 const SizedBox(height: 70),
                 Expanded(
-                  child: _isLoading
+                  child: _isLoading && _searchResults.isEmpty
                       ? const Center(child: CircularProgressIndicator())
                       : _error != null
-                          ? Center(child: Text(_error!))
-                          : ListView.builder(
-                              itemCount: _searchResults.length,
-                              itemBuilder: (context, index) {
-                                var result = _searchResults[index];
-                                return Card(
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  child: ListTile(
-                                    title: Text(result.title),
-                                    subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(result.category),
-                                        Text(result.roadAddress),
-                                      ],
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => SearchResultMap(
-                                            searchResult: result,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
+                      ? Center(child: Text(_error!))
+                      : ListView.builder(
+                    controller: _scrollController,
+                    itemCount: _searchResults.length + (_hasMoreItems ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == _searchResults.length) {
+                        return Container(
+                          padding: const EdgeInsets.all(16.0),
+                          alignment: Alignment.center,
+                          child: const CircularProgressIndicator(),
+                        );
+                      }
+
+                      var result = _searchResults[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: ListTile(
+                          title: Text(result.title),
+                          subtitle: Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+                              Text(result.category),
+                              Text(result.roadAddress),
+                            ],
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SearchResultMap(
+                                  searchResult: result,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
@@ -151,6 +202,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 }
