@@ -3,8 +3,6 @@ server:
   servlet:
     context-path: /api
 spring:
-  redis:
-    host: localhost
   config:
     import: optional:file:.env[.properties]
   application:
