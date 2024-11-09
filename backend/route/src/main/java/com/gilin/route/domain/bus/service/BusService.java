@@ -25,7 +25,7 @@ public final class BusService {
     private RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
 
-    public List<Coordinate> getSubPath(Long routeId, Coordinate startAt, Coordinate endAt) {
+    public List<Coordinate> getSubPath(Long routeId, Coordinate startStation, Coordinate endStation) {
         String json = redisTemplate.opsForValue().get(routeId.toString());
         if (Objects.isNull(json)) return null;
 
@@ -36,31 +36,31 @@ public final class BusService {
             return null;
         }
 
-        return getSubPath(fullPath, startAt, endAt);
+        return getSubPath(fullPath, startStation, endStation);
     }
 
-    private List<Coordinate> getSubPath(List<Coordinate> fullPath, Coordinate startAt, Coordinate endAt) {
+    private List<Coordinate> getSubPath(List<Coordinate> fullPath, Coordinate startStation, Coordinate endStation) {
         int startIdx = 0, endIdx = 0;
         double minToStart = Double.MAX_VALUE, minToEnd = Double.MAX_VALUE;
 
         for (int i = 0; i < fullPath.size(); i++) {
             Coordinate currCoordinate = fullPath.get(i);
-            double distanceFromStart = startAt.distanceFrom(currCoordinate);
-            double distanceFromEnd = endAt.distanceFrom(currCoordinate);
+            double distanceFromStart = startStation.distanceFrom(currCoordinate);
+            double distanceFromEnd = endStation.distanceFrom(currCoordinate);
 
             if (distanceFromStart < minToStart) {
-                minToStart = startAt.distanceFrom(currCoordinate);
+                minToStart = startStation.distanceFrom(currCoordinate);
                 startIdx = i;
             }
             if (distanceFromEnd < minToEnd) {
-                minToEnd = endAt.distanceFrom(currCoordinate);
+                minToEnd = endStation.distanceFrom(currCoordinate);
                 endIdx = i;
             }
         }
         List<Coordinate> subPath = new ArrayList<>();
-        subPath.add(startAt);
+        subPath.add(startStation);
         subPath.addAll(fullPath.subList(startIdx, endIdx + 1));
-        subPath.add(endAt);
+        subPath.add(endStation);
 
         return subPath;
     }
