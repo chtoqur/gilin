@@ -37,3 +37,5 @@ apikey:
     ${ODSAY_API_CSK}
   seouls:
     ${SEOUL_API_CSK}
+  kakaos:
+    ${KAKAO_API_CSK}

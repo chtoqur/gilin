@@ -1,5 +1,8 @@
 package com.gilin.route;
 
+import com.gilin.route.global.client.kakao.KakaoClient;
+import com.gilin.route.global.client.kakao.request.SearchKakaoCarDirectionRequest;
+import com.gilin.route.global.client.kakao.response.SearchKakaoCarDirectionResponse;
 import com.gilin.route.global.client.odsay.ODSayClient;
 import com.gilin.route.global.client.odsay.request.SearchPubTransPathRequest;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
@@ -22,6 +25,7 @@ public class TestController {
     private final ODSayClient odSayClient;
     private final SeoulClient seoulClient;
     private final APIKeyConfig apiKeyConfig;
+    private final KakaoClient kakaoClient;
 
     @GetMapping("/odsay/path")
     @Operation(description = "오디세이 호출입니다. https://lab.odsay.com/guide/releaseReference#searchPubTransPathT")
@@ -52,4 +56,23 @@ public class TestController {
                 apiKeyConfig.getSeoulKey(), start, end
         ));
     }
+
+    @GetMapping("/kakao/carDirections")
+    @Operation(description = "카카오모빌리티 자동차 길찾기 호출입니다.")
+    public ResponseEntity<SearchKakaoCarDirectionResponse> kakaoCarDirections(
+            @RequestParam(defaultValue = "126.963760") double sx,
+            @RequestParam(defaultValue = "37.477111") double sy,
+            @RequestParam(defaultValue = "127.039528") double ex,
+            @RequestParam(defaultValue = "37.501363") double ey
+    ) {
+        SearchKakaoCarDirectionRequest req =
+                SearchKakaoCarDirectionRequest.builder()
+                        .origin(sx+","+sy)
+                        .destination(ex+","+ey)
+                        .build();
+        return ResponseEntity.ok(kakaoClient.searchKakaoCarDirection(
+                req, "KakaoAK "+apiKeyConfig.getKakaoKey()
+        ));
+    }
+
 }
