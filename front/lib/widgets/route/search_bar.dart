@@ -72,18 +72,25 @@ class CustomSearchBar extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.all(8),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF6D9),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Text(
-                '검색',
-                style: TextStyle(
-                  color: Color(0xFF463C33),
-                  fontWeight: FontWeight.w600,
+            GestureDetector(
+              onTap: () {
+                if (onSubmitted != null && controller != null) {
+                  onSubmitted!(controller!.text);
+                }
+              },
+              child: Container(
+                margin: const EdgeInsets.all(8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF6D9),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  '검색',
+                  style: TextStyle(
+                    color: Color(0xFF463C33),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
