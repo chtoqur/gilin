@@ -2,7 +2,9 @@ package com.gilin.route;
 
 import com.gilin.route.global.client.odsay.ODSayClient;
 import com.gilin.route.global.client.odsay.request.SearchPubTransPathRequest;
+import com.gilin.route.global.client.odsay.request.SubwayStationInfoRequest;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
+import com.gilin.route.global.client.odsay.response.SubwayStationInfoResponse;
 import com.gilin.route.global.config.APIKeyConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -23,19 +25,35 @@ public class TestController {
     @GetMapping("/odsay/path")
     @Operation(description = "오디세이 호출입니다. https://lab.odsay.com/guide/releaseReference#searchPubTransPathT")
     public ResponseEntity<SearchPubTransPathResponse> odsayPath(
-            @RequestParam(defaultValue = "126.963760") double sx,
-            @RequestParam(defaultValue = "37.477111") double sy,
-            @RequestParam(defaultValue = "127.039528") double ex,
-            @RequestParam(defaultValue = "37.501363") double ey
+        @RequestParam(defaultValue = "126.963760") double sx,
+        @RequestParam(defaultValue = "37.477111") double sy,
+        @RequestParam(defaultValue = "127.039528") double ex,
+        @RequestParam(defaultValue = "37.501363") double ey
 
     ) {
         return ResponseEntity.ok(odSayClient.searchPubTransPathT(
-                SearchPubTransPathRequest.builder()
-                        .apiKey(apiKeyConfig.getODSayKey())
-                        .SX(sx)
-                        .SY(sy)
-                        .EX(ex)
-                        .EY(ey)
-                        .build()));
+            SearchPubTransPathRequest.builder()
+                                     .apiKey(apiKeyConfig.getODSayKey())
+                                     .SX(sx)
+                                     .SY(sy)
+                                     .EX(ex)
+                                     .EY(ey)
+                                     .build()));
     }
+
+    @GetMapping("/odsay/station")
+    @Operation(description = "오디세이 호출입니다. https://lab.odsay.com/guide/releaseReference#subwayStationInfo")
+    public ResponseEntity<SubwayStationInfoResponse> odsaySubwayStationInfo(
+        @RequestParam(defaultValue = "130") Integer stationID
+    ) {
+        return ResponseEntity.ok(odSayClient.subwayStationInfo(
+            SubwayStationInfoRequest.builder()
+                                    .apiKey(apiKeyConfig.getODSayKey())
+                                    .lang(0)
+                                    .output("json")
+                                    .stationID(stationID)
+                                    .build()
+        ));
+    }
+
 }
