@@ -39,10 +39,8 @@ class _RouteScreenState extends State<RouteScreen> {
                   const RouteSelectorWidget(),
                   const Gap(15),
                   CupertinoTimePicker(
-                    onDateTimeChanged: (DateTime time) {
-                      // print("Selected time: ${time.hour}:${time.minute}");
-                    },
-                    initTimeStr: '', // 초기 시간 문자열
+                    onDateTimeChanged: (DateTime time) {},
+                    initTimeStr: '',
                   ),
                   const Gap(30),
                   const Text(
@@ -65,7 +63,22 @@ class _RouteScreenState extends State<RouteScreen> {
                     ),
                   ),
                   const Gap(15),
-                  const SavedLocationsWidget(),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8F5F0),
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.15),
+                          offset: const Offset(3, 4),
+                          blurRadius: 10,
+                          spreadRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: const SavedLocationsWidget(),
+                  ),
                   const Gap(30),
                 ],
               ),
@@ -87,9 +100,7 @@ class _RouteScreenState extends State<RouteScreen> {
         ),
         child: SafeArea(
           child: GestureDetector(
-            onTap: () {
-              // 탭 했을 때의 동작
-            },
+            onTap: () {},
             child: const SizedBox(
               height: 35,
               child: Center(

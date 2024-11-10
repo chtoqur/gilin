@@ -41,6 +41,7 @@ class _SearchResultMapState extends ConsumerState<SearchResultMap> {
         position: position,
       );
 
+      currentMarker?.setIconTintColor(Colors.brown);
       print('Adding marker to map at position: $position');
       await controller.addOverlay(currentMarker!);
 
