@@ -23,6 +23,7 @@ class MainScreen extends ConsumerWidget {
       ),
       bottomNavigationBar: showBottomNav
           ? BottomNavigationBar(
+              backgroundColor: Colors.white,
               currentIndex: currentIndex,
               onTap: (index) {
                 var routes = ['/route', '/schedule', '/alert', '/mypage'];

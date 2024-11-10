@@ -22,8 +22,8 @@ class RouteItem extends StatelessWidget {
             children: [
               SvgPicture.asset(
                 'assets/images/icons/road_2.svg',
-                width: 24,
-                height: 24,
+                width: 20,
+                height: 20,
               ),
               const Gap(12),
               Expanded(
@@ -32,23 +32,23 @@ class RouteItem extends StatelessWidget {
                   overflow: TextOverflow.ellipsis, // 말줄임표 처리
                   maxLines: 1, // 한 줄로 표시
                   style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                     textBaseline: TextBaseline.alphabetic,
                   ),
                 ),
               ),
-              const Gap(8),
+              const Gap(5),
               const Icon(Icons.arrow_right_alt,
                   size: 20, color: Color(0xFF989898)),
-              const Gap(8),
+              const Gap(5),
               Expanded(
                 child: Text(
                   to,
                   overflow: TextOverflow.ellipsis, // 말줄임표 처리
                   maxLines: 1, // 한 줄로 표시
                   style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                     textBaseline: TextBaseline.alphabetic,
                   ),

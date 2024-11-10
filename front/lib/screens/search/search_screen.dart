@@ -71,6 +71,7 @@ class _SearchScreenState extends State<SearchScreen> {
     bool hasSearchQuery = _searchController.text.isNotEmpty;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           // 검색어가 없을 때: 기본 화면
@@ -89,7 +90,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
             ),
-
           // 검색어가 있을 때: 검색 결과 화면 표시
           if (hasSearchQuery)
             Column(
@@ -142,6 +142,7 @@ class _SearchScreenState extends State<SearchScreen> {
             readOnly: false,
             onSubmitted: (_) {},
             hintText: '장소를 검색해보세요',
+            isRouteScreen: false,
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gilin/screens/search/search_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gilin/screens/alert/alert_screen.dart';
 import 'package:gilin/screens/mypage/mypage_screen.dart';
@@ -37,6 +38,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/test',
             builder: (context, state) => const TestScreen(),
           ),
+          GoRoute(
+            path: '/search',
+            builder: (context, state) => const SearchScreen(),
+          )
         ],
       ),
     ],
