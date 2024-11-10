@@ -104,7 +104,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                margin: const EdgeInsets.symmetric(vertical: 8),
+                margin: const EdgeInsets.symmetric(vertical: 12),
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
@@ -120,7 +120,7 @@ class _RouteBottomSheetState extends State<RouteBottomSheet> {
                       ? const NeverScrollableScrollPhysics()
                       : const ClampingScrollPhysics(),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.fromLTRB(25, 15, 25, 25),
                     child: widget.child,
                   ),
                 ),

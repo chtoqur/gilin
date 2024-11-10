@@ -25,33 +25,32 @@ class MyplaceScreen extends StatelessWidget {
                       '전체 목록 4', // 추후 수정: 목록 count
                       style: TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     Row(
-                      // 클릭 시 추가/편집 화면으로 이동
                       children: [
                         Text(
                           '추가',
                           style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
                               color: Color(0xFF979797)),
                         ),
                         Gap(3),
                         VerticalDivider(
-                          width: 15, // divider를 포함한 전체 너비
-                          thickness: 1, // 실제 선의 두께
-                          indent: 4, // 위쪽 여백
-                          endIndent: 4, // 아래쪽 여백
+                          width: 15,
+                          thickness: 1,
+                          indent: 4,
+                          endIndent: 4,
                           color: Color(0xFF979797),
                         ),
                         Gap(3),
                         Text(
                           '편집',
                           style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
                               color: Color(0xFF979797)),
                         ),
                       ],

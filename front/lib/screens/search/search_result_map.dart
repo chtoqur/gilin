@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gilin/widgets/route./search_bar.dart';
 import '../../models/search/local_search_result.dart';
 import '../../widgets/search/search_result_map_info.dart';
 
@@ -87,30 +88,11 @@ class _SearchResultMapState extends ConsumerState<SearchResultMap> {
               },
             ),
 
-            // 상단 앱바
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: Colors.white,
-              child: Row(
-                children: [
-                  // 뒤로가기 버튼
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  // 장소 이름
-                  Expanded(
-                    child: Text(
-                      widget.searchResult.title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
+            CustomSearchBar(
+              controller: TextEditingController(text: widget.searchResult.title),
+              readOnly: true,
+              showSearchButton: false,  // 검색 버튼 숨기기
+              onTap: () => Navigator.of(context).pop(),
             ),
 
             // 하단 정보 컨테이너

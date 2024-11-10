@@ -132,7 +132,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
       if (results.isNotEmpty) {
         if (mounted) {
-          Navigator.push(
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => SearchResultsMap(
@@ -167,6 +167,7 @@ class _SearchScreenState extends State<SearchScreen> {
     bool hasSearchQuery = _searchController.text.isNotEmpty;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           // 검색어가 없을 때: 기본 화면
@@ -185,7 +186,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
             ),
-
           // 검색어가 있을 때: 검색 결과 화면 표시
           if (hasSearchQuery)
             Column(

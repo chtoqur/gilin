@@ -22,15 +22,15 @@ class LocationItem extends StatelessWidget {
           children: [
             SvgPicture.asset(
               'assets/images/icons/pin_2.svg',
-              width: 24,
-              height: 24,
+              width: 20,
+              height: 20,
             ),
             const SizedBox(width: 8),
             Expanded(
                 child: Text(
               title,
               style: const TextStyle(
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
             )),

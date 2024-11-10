@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:gap/gap.dart';
 import '../../models/search/local_search_result.dart';
 
 class SearchResultMapInfo extends StatelessWidget {
@@ -13,12 +15,16 @@ class SearchResultMapInfo extends StatelessWidget {
     this.onEndPressed,
   }) : super(key: key);
 
+  String getMainCategory(String category) {
+    return category.split('>')[0];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16), // 좌우 패딩 최적화
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: Color(0xffF8F5F0),
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(16),
         ),
@@ -30,60 +36,73 @@ class SearchResultMapInfo extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,  // 좌우 끝 정렬
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 장소 기본 정보
-          Text(
-            searchResult.title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // 왼쪽
+          Expanded(
+            flex: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: 6,
+                  runSpacing: 3,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      searchResult.title,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      getMainCategory(searchResult.category),
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+                const Gap(4),
+                Text(
+                  searchResult.roadAddress,
+                  style: const TextStyle(fontSize: 16),
+                  textAlign: TextAlign.left,
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            searchResult.category,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 14,
+          const Gap(25),
+          // 오른쪽 (아이콘)
+          SizedBox(
+            width: 60,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF463C33),
+                    border: Border.all(color: const Color(0xFF463C33), width: 1),
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      'assets/images/icons/pin_x_mark.svg',
+                      width: 60 * 0.65,
+                      height: 60 * 0.65,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            searchResult.roadAddress,
-            style: const TextStyle(fontSize: 14),
-          ),
-          const SizedBox(height: 16),
-
-          // 출발/도착 버튼
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: onStartPressed,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('출발'),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: onEndPressed,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('도착'),
-                ),
-              ),
-            ],
           ),
         ],
       ),
