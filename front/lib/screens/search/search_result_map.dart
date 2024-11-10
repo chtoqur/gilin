@@ -25,12 +25,12 @@ class _SearchResultMapState extends ConsumerState<SearchResultMap> {
   Future<void> initializeMarkerAndInfoWindow(
       NaverMapController controller) async {
     try {
-      var lat = widget.searchResult.mapy / 10000000;
-      var lng = widget.searchResult.mapx / 10000000;
+      var lat = widget.searchResult.y;
+      var lng = widget.searchResult.x;
 
-      print('Converting coordinates to lat/lng: $lat, $lng');
+      print('Adding marker at coordinates: $lat, $lng');
 
-      if (lat.isNaN || lng.isNaN) {
+      if (lat == 0 || lng == 0) {
         throw Exception('Invalid coordinates: lat=$lat, lng=$lng');
       }
 

@@ -1,31 +1,31 @@
 class LocalSearchResult {
   final String title;
   final String category;
-  final String description;
   final String address;
   final String roadAddress;
-  final int mapx;
-  final int mapy;
+  final double x;
+  final double y;
+  final String placeId;
 
   LocalSearchResult({
     required this.title,
     required this.category,
-    required this.description,
     required this.address,
     required this.roadAddress,
-    required this.mapx,
-    required this.mapy,
+    required this.x,
+    required this.y,
+    required this.placeId,
   });
 
-  factory LocalSearchResult.fromJson(Map<String, dynamic> json) {
+  factory LocalSearchResult.fromKakaoJson(Map<String, dynamic> json) {
     return LocalSearchResult(
-      title: json['title']?.replaceAll(RegExp(r'<[^>]*>'), '') ?? '',
-      category: json['category'] ?? '',
-      description: json['description'] ?? '',
-      address: json['address'] ?? '',
-      roadAddress: json['roadAddress'] ?? '',
-      mapx: json['mapx'] != null ? int.parse(json['mapx'].toString()) : 0,
-      mapy: json['mapy'] != null ? int.parse(json['mapy'].toString()) : 0,
+      title: json['place_name']?.replaceAll(RegExp(r'<[^>]*>'), '') ?? '',
+      category: json['category_name'] ?? '',
+      address: json['address_name'] ?? '',
+      roadAddress: json['road_address_name'] ?? '',
+      x: double.tryParse(json['x'] ?? '0') ?? 0,
+      y: double.tryParse(json['y'] ?? '0') ?? 0,
+      placeId: json['id'] ?? '',
     );
   }
 }

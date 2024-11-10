@@ -5,26 +5,24 @@ import '../../models/search/local_search_result.dart';
 
 class LocalSearchService {
   static const String baseUrl =
-      'https://openapi.naver.com/v1/search/local.json';
-  final String clientId;
-  final String clientSecret;
+      'https://dapi.kakao.com/v2/local/search/keyword.json';
+  final String apiKey;
 
   LocalSearchService({
-    required this.clientId,
-    required this.clientSecret,
+    required this.apiKey,
   });
 
   Future<List<LocalSearchResult>> searchLocal({
     required String query,
-    int display = 5,
-    int start = 1,
-    String sort = 'random',
+    int page = 1,
+    int size = 15,
   }) async {
     try {
-      var encodedQuery = Uri.encodeComponent(query);
-
-      var uri = Uri.parse(
-          '$baseUrl?query=$encodedQuery&display=$display&start=$start&sort=$sort');
+      var uri = Uri.parse('$baseUrl').replace(queryParameters: {
+        'query': query,
+        'page': page.toString(),
+        'size': size.toString(),
+      });
 
       if (kDebugMode) {
         print('Requesting URL: $uri');
@@ -33,9 +31,7 @@ class LocalSearchService {
       var response = await http.get(
         uri,
         headers: {
-          'X-Naver-Client-Id': clientId,
-          'X-Naver-Client-Secret': clientSecret,
-          'Content-Type': 'application/json',
+          'Authorization': 'KakaoAK $apiKey',
         },
       );
 
@@ -46,9 +42,9 @@ class LocalSearchService {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> data = json.decode(response.body);
-        if (data.containsKey('items')) {
-          List<dynamic> items = data['items'];
-          return items.map((item) => LocalSearchResult.fromJson(item)).toList();
+        if (data.containsKey('documents')) {
+          List<dynamic> items = data['documents'];
+          return items.map((item) => LocalSearchResult.fromKakaoJson(item)).toList();
         }
       }
 
@@ -57,7 +53,6 @@ class LocalSearchService {
       if (kDebugMode) {
         print('Error in searchLocal: $e');
       }
-
       return [];
     }
   }
