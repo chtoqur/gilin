@@ -110,6 +110,21 @@ public class RouteResponse {
         @Schema(description = "지하철 나가는 출구 Y 좌표", example = "37.50112209922957")
         private Double endExitY;
         private PassStopListt passStopList;
+
+        public static SubPathh of(SearchPubTransPathResponse.Result.SubPath s, List<Coordinate> pathGraph) {
+            return new SubPathh(
+                    TravelType.fromTrafficType(s.getTrafficType()),
+                    pathGraph, s.getDistance(), s.getSectionTime(), s.getStationCount(),
+                    s.getLane().stream().map(Lanee::of).toList(),
+                    s.getIntervalTime(), s.getStartName(), s.getStartX(), s.getStartY(),
+                    s.getEndName(), s.getEndX(), s.getEndY(), s.getWay(),
+                    s.getWayCode(), s.getDoor(), s.getStartID(), s.getStartLocalStationID(),
+                    s.getStartArsID(), s.getEndID(), s.getEndLocalStationID(), s.getEndArsID(),
+                    s.getStartExitNo(), s.getStartExitX(), s.getStartExitY(), s.getEndExitNo(),
+                    s.getEndExitX(), s.getEndExitY(),
+                    new PassStopListt(s.getPassStopList().getStations().stream().map(Stationn::of).toList())
+            );
+        }
     }
 
     @Getter
@@ -129,6 +144,11 @@ public class RouteResponse {
         private String busLocalBlID;
         @Schema(description = "지하철 노선 번호", example = "2")
         private Integer subwayCode;
+
+        public static Lanee of(SearchPubTransPathResponse.Result.Lane lane) {
+            return new Lanee(lane.getName(), lane.getBusNo(), lane.getType(), lane.getBusID(),
+                    lane.getBusLocalBlID(), lane.getSubwayCode());
+        }
     }
 
     @Getter
@@ -159,5 +179,11 @@ public class RouteResponse {
         private String y;
         @Schema(description = "미정차 정류장 여부", example = "N")
         private String isNonStop;
+
+        public static Stationn of(SearchPubTransPathResponse.Result.Station station) {
+            return new Stationn(station.getIndex(), station.getStationID(), station.getStationName(),
+                    station.getLocalStationID(), station.getArsID(), station.getX(), station.getY(),
+                    station.getIsNonStop());
+        }
     }
 }
