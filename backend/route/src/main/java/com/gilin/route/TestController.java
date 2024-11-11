@@ -69,8 +69,8 @@ public class TestController {
         @RequestParam(defaultValue = "127.09355") double ex,
         @RequestParam(defaultValue = "37.53615") double ey
     ) {
-        Coordinate startStation = new Coordinate(sy, sx);
-        Coordinate endStation = new Coordinate(ey, ex);
+        Coordinate startStation = new Coordinate(sx, sy);
+        Coordinate endStation = new Coordinate(ex, ey);
         return ResponseEntity.ok(busService.getSubPath(routeId, startStation, endStation));
     }
 }
