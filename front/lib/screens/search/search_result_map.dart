@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gilin/widgets/route./search_bar.dart';
+import 'package:gilin/widgets/route/search_bar.dart';
 import '../../models/search/local_search_result.dart';
 import '../../widgets/search/search_result_map_info.dart';
 

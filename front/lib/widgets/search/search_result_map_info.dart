@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import '../../models/search/local_search_result.dart';
+import '../../screens/guide/guide_preview_screen.dart';
+
+//테스트용
+import '../../utils/sample_data/route_samples.dart';  // 테스트 데이터 import
 
 class SearchResultMapInfo extends StatelessWidget {
   final LocalSearchResult searchResult;
@@ -85,7 +89,19 @@ class SearchResultMapInfo extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GuidePreviewScreen(
+                          selectedLocation: searchResult,
+                          routeData: RouteSamples.seoulCityHallToGyeongbokgung,  // 테스트 데이터 전달
+                        ),
+                      ),
+                    );
+                  },
+                child: Container(
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
@@ -100,6 +116,7 @@ class SearchResultMapInfo extends StatelessWidget {
                       height: 60 * 0.65,
                     ),
                   ),
+                ),
                 ),
               ],
             ),
