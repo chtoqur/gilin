@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface BusService {
     RouteResponse.SubPathh convertToSubPathh(SearchPubTransPathResponse.Result.SubPath subPath);
+
+    List<Coordinate> getPathGraph(Long routeId, Coordinate startStation, Coordinate endStation);
 }

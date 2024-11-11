@@ -71,6 +71,6 @@ public class TestController {
     ) {
         Coordinate startStation = new Coordinate(sx, sy);
         Coordinate endStation = new Coordinate(ex, ey);
-        return ResponseEntity.ok(busService.getSubPath(routeId, startStation, endStation));
+        return ResponseEntity.ok(busService.getPathGraph(routeId, startStation, endStation));
     }
 }
