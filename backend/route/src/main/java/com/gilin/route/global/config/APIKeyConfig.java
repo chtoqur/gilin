@@ -12,10 +12,9 @@ public class APIKeyConfig {
     private final String[] KakaoKeys;
 
     public APIKeyConfig(@Value("${apikey.odsays}") String[] ODSayKeys,
-        @Value("${apikey.tmap}") String[] TMapKeys) {
-    public APIKeyConfig(@Value("${apikey.odsays}") String[] ODSayKeys,
-                        @Value("${apikey.seouls}") String[] SeoulKeys,
-                        @Value("${apikey.kakaos}") String[] KakaoKeys) {
+        @Value("${apikey.tmap}") String[] TMapKeys,
+        @Value("${apikey.seouls}") String[] SeoulKeys,
+        @Value("${apikey.kakaos}") String[] KakaoKeys) {
         this.ODSayKeys = ODSayKeys;
         this.TMapKeys = TMapKeys;
         this.SeoulKeys = SeoulKeys;

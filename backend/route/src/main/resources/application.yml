@@ -36,6 +36,6 @@ apikey:
   tmap:
     ${TMAP_API_DINO}
   seouls:
-    ${SEOUL_API_CSK}
+    ${SEOUL_API_SEO}
   kakaos:
-    ${KAKAO_API_CSK}
+    ${KAKAO_API_SEO}
