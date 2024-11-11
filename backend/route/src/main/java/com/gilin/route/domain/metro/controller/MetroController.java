@@ -4,8 +4,6 @@ package com.gilin.route.domain.metro.controller;
 import com.gilin.route.domain.metro.dto.MetroLinkDto;
 import com.gilin.route.domain.metro.dto.PollyLineResponseDto;
 import com.gilin.route.domain.metro.service.MetroService;
-import java.util.List;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +22,7 @@ public class MetroController {
     }
 
     @GetMapping("/link/line")
-    public List<PollyLineResponseDto> metroLine(Integer startId, Integer endId) {
+    public PollyLineResponseDto metroLine(Integer startId, Integer endId) {
         return metroService.getMetroPollyLine(startId, endId);
     }
 

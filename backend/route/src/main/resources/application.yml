@@ -3,8 +3,6 @@ server:
   servlet:
     context-path: /api
 spring:
-  redis:
-    host: localhost
   config:
     import: optional:file:.env[.properties]
   application:
@@ -35,6 +33,8 @@ logging:
 apikey:
   odsays:
     ${ODSAY_API_CSK}
+  tmap:
+    ${TMAP_API_DINO}
   seouls:
     ${SEOUL_API_CSK}
   kakaos:

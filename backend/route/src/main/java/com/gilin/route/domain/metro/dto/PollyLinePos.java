@@ -1,9 +1,16 @@
 package com.gilin.route.domain.metro.dto;
 
 
+import lombok.Builder;
+
 /**
  * @param x x 좌표
  * @param y y 좌표
  */
-public record PollyLinePos(Double x, Double y) {
+@Builder
+public record PollyLinePos(
+    Double x,
+    Double y
+) {
+
 }
