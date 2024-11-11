@@ -26,7 +26,7 @@ class CustomSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: MediaQuery.of(context).padding.top + 10,
+      top: MediaQuery.of(context).padding.top + 20,
       left: 16,
       right: 16,
       child: Container(
@@ -46,7 +46,7 @@ class CustomSearchBar extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(width: 16),
+            const SizedBox(width: 8),
             IconButton(  // GestureDetector 대신 IconButton 사용
               onPressed: () => context.pop(),
               icon: const Icon(

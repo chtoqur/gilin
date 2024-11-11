@@ -18,7 +18,7 @@ class LocalSearchService {
     int size = 15,
   }) async {
     try {
-      var uri = Uri.parse('$baseUrl').replace(queryParameters: {
+      var uri = Uri.parse(baseUrl).replace(queryParameters: {
         'query': query,
         'page': page.toString(),
         'size': size.toString(),

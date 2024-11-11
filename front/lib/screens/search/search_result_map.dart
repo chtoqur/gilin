@@ -41,6 +41,7 @@ class _SearchResultMapState extends ConsumerState<SearchResultMap> {
         position: position,
       );
 
+      currentMarker?.setIconTintColor(Colors.brown);
       print('Adding marker to map at position: $position');
       await controller.addOverlay(currentMarker!);
 
@@ -102,12 +103,6 @@ class _SearchResultMapState extends ConsumerState<SearchResultMap> {
               right: 0,
               child: SearchResultMapInfo(
                 searchResult: widget.searchResult,
-                onStartPressed: () {
-                  // TODO: 출발지 설정 로직 구현
-                },
-                onEndPressed: () {
-                  // TODO: 도착지 설정 로직 구현
-                },
               ),
             ),
           ],
@@ -120,7 +115,6 @@ class _SearchResultMapState extends ConsumerState<SearchResultMap> {
   void dispose() {
     if (mapController != null && currentMarker != null) {
       try {
-        // currentMarker?.closeInfoWindow();
         mapController?.deleteOverlay(
           NOverlayInfo(
             type: NOverlayType.marker,
