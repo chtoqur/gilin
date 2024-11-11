@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import '../../models/search/local_search_result.dart';
+import '../../state/route/route_state.dart';
 
-class SearchResultMapInfo extends StatelessWidget {
+class SearchResultMapInfo extends ConsumerWidget {
   final LocalSearchResult searchResult;
-  final VoidCallback? onStartPressed;
-  final VoidCallback? onEndPressed;
 
   const SearchResultMapInfo({
     Key? key,
     required this.searchResult,
-    this.onStartPressed,
-    this.onEndPressed,
   }) : super(key: key);
 
   String getMainCategory(String category) {
@@ -20,7 +19,7 @@ class SearchResultMapInfo extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16), // 좌우 패딩 최적화
       decoration: const BoxDecoration(
@@ -80,28 +79,31 @@ class SearchResultMapInfo extends StatelessWidget {
           ),
           const Gap(25),
           // 오른쪽 (아이콘)
-          SizedBox(
-            width: 60,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFF463C33),
-                    border: Border.all(color: const Color(0xFF463C33), width: 1),
-                  ),
-                  child: Center(
-                    child: SvgPicture.asset(
-                      'assets/images/icons/pin_x_mark.svg',
-                      width: 60 * 0.65,
-                      height: 60 * 0.65,
-                    ),
-                  ),
+          GestureDetector(
+            onTap: () {
+              var routeNotifier = ref.read(routeProvider.notifier);
+              routeNotifier.setLocation(
+                searchResult.title,
+                searchResult.x,
+                searchResult.y,
+              );
+              context.go('/route');
+            },
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF463C33),
+                border: Border.all(color: const Color(0xFF463C33), width: 1),
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/images/icons/pin_x_mark.svg',
+                  width: 60 * 0.65,
+                  height: 60 * 0.65,
                 ),
-              ],
+              ),
             ),
           ),
         ],

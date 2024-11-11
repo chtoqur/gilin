@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
-class RouteSelectorWidget extends StatefulWidget {
+import '../../../state/route/route_state.dart';
+
+// StatefulWidget을 ConsumerStatefulWidget으로 변경
+class RouteSelectorWidget extends ConsumerStatefulWidget {
   const RouteSelectorWidget({super.key});
 
   @override
-  State<RouteSelectorWidget> createState() => _RoutePickerWidgetState();
+  ConsumerState<RouteSelectorWidget> createState() => _RoutePickerWidgetState();
 }
 
-class _RoutePickerWidgetState extends State<RouteSelectorWidget> {
-  String startPoint = "멀티캠퍼스 역삼";
-  String endPoint = "북촉 한옥마을";
-
-  void swapLocations() {
-    setState(() {
-      var temp = startPoint;
-      startPoint = endPoint;
-      endPoint = temp;
-    });
-  }
-
+// State를 ConsumerState로 변경
+class _RoutePickerWidgetState extends ConsumerState<RouteSelectorWidget> {
   @override
   Widget build(BuildContext context) {
+    var routeState = ref.watch(routeProvider);
+
     return Container(
       padding: const EdgeInsets.all(23),
       decoration: BoxDecoration(
@@ -41,7 +37,7 @@ class _RoutePickerWidgetState extends State<RouteSelectorWidget> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width - 150, // 적절한 너비 설정
+            width: MediaQuery.of(context).size.width - 150,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -50,9 +46,9 @@ class _RoutePickerWidgetState extends State<RouteSelectorWidget> {
                     Text(
                       '출발',
                       style: TextStyle(
-                          color: Color(0xFFD7C3A8),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600
+                        color: Color(0xFFD7C3A8),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -60,10 +56,11 @@ class _RoutePickerWidgetState extends State<RouteSelectorWidget> {
                 const Gap(5),
                 GestureDetector(
                   onTap: () {
+                    ref.read(routeProvider.notifier).setInputMode(RouteInputMode.start);
                     context.push('/search');
                   },
                   child: Text(
-                    startPoint,
+                    routeState.startPoint.title.isEmpty ? "내 위치" : routeState.startPoint.title,
                     style: const TextStyle(
                       color: Color(0xFF463C33),
                       fontSize: 16,
@@ -84,9 +81,9 @@ class _RoutePickerWidgetState extends State<RouteSelectorWidget> {
                     Text(
                       '도착',
                       style: TextStyle(
-                          color: Color(0xFFD7C3A8),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600
+                        color: Color(0xFFD7C3A8),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -94,10 +91,11 @@ class _RoutePickerWidgetState extends State<RouteSelectorWidget> {
                 const Gap(5),
                 GestureDetector(
                   onTap: () {
+                    ref.read(routeProvider.notifier).setInputMode(RouteInputMode.end);
                     context.push('/search');
                   },
                   child: Text(
-                    endPoint,
+                    routeState.endPoint.title.isEmpty ? "목적지를 선택해주세요." : routeState.endPoint.title,
                     style: const TextStyle(
                       color: Color(0xFF463C33),
                       fontSize: 16,
@@ -108,9 +106,8 @@ class _RoutePickerWidgetState extends State<RouteSelectorWidget> {
               ],
             ),
           ),
-          // 위치 교환 버튼
           GestureDetector(
-            onTap: swapLocations,
+            onTap: () => ref.read(routeProvider.notifier).swapLocations(),
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
