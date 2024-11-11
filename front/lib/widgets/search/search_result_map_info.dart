@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import '../../models/route/transit_route.dart';
 import '../../models/search/local_search_result.dart';
 import '../../screens/guide/guide_preview_screen.dart';
 
