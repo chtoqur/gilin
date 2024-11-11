@@ -5,5 +5,14 @@ public enum TravelType {
     BUS,
     METRO,
     TAXI,
-    BICYCLE
+    BICYCLE;
+
+    public static TravelType fromTrafficType(int trafficType) {
+        return switch (trafficType) {
+            case 1 -> METRO;
+            case 2 -> BUS;
+            case 3 -> WALK;
+            default -> TAXI;
+        };
+    }
 }
