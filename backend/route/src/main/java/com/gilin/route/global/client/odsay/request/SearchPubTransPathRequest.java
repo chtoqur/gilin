@@ -18,7 +18,7 @@ public class SearchPubTransPathRequest {
     private final int SearchPathType = 0;     // 0 모두, 1 지하철, 2 버스
 
     @Builder
-    public SearchPubTransPathRequest(String apiKey, double SX, double SY, double EX, double EY) {
+    public SearchPubTransPathRequest(String apiKey, double SX, double SY, double EX, double EY, int searchPathType) {
         this.apiKey = apiKey;
         this.SX = SX;
         this.SY = SY;

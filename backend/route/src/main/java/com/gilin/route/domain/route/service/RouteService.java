@@ -33,20 +33,13 @@ public class RouteService {
             //TODO- 걷기, 따릉이, 택시 만 있는 경우 추가
             return null;
         }
-        var request = new SearchPubTransPathRequest(apiKeyConfig.getODSayKey(), sx, sy, ex, ey);
+        boolean isAll = travelTypes.contains(TravelType.BUS) && travelTypes.contains(TravelType.METRO);
+        boolean isMetro = travelTypes.contains(TravelType.METRO);
+        int searchPathType = isAll ? 0 : (isMetro ? 1 : 2);
+
+        var request = new SearchPubTransPathRequest(apiKeyConfig.getODSayKey(), sx, sy, ex, ey, searchPathType);
         SearchPubTransPathResponse response = odSayClient.searchPubTransPathT(request);
-        Optional<SearchPubTransPathResponse.Result.Path> path = Optional.empty();
-        if (travelTypes.contains(TravelType.BUS) && travelTypes.contains(TravelType.METRO)) {
-            path = response.getResult().getPath().stream().findFirst();
-        } else if (travelTypes.contains(TravelType.METRO)) {
-            path = response.getResult().getPath().stream()
-                    .filter(path1 -> path1.getPathType() == 1)
-                    .findFirst();
-        } else if (travelTypes.contains(TravelType.BUS)) {
-            path = response.getResult().getPath().stream()
-                    .filter(path1 -> path1.getPathType() == 2)
-                    .findFirst();
-        }
+        Optional<SearchPubTransPathResponse.Result.Path> path = response.getResult().getPath().stream().findFirst();
 
         return path.map(this::of).orElse(null);
     }
