@@ -9,6 +9,8 @@ import 'package:gilin/screens/route/route_screen.dart';
 import 'package:gilin/screens/schedule/schedule_screen.dart';
 import 'package:gilin/screens/main_screen.dart';
 
+import '../../screens/login/login_screen.dart';
+
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     routes: [
@@ -41,12 +43,16 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/test',
-            builder: (context, state) => const TestScreen(),
+            builder: (context, state) => TestScreen(),
           ),
           GoRoute(
             path: '/search',
             builder: (context, state) => const SearchScreen(),
-          )
+          ),
+          GoRoute(
+            path: '/login',  // 로그인 경로 추가
+            builder: (context, state) => const LoginScreenUI(),
+          ),
         ],
       ),
     ],
