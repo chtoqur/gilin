@@ -4,6 +4,7 @@ import com.gilin.route.domain.route.dto.response.RouteResponse;
 import com.gilin.route.domain.route.dto.response.TravelType;
 import com.gilin.route.domain.route.service.RouteService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class RouteController {
@@ -27,14 +29,14 @@ public class RouteController {
             @RequestParam(defaultValue = "METRO,BUS,TAXI,BICYCLE,WALK") List<String> travelTypes,
             @RequestParam(required = false) LocalDateTime arrivalTime
     ) {
+        EnumSet<TravelType> travelTypeSet = EnumSet.allOf(TravelType.class);
         try {
-            EnumSet<TravelType> travelTypeSet = travelTypes.stream()
+             travelTypeSet = travelTypes.stream()
                     .map(TravelType::valueOf)
                     .collect(Collectors.toCollection(() -> EnumSet.noneOf(TravelType.class)));
-
-            return ResponseEntity.ok(routeService.getRoute(sx, sy, ex, ey, travelTypeSet));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
         }
+        return ResponseEntity.ok(routeService.getRoute(sx, sy, ex, ey, travelTypeSet));
     }
 }
