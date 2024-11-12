@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gilin/screens/route/my_route_screen.dart';
 import 'package:gilin/screens/search/search_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gilin/screens/alert/alert_screen.dart';
@@ -21,6 +22,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/route',
             builder: (context, state) => const RouteScreen(),
+          ),
+          GoRoute(
+            path: '/my_route',
+            builder: (context, state) => const MyRouteScreen(),
           ),
           GoRoute(
             path: '/schedule',

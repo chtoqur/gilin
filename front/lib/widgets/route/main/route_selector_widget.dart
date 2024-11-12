@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gilin/state/route/route_state.dart';
 
-import '../../../state/route/route_state.dart';
-
-// StatefulWidget을 ConsumerStatefulWidget으로 변경
 class RouteSelectorWidget extends ConsumerStatefulWidget {
   const RouteSelectorWidget({super.key});
 
@@ -13,7 +11,6 @@ class RouteSelectorWidget extends ConsumerStatefulWidget {
   ConsumerState<RouteSelectorWidget> createState() => _RoutePickerWidgetState();
 }
 
-// State를 ConsumerState로 변경
 class _RoutePickerWidgetState extends ConsumerState<RouteSelectorWidget> {
   @override
   Widget build(BuildContext context) {

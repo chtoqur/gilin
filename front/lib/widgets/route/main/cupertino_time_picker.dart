@@ -12,8 +12,16 @@ class CupertinoTimePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 현재 시간을 초기값으로 설정
-    var initTime = DateTime.now();
+    var now = DateTime.now();
+    // 현재 분을 5의 배수로 조정
+    var roundedMinutes = (now.minute ~/ 5) * 5;
+    var initTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      roundedMinutes,
+    );
 
     return Container(
       height: 140,
@@ -25,8 +33,8 @@ class CupertinoTimePicker extends StatelessWidget {
         initialDateTime: initTime,
         onDateTimeChanged: onDateTimeChanged,
         mode: CupertinoDatePickerMode.time,
-        use24hFormat: false, // 12시간 형식 사용
-        minuteInterval: 1, // 분 간격 설정
+        use24hFormat: false,
+        minuteInterval: 5,
       ),
     );
   }
