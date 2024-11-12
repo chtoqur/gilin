@@ -1,6 +1,6 @@
 package com.gilin.route;
 
-import com.gilin.route.domain.bus.dto.Coordinate;
+import com.gilin.route.global.dto.Coordinate;
 import com.gilin.route.domain.bus.service.BusService;
 import com.gilin.route.global.client.odsay.ODSayClient;
 import com.gilin.route.global.client.odsay.request.SearchPubTransPathRequest;
@@ -12,7 +12,6 @@ import com.gilin.route.global.client.tmap.request.PedestrianPathRequest;
 import com.gilin.route.global.client.tmap.response.PedestrianPathResponse;
 import com.gilin.route.global.config.APIKeyConfig;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
