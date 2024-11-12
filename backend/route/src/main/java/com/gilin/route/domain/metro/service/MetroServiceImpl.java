@@ -5,6 +5,8 @@ import com.gilin.route.domain.metro.dto.MetroExitToDest;
 import com.gilin.route.domain.metro.dto.MetroLinkDto;
 import com.gilin.route.domain.metro.dto.PollyLinePos;
 import com.gilin.route.domain.metro.dto.PollyLineResponseDto;
+import com.gilin.route.domain.walk.dto.WalkInfo;
+import com.gilin.route.domain.walk.service.WalkService;
 import com.gilin.route.global.dto.Coordinate;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +27,16 @@ public class MetroServiceImpl implements MetroService {
     private final ListOperations<String, Object> listOperations;
     private final HashOperations<String, String, String> hashOperations;
     private final ObjectMapper objectMapper;
+    private final WalkService walkService;
 
     @Autowired
     public MetroServiceImpl(RedisTemplate<String, Object> redisTemplate,
-        ObjectMapper objectMapper) {
+        ObjectMapper objectMapper, WalkService walkService) {
         this.redisTemplate = redisTemplate;
         this.listOperations = redisTemplate.opsForList();
         this.hashOperations = redisTemplate.opsForHash();
         this.objectMapper = objectMapper;
+        this.walkService = walkService;
     }
 
     /**
@@ -92,8 +96,7 @@ public class MetroServiceImpl implements MetroService {
 
     @Override
     public MetroExitToDest getClosestExit(Integer startStationId, Coordinate dest) {
-        MetroExitToDest closestExit = MetroExitToDest.builder()
-                                                     .build();
+        MetroExitToDest closestExit = null;
         double minDistance = Double.MAX_VALUE;
 
         for (int i = 1; i <= 20; i++) {
@@ -106,7 +109,16 @@ public class MetroServiceImpl implements MetroService {
 
             try {
                 Coordinate exitCoordinate = objectMapper.readValue(jsonValue, Coordinate.class);
-                log.info(exitCoordinate.x() + " " + exitCoordinate.y());
+
+                WalkInfo walkInfo = walkService.getWalkGraphPath(exitCoordinate, dest);
+                if (walkInfo.distance() < minDistance) {
+                    minDistance = walkInfo.distance();
+                    closestExit = MetroExitToDest.builder()
+                                                 .exitNum(i)
+                                                 .distance(walkInfo.distance())
+                                                 .time(walkInfo.time())
+                                                 .build();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
