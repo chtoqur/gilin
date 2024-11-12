@@ -58,6 +58,7 @@ public class PedestrianPathResponse {
             private String facilityType;
             private String facilityName;
             private Integer totalDistance;
+            private Integer distance;
             private Integer totalTime;
             private Integer lineIndex;
             private String roadType;
