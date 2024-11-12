@@ -12,6 +12,6 @@ public record BusCoordinate(
         return Math.sqrt(Math.pow(latDiff, 2) + Math.pow(lngDiff, 2));
     }
     public Coordinate toCoordinate() {
-        return new Coordinate(longitude, latitude);
+        return new Coordinate(latitude, longitude);
     }
 }
