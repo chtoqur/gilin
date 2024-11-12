@@ -40,22 +40,6 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
                     ),
                   ),
                   const Gap(15),
-                  // Container(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  //   decoration: BoxDecoration(
-                  //     color: const Color(0xFFF8F5F0),
-                  //     borderRadius: BorderRadius.circular(15),
-                  //     boxShadow: [
-                  //       BoxShadow(
-                  //         color: Colors.black.withOpacity(0.15),
-                  //         offset: const Offset(3, 4),
-                  //         blurRadius: 10,
-                  //         spreadRadius: 0,
-                  //       ),
-                  //     ],
-                  //   ),
-                  //   child: const SavedLocationsWidget(),
-                  // ),
                   const RouteSelectorWidget(),
                   const Gap(30),
                   const Text(
