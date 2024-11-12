@@ -68,8 +68,11 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
                   ),
                   const Gap(15),
                   CupertinoTimePicker(
-                    onDateTimeChanged: (DateTime time) {},
+                    onDateTimeChanged: (DateTime time) {
+                      ref.read(routeProvider.notifier).setArrivalTime(time);
+                    },
                     initTimeStr: '',
+                    key: ValueKey(ref.watch(routeProvider).arrivalTime),
                   ),
                   const Gap(30),
                   const Text(
@@ -103,7 +106,15 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
         ),
         child: SafeArea(
           child: GestureDetector(
-            onTap: () {},
+            onTap: () {
+              var routeState = ref.read(routeProvider);
+              print('=== 경로 정보 ===');
+              print('출발지: ${routeState.startPoint.title} (${routeState.startPoint.x}, ${routeState.startPoint.y})');
+              print('도착지: ${routeState.endPoint.title} (${routeState.endPoint.x}, ${routeState.endPoint.y})');
+              print('도착 시간: ${routeState.arrivalTime?.hour}시 ${routeState.arrivalTime?.minute}분');
+              print('선택된 이동수단: ${routeState.selectedTransports.join(", ")}');
+              print('===============');
+            },
             child: const SizedBox(
               height: 35,
               child: Center(

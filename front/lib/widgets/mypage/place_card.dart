@@ -87,102 +87,100 @@ class PlaceCard extends StatelessWidget {
           radius: const Radius.circular(10),
           padding: EdgeInsets.zero,
           dashPattern: const [3, 2],
-          child: Container(
-            child: SizedBox(
-              width: 145,
-              height: 147,
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Flexible(
-                      flex: 0,
-                      child: Row(
-                        children: [
-                          const Icon(Icons.home, size: 20),
-                          const SizedBox(width: 9),
-                          Flexible(
-                            child: Text(
-                              place!.name,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
+          child: SizedBox(
+            width: 145,
+            height: 147,
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    flex: 0,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.home, size: 20),
+                        const SizedBox(width: 9),
+                        Flexible(
+                          child: Text(
+                            place!.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 9),
-                    Flexible(
-                      flex: 0,
-                      child: Text(
-                        place!.address,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 12,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w400,
                         ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 9),
+                  Flexible(
+                    flex: 0,
+                    child: Text(
+                      place!.address,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
-                    const SizedBox(height: 25),
-                    Flexible(
-                      flex: 2,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                            onPressed: onEdit,
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(53, 25),
-                              backgroundColor: const Color(0xFFD7C3A8),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                            ),
-                            child: const Text(
-                              '편집',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 11,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w400,
-                              ),
+                  ),
+                  const SizedBox(height: 25),
+                  Flexible(
+                    flex: 2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: onEdit,
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(53, 25),
+                            backgroundColor: const Color(0xFFD7C3A8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
                             ),
                           ),
-                          TextButton(
-                            onPressed: onDelete,
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(53, 25),
-                              backgroundColor: const Color(0xFFE3E3E3),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                            ),
-                            child: const Text(
-                              '삭제',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 11,
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w400,
-                              ),
+                          child: const Text(
+                            '편집',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 11,
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        TextButton(
+                          onPressed: onDelete,
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(53, 25),
+                            backgroundColor: const Color(0xFFE3E3E3),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                          ),
+                          child: const Text(
+                            '삭제',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 11,
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

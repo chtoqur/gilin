@@ -1,3 +1,4 @@
+// route_state.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RouteLocation {
@@ -28,22 +29,42 @@ class RouteState {
   final RouteLocation startPoint;
   final RouteLocation endPoint;
   final RouteInputMode? currentInputMode;
+  final DateTime? arrivalTime;
+  final List<String> selectedTransports;
 
-  const RouteState({
+  RouteState({
     this.startPoint = const RouteLocation(),
     this.endPoint = const RouteLocation(),
     this.currentInputMode,
-  });
+    DateTime? arrivalTime,
+    this.selectedTransports = const ['지하철', '버스', '도보'],
+  }) : arrivalTime = arrivalTime ?? _initializeTime();
+
+  static DateTime _initializeTime() { // 현재 시간으로 초기화
+    var now = DateTime.now();
+    var roundedMinutes = (now.minute ~/ 5) * 5;
+    return DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      roundedMinutes,
+    );
+  }
 
   RouteState copyWith({
     RouteLocation? startPoint,
     RouteLocation? endPoint,
     RouteInputMode? currentInputMode,
+    DateTime? arrivalTime,
+    List<String>? selectedTransports,
   }) {
     return RouteState(
       startPoint: startPoint ?? this.startPoint,
       endPoint: endPoint ?? this.endPoint,
       currentInputMode: currentInputMode ?? this.currentInputMode,
+      arrivalTime: arrivalTime ?? this.arrivalTime,
+      selectedTransports: selectedTransports ?? this.selectedTransports,
     );
   }
 }
@@ -51,7 +72,7 @@ class RouteState {
 enum RouteInputMode { start, end }
 
 class RouteNotifier extends StateNotifier<RouteState> {
-  RouteNotifier() : super(const RouteState());
+  RouteNotifier() : super(RouteState());
 
   void setInputMode(RouteInputMode mode) {
     state = state.copyWith(currentInputMode: mode);
@@ -69,6 +90,14 @@ class RouteNotifier extends StateNotifier<RouteState> {
         currentInputMode: null,
       );
     }
+  }
+
+  void setArrivalTime(DateTime time) {
+    state = state.copyWith(arrivalTime: time);
+  }
+
+  void updateTransports(List<String> transports) {
+    state = state.copyWith(selectedTransports: transports);
   }
 
   void swapLocations() {
