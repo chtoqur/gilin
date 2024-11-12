@@ -18,8 +18,8 @@ public class Member {
     @Column(name = "member_id")
     private Long Id;
 
+    @Column(name = "oauth_type")
     @Enumerated(EnumType.STRING)
-    @Column
     private OAuthType oAuthType;
 
     @Column(name = "oauth_id")

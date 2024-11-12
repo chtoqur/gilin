@@ -35,3 +35,8 @@ apikey:
     ${ODSAY_API_CSK}
   tmap:
     ${TMAP_API_DINO}
+jwt:
+  accessKey: ${JWT_ACCESS_KEY}
+  accessPeriod: ${JWT_ACCESS_PERIOD}
+  refreshKey: ${JWT_REFRESH_KEY}
+  refreshPeriod: ${JWT_REFRESH_PERIOD}

@@ -5,4 +5,5 @@ import com.gilin.route.domain.member.dto.TokenResponse;
 
 public interface MemberService {
     TokenResponse login(OAuthTokenRequest oAuthTokenRequest);
+    TokenResponse reissue(String refreshToken);
 }

@@ -29,4 +29,8 @@ public class MemberController {
         return ResponseEntity.ok(memberService.login(oAuthTokenRequest));
     }
 
+    @GetMapping("/reissue")
+    public ResponseEntity<TokenResponse> reissue(@RequestBody String refreshToken) {
+        return ResponseEntity.ok(memberService.reissue(refreshToken));
+    }
 }
