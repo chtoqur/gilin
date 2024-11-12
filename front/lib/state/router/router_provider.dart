@@ -37,7 +37,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/mypage',
-            builder: (context, state) => const MypageScreen(),
+            builder: (context, state) => MypageScreen(),
           ),
           GoRoute(
             path: '/test',
