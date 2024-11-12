@@ -1,5 +1,6 @@
 package com.gilin.route;
 
+import com.gilin.route.domain.walk.service.WalkService;
 import com.gilin.route.global.dto.Coordinate;
 import com.gilin.route.domain.bus.service.BusService;
 import com.gilin.route.global.client.odsay.ODSayClient;
@@ -29,6 +30,7 @@ public class TestController {
     private final APIKeyConfig apiKeyConfig;
     private final BusService busService;
     private final TMapClient tMapClient;
+    private final WalkService walkService;
 
     @GetMapping("/odsay/path")
     @Operation(description = "오디세이 호출입니다. https://lab.odsay.com/guide/releaseReference#searchPubTransPathT")
@@ -91,20 +93,29 @@ public class TestController {
         @RequestParam(defaultValue = "도착지") String endName
 
     ) {
-        return ResponseEntity.ok(tMapClient.getPedestrianPath(PedestrianPathRequest.builder()
-                                                                                   .startX(sx)
-                                                                                   .startY(sy)
-                                                                                   .speed(speed)
-                                                                                   .endPoiId(
-                                                                                       endPoiId)
-                                                                                   .endX(ex)
-                                                                                   .endY(ey)
-                                                                                   .startName(
-                                                                                       startName)
-                                                                                   .endName(endName)
-                                                                                   .searchOption(0)
-                                                                                   .build(),
-            apiKeyConfig.getTMapKey()));
+        return ResponseEntity.ok(
+            tMapClient.getPedestrianPath(PedestrianPathRequest.builder()
+                                                              .startX(sx)
+                                                              .startY(sy)
+                                                              .speed(speed)
+                                                              .endPoiId(endPoiId)
+                                                              .endX(ex)
+                                                              .endY(ey)
+                                                              .startName(startName)
+                                                              .endName(endName)
+                                                              .searchOption(0)
+                                                              .build()
+            ));
     }
 
+    @GetMapping("/walk/path")
+    public List<Coordinate> walkPath(
+        @RequestParam(defaultValue = "127.0287449") Double startX,
+        @RequestParam(defaultValue = "37.4981050") Double startY,
+        @RequestParam(defaultValue = "127.039528") Double endX,
+        @RequestParam(defaultValue = "37.501363") Double endY
+    ) {
+        return walkService.getWalkGraphPath(new Coordinate(startX, startY),
+            new Coordinate(endX, endY));
+    }
 }
