@@ -1,5 +1,6 @@
 package com.gilin.route.domain.walk.service;
 
+import com.gilin.route.domain.walk.dto.WalkInfo;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse.Result.SubPath;
 import com.gilin.route.global.client.tmap.TMapClient;
 import com.gilin.route.global.client.tmap.request.PedestrianPathRequest;
@@ -23,8 +24,10 @@ public class WalkServiceImpl implements WalkService {
     final private TMapClient tMapClient;
 
     @Override
-    public List<Coordinate> getWalkGraphPath(Coordinate start, Coordinate end) {
+    public WalkInfo getWalkGraphPath(Coordinate start, Coordinate end) {
         List<Coordinate> path = new ArrayList<>();
+        Integer totalDistance = 0;
+        Integer totalTime = 0;
         PedestrianPathResponse pedestrianPath = tMapClient.getPedestrianPath(
             PedestrianPathRequest.builder()
                                  .startX(start.x())
@@ -35,7 +38,19 @@ public class WalkServiceImpl implements WalkService {
                                  .startName("start")
                                  .endName("end")
                                  .build());
+
         for (Feature feature : pedestrianPath.getFeatures()) {
+            if (feature.getProperties()
+                       .getDistance() != null) {
+                totalDistance += feature.getProperties()
+                                        .getDistance();
+            }
+            if (feature.getProperties()
+                       .getTotalTime() != null) {
+                totalTime += feature.getProperties()
+                                    .getTotalTime();
+            }
+
             if (feature.getGeometry() instanceof LineStringGeometry lineStringGeometry) {
                 for (List<Double> coordinate : lineStringGeometry.getCoordinates()) {
                     path.add(new Coordinate(coordinate.get(0), coordinate.get(1)));
@@ -46,7 +61,11 @@ public class WalkServiceImpl implements WalkService {
                                                                            .get(1)));
             }
         }
-        return path;
+        return WalkInfo.builder()
+                       .coordinates(path)
+                       .distance(totalDistance)
+                       .time(totalTime)
+                       .build();
     }
 
     @Override
