@@ -31,6 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_naver_map: 1.3.0+1
+  kakao_flutter_sdk_user: ^1.9.5
   http: ^1.1.0
 
   # The following adds the Cupertino Icons font to your application.
@@ -58,6 +59,7 @@ dev_dependencies:
   build_runner: ^2.4.13
   custom_lint: ^0.7.0
   riverpod_lint: ^2.6.2
+  flutter_native_splash: ^2.4.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -75,6 +77,7 @@ flutter:
     - assets/images/
     - assets/images/streamline/
     - assets/images/icons/
+    - assets/images/buttons/
 #    - assets/font/pdf/
 #    - assets/lottie/
 
@@ -115,3 +118,21 @@ flutter:
 #          weight: 700
 #        - asset: assets/fonts/Pretendard-Medium.otf
 #          weight: 500
+
+flutter_native_splash:
+  color: "#669358"
+  image: assets/images/icons/splash_default.png
+
+  android_12:
+    # 안드로이드 12 이상을 위한 설정
+    image: assets/images/icons/splash_android12.png
+    color: "#669358"
+    icon_background_color: "#669358"
+
+  # 안드로이드 전용 설정
+  android_gravity: center  # 이미지 위치
+  #fullscreen: true  # 전체화면 모드 (필요시 주석 해제)
+
+  # 다크모드 지원 (필요시 주석 해제)
+  #color_dark: "#000000"
+  #image_dark: assets/splash_dark.png
