@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:gilin/state/route/route_state.dart';
 
 class RouteSelectorWidget extends ConsumerStatefulWidget {
@@ -11,7 +12,39 @@ class RouteSelectorWidget extends ConsumerStatefulWidget {
   ConsumerState<RouteSelectorWidget> createState() => _RoutePickerWidgetState();
 }
 
+
 class _RoutePickerWidgetState extends ConsumerState<RouteSelectorWidget> {
+  @override
+  void initState() {
+    super.initState();
+      _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return;
+        }
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      ref.read(routeProvider.notifier).setLocation(
+        "내 위치",
+        position.longitude,
+        position.latitude,
+        isStart: true,
+      );
+    } catch (e) {
+      print('위치 가져오기 실패: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var routeState = ref.watch(routeProvider);

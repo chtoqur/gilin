@@ -74,17 +74,30 @@ class RouteNotifier extends StateNotifier<RouteState> {
     state = state.copyWith(currentInputMode: mode);
   }
 
-  void setLocation(String title, double x, double y) {
-    if (state.currentInputMode == RouteInputMode.start) {
-      state = state.copyWith(
-        startPoint: RouteLocation(title: title, x: x, y: y),
-        currentInputMode: null,
-      );
-    } else if (state.currentInputMode == RouteInputMode.end) {
-      state = state.copyWith(
-        endPoint: RouteLocation(title: title, x: x, y: y),
-        currentInputMode: null,
-      );
+  void setLocation(String title, double x, double y, {bool? isStart}) {
+    if (isStart != null) {
+      // isStart 파라미터가 제공된 경우
+      if (isStart) {
+        state = state.copyWith(
+          startPoint: RouteLocation(title: title, x: x, y: y),
+        );
+      } else {
+        state = state.copyWith(
+          endPoint: RouteLocation(title: title, x: x, y: y),
+        );
+      }
+    } else {
+      if (state.currentInputMode == RouteInputMode.start) {
+        state = state.copyWith(
+          startPoint: RouteLocation(title: title, x: x, y: y),
+          currentInputMode: null,
+        );
+      } else if (state.currentInputMode == RouteInputMode.end) {
+        state = state.copyWith(
+          endPoint: RouteLocation(title: title, x: x, y: y),
+          currentInputMode: null,
+        );
+      }
     }
   }
 
@@ -100,6 +113,7 @@ class RouteNotifier extends StateNotifier<RouteState> {
       currentModes.add(mode);
     }
     state = state.copyWith(selectedTransportModes: currentModes);
+    print('Updated transport modes: $currentModes'); // 디버깅용
   }
 
   void swapLocations() {
