@@ -1,9 +1,10 @@
 package com.gilin.route;
 
+import com.gilin.route.domain.bus.service.BusService;
 import com.gilin.route.domain.metro.dto.MetroExitToDest;
 import com.gilin.route.domain.metro.service.MetroService;
-import com.gilin.route.global.dto.Coordinate;
-import com.gilin.route.domain.bus.service.BusService;
+import com.gilin.route.domain.walk.dto.WalkInfo;
+import com.gilin.route.domain.walk.service.WalkService;
 import com.gilin.route.global.client.odsay.ODSayClient;
 import com.gilin.route.global.client.odsay.request.SearchPubTransPathRequest;
 import com.gilin.route.global.client.odsay.request.SubwayStationInfoRequest;
@@ -13,6 +14,7 @@ import com.gilin.route.global.client.tmap.TMapClient;
 import com.gilin.route.global.client.tmap.request.PedestrianPathRequest;
 import com.gilin.route.global.client.tmap.response.PedestrianPathResponse;
 import com.gilin.route.global.config.APIKeyConfig;
+import com.gilin.route.global.dto.Coordinate;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ public class TestController {
     private final BusService busService;
     private final TMapClient tMapClient;
     private final MetroService metroService;
+    private final WalkService walkService;
 
     @GetMapping("/odsay/path")
     @Operation(description = "오디세이 호출입니다. https://lab.odsay.com/guide/releaseReference#searchPubTransPathT")
@@ -94,20 +97,19 @@ public class TestController {
         @RequestParam(defaultValue = "도착지") String endName
 
     ) {
-        return ResponseEntity.ok(tMapClient.getPedestrianPath(PedestrianPathRequest.builder()
-                                                                                   .startX(sx)
-                                                                                   .startY(sy)
-                                                                                   .speed(speed)
-                                                                                   .endPoiId(
-                                                                                       endPoiId)
-                                                                                   .endX(ex)
-                                                                                   .endY(ey)
-                                                                                   .startName(
-                                                                                       startName)
-                                                                                   .endName(endName)
-                                                                                   .searchOption(0)
-                                                                                   .build(),
-            apiKeyConfig.getTMapKey()));
+        return ResponseEntity.ok(
+            tMapClient.getPedestrianPath(PedestrianPathRequest.builder()
+                                                              .startX(sx)
+                                                              .startY(sy)
+                                                              .speed(speed)
+                                                              .endPoiId(endPoiId)
+                                                              .endX(ex)
+                                                              .endY(ey)
+                                                              .startName(startName)
+                                                              .endName(endName)
+                                                              .searchOption(0)
+                                                              .build()
+            ));
     }
 
     @GetMapping("/metro/exit")
@@ -119,4 +121,14 @@ public class TestController {
         return metroService.getClosestExit(stationId, new Coordinate(destX, destY));
     }
 
+    @GetMapping("/walk/path")
+    public WalkInfo walkPath(
+        @RequestParam(defaultValue = "127.0287449") Double startX,
+        @RequestParam(defaultValue = "37.4981050") Double startY,
+        @RequestParam(defaultValue = "127.039528") Double endX,
+        @RequestParam(defaultValue = "37.501363") Double endY
+    ) {
+        return walkService.getWalkGraphPath(new Coordinate(startX, startY),
+            new Coordinate(endX, endY));
+    }
 }
