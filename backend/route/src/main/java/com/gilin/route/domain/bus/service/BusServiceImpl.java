@@ -3,6 +3,7 @@ package com.gilin.route.domain.bus.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gilin.route.domain.bus.dto.BusCoordinate;
 import com.gilin.route.domain.bus.dto.Coordinate;
 import com.gilin.route.domain.route.dto.response.RouteResponse;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
@@ -34,8 +35,8 @@ public final class BusServiceImpl implements BusService {
         Long routeId = Long.parseLong(subPath.getLane().get(0).getBusLocalBlID());
         Coordinate startStation = new Coordinate(subPath.getStartX(), subPath.getStartY());
         Coordinate endStation = new Coordinate(subPath.getEndX(), subPath.getEndY());
+        log.error("{} {}", startStation.toString(), endStation.toString());
         List<Coordinate> pathGraph = getPathGraph(routeId, startStation, endStation);
-
         return RouteResponse.SubPathh.of(subPath, pathGraph);
     }
 
@@ -43,14 +44,15 @@ public final class BusServiceImpl implements BusService {
         String json = redisTemplate.opsForValue().get(routeId.toString());
         if (Objects.isNull(json)) return null;
 
-        List<Coordinate> fullPath;
+        List<BusCoordinate> fullPath;
         try {
-            fullPath = objectMapper.readValue(json,  new TypeReference<List<Coordinate>>() {});
+            fullPath = objectMapper.readValue(json,  new TypeReference<List<BusCoordinate>>() {});
         } catch (JsonProcessingException e) {
             return null;
         }
+        log.error(fullPath.toString() + "!!!!");
 
-        return getPathGraph(fullPath, startStation, endStation);
+        return getPathGraph(fullPath.stream().map(BusCoordinate::toCoordinate).toList(), startStation, endStation);
     }
 
     private List<Coordinate> getPathGraph(List<Coordinate> fullPath, Coordinate startStation, Coordinate endStation) {
