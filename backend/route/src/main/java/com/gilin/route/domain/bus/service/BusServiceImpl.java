@@ -3,7 +3,7 @@ package com.gilin.route.domain.bus.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gilin.route.domain.bus.dto.Coordinate;
+import com.gilin.route.global.dto.Coordinate;
 import com.gilin.route.domain.route.dto.response.RouteResponse;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +26,17 @@ public final class BusServiceImpl implements BusService {
     private final ObjectMapper objectMapper;
 
     @Override
-    public RouteResponse.SubPathh convertToSubPathh(SearchPubTransPathResponse.Result.SubPath subPath) {
-        if (subPath.getTrafficType() != 2) return null;
+    public RouteResponse.SubPathh convertToSubPathh(
+        SearchPubTransPathResponse.Result.SubPath subPath) {
+        if (subPath.getTrafficType() != 2) {
+            return null;
+        }
         if (subPath.getStartStationCityCode() > 1310) { // 서울 경기 외 지역
             return null;
         }
-        Long routeId = Long.parseLong(subPath.getLane().get(0).getBusLocalBlID());
+        Long routeId = Long.parseLong(subPath.getLane()
+                                             .get(0)
+                                             .getBusLocalBlID());
         Coordinate startStation = new Coordinate(subPath.getStartX(), subPath.getStartY());
         Coordinate endStation = new Coordinate(subPath.getEndX(), subPath.getEndY());
         List<Coordinate> pathGraph = getPathGraph(routeId, startStation, endStation);
@@ -39,13 +44,18 @@ public final class BusServiceImpl implements BusService {
         return RouteResponse.SubPathh.of(subPath, pathGraph);
     }
 
-    public List<Coordinate> getPathGraph(Long routeId, Coordinate startStation, Coordinate endStation) {
-        String json = redisTemplate.opsForValue().get(routeId.toString());
-        if (Objects.isNull(json)) return null;
+    public List<Coordinate> getPathGraph(Long routeId, Coordinate startStation,
+        Coordinate endStation) {
+        String json = redisTemplate.opsForValue()
+                                   .get(routeId.toString());
+        if (Objects.isNull(json)) {
+            return null;
+        }
 
         List<Coordinate> fullPath;
         try {
-            fullPath = objectMapper.readValue(json,  new TypeReference<List<Coordinate>>() {});
+            fullPath = objectMapper.readValue(json, new TypeReference<List<Coordinate>>() {
+            });
         } catch (JsonProcessingException e) {
             return null;
         }
@@ -53,7 +63,8 @@ public final class BusServiceImpl implements BusService {
         return getPathGraph(fullPath, startStation, endStation);
     }
 
-    private List<Coordinate> getPathGraph(List<Coordinate> fullPath, Coordinate startStation, Coordinate endStation) {
+    private List<Coordinate> getPathGraph(List<Coordinate> fullPath, Coordinate startStation,
+        Coordinate endStation) {
         int startIdx = 0, endIdx = 0;
         double minToStart = Double.MAX_VALUE, minToEnd = Double.MAX_VALUE;
 
