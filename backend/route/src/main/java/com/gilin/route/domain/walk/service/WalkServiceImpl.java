@@ -56,9 +56,12 @@ public class WalkServiceImpl implements WalkService {
                     path.add(new Coordinate(coordinate.get(0), coordinate.get(1)));
                 }
             } else if (feature.getGeometry() instanceof PointGeometry pointGeometry) {
-                path.add(new Coordinate(pointGeometry.getCoordinates()
-                                                     .get(0), pointGeometry.getCoordinates()
-                                                                           .get(1)));
+                path.add(new Coordinate(
+                    pointGeometry.getCoordinates()
+                                 .get(0),
+                    pointGeometry.getCoordinates()
+                                 .get(1)
+                ));
             }
         }
         return WalkInfo.builder()
