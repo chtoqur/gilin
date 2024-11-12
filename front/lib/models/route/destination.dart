@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Destination {
   final String iconPath;
   final String name;
