@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -85,7 +86,13 @@ public final class BusServiceImpl implements BusService {
         }
         List<Coordinate> subPath = new ArrayList<>();
         subPath.add(startStation);
-        subPath.addAll(fullPath.subList(startIdx, endIdx + 1));
+        if (startIdx > endIdx) {
+            List<Coordinate> reversedSubList = new ArrayList<>(fullPath.subList(endIdx, startIdx + 1));
+            Collections.reverse(reversedSubList);
+            subPath.addAll(reversedSubList);
+        } else {
+            subPath.addAll(fullPath.subList(startIdx, endIdx + 1));
+        }
         subPath.add(endStation);
 
         return subPath;
