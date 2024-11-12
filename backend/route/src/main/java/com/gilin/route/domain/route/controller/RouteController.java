@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,8 +24,9 @@ public class RouteController {
             @RequestParam(defaultValue = "37.5441833") double sy,
             @RequestParam(defaultValue = "127.09355") double ex,
             @RequestParam(defaultValue = "37.53615") double ey,
-            @RequestParam(defaultValue = "METRO,BUS,TAXI,BICYCLE,WALK") List<String> travelTypes
-            ) {
+            @RequestParam(defaultValue = "METRO,BUS,TAXI,BICYCLE,WALK") List<String> travelTypes,
+            @RequestParam(required = false) LocalDateTime arrivalTime
+    ) {
         try {
             EnumSet<TravelType> travelTypeSet = travelTypes.stream()
                     .map(TravelType::valueOf)

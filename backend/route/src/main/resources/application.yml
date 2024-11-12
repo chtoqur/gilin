@@ -33,3 +33,5 @@ logging:
 apikey:
   odsays:
     ${ODSAY_API_CSK}
+  tmap:
+    ${TMAP_API_DINO}

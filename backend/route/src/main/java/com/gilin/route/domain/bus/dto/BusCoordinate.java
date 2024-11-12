@@ -1,5 +1,7 @@
 package com.gilin.route.domain.bus.dto;
 
+import com.gilin.route.global.dto.Coordinate;
+
 public record BusCoordinate(
         Double longitude, // 경도 x
         Double latitude // 위도 y
