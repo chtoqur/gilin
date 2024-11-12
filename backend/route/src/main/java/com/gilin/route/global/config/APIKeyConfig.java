@@ -7,20 +7,15 @@ import org.springframework.stereotype.Component;
 public class APIKeyConfig {
 
     private final String[] ODSayKeys;
-    private final String[] TMapKeys;
 
-    public APIKeyConfig(@Value("${apikey.odsays}") String[] ODSayKeys,
-        @Value("${apikey.tmap}") String[] TMapKeys) {
+    public APIKeyConfig(@Value("${apikey.odsays}") String[] ODSayKeys
+    ) {
         this.ODSayKeys = ODSayKeys;
-        this.TMapKeys = TMapKeys;
     }
 
     public String getODSayKey() {
         return ODSayKeys[0];
-        
+
     }
 
-    public String getTMapKey() {
-        return TMapKeys[0];
-    }
 }
