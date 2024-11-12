@@ -1,5 +1,7 @@
 package com.gilin.route;
 
+import com.gilin.route.domain.metro.dto.MetroExitToDest;
+import com.gilin.route.domain.metro.service.MetroService;
 import com.gilin.route.global.dto.Coordinate;
 import com.gilin.route.domain.bus.service.BusService;
 import com.gilin.route.global.client.odsay.ODSayClient;
@@ -29,6 +31,7 @@ public class TestController {
     private final APIKeyConfig apiKeyConfig;
     private final BusService busService;
     private final TMapClient tMapClient;
+    private final MetroService metroService;
 
     @GetMapping("/odsay/path")
     @Operation(description = "오디세이 호출입니다. https://lab.odsay.com/guide/releaseReference#searchPubTransPathT")
@@ -105,6 +108,15 @@ public class TestController {
                                                                                    .searchOption(0)
                                                                                    .build(),
             apiKeyConfig.getTMapKey()));
+    }
+
+    @GetMapping("/metro/exit")
+    public MetroExitToDest exitToDest(
+        @RequestParam(defaultValue = "221") Integer stationId,
+        @RequestParam(defaultValue = "127.039528") Double destX,
+        @RequestParam(defaultValue = "37.501363") Double destY
+    ) {
+        return metroService.getClosestExit(stationId, new Coordinate(destX, destY));
     }
 
 }

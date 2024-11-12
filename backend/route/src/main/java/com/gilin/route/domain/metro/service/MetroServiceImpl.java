@@ -1,17 +1,22 @@
 package com.gilin.route.domain.metro.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gilin.route.domain.metro.dto.MetroExitToDest;
 import com.gilin.route.domain.metro.dto.MetroLinkDto;
 import com.gilin.route.domain.metro.dto.PollyLinePos;
 import com.gilin.route.domain.metro.dto.PollyLineResponseDto;
+import com.gilin.route.global.dto.Coordinate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class MetroServiceImpl implements MetroService {
 
@@ -19,12 +24,15 @@ public class MetroServiceImpl implements MetroService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ListOperations<String, Object> listOperations;
     private final HashOperations<String, String, String> hashOperations;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public MetroServiceImpl(RedisTemplate<String, Object> redisTemplate) {
+    public MetroServiceImpl(RedisTemplate<String, Object> redisTemplate,
+        ObjectMapper objectMapper) {
         this.redisTemplate = redisTemplate;
         this.listOperations = redisTemplate.opsForList();
         this.hashOperations = redisTemplate.opsForHash();
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -80,5 +88,30 @@ public class MetroServiceImpl implements MetroService {
                            .endX(Double.valueOf(entries.get("endX")))
                            .endY(Double.valueOf(entries.get("endY")))
                            .build();
+    }
+
+    @Override
+    public MetroExitToDest getClosestExit(Integer startStationId, Coordinate dest) {
+        MetroExitToDest closestExit = MetroExitToDest.builder()
+                                                     .build();
+        double minDistance = Double.MAX_VALUE;
+
+        for (int i = 1; i <= 20; i++) {
+            String key = "exit" + startStationId + ":" + i;
+            String jsonValue = (String) redisTemplate.opsForValue()
+                                                     .get(key);
+            if (jsonValue == null) {
+                break;
+            }
+
+            try {
+                Coordinate exitCoordinate = objectMapper.readValue(jsonValue, Coordinate.class);
+                log.info(exitCoordinate.x() + " " + exitCoordinate.y());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return closestExit;
     }
 }
