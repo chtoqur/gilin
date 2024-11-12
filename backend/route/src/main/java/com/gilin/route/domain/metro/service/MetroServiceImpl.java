@@ -46,26 +46,33 @@ public class MetroServiceImpl implements MetroService {
      */
     @Override
     public PollyLineResponseDto getMetroPollyLine(Integer startId, Integer endId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(startId)
-          .append('_')
-          .append(endId)
-          .append(":graphPos");
-        List<Object> posDataList = listOperations.range(sb.toString(), 0, -1);
-        List<PollyLinePos> posList = new ArrayList<>();
-        for (Object data : posDataList) {
-            String string = (String) data;
-            String cleaned = string.replaceAll("[()]", "");
-            String[] split = cleaned.split(",");
-            Double x = Double.parseDouble(split[0].trim());
-            Double y = Double.parseDouble(split[1].trim());
-            posList.add(PollyLinePos.builder()
-                                    .x(x)
-                                    .y(y)
-                                    .build());
+        Integer start = Math.min(startId, endId);
+        Integer end = Math.max(startId, endId);
+        List<PollyLinePos> retList = new ArrayList<>();
+        while (start < end) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(start)
+              .append('_')
+              .append(start + 1)
+              .append(":graphPos");
+            List<Object> posDataList = listOperations.range(sb.toString(), 0, -1);
+            List<PollyLinePos> posList = new ArrayList<>();
+            for (Object data : posDataList) {
+                String string = (String) data;
+                String cleaned = string.replaceAll("[()]", "");
+                String[] split = cleaned.split(",");
+                Double x = Double.parseDouble(split[0].trim());
+                Double y = Double.parseDouble(split[1].trim());
+                posList.add(PollyLinePos.builder()
+                                        .x(x)
+                                        .y(y)
+                                        .build());
+            }
+            retList.addAll(posList);
+            start++;
         }
         return PollyLineResponseDto.builder()
-                                   .pollyLinePosList(posList)
+                                   .pollyLinePosList(retList)
                                    .build();
     }
 
