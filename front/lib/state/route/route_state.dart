@@ -1,4 +1,3 @@
-// route_state.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum TransportMode {
@@ -79,22 +78,38 @@ class RouteNotifier extends StateNotifier<RouteState> {
       // isStart 파라미터가 제공된 경우
       if (isStart) {
         state = state.copyWith(
-          startPoint: RouteLocation(title: title, x: x, y: y),
+          startPoint: state.startPoint.copyWith(
+            title: title,
+            x: x,
+            y: y,
+          ),
         );
       } else {
         state = state.copyWith(
-          endPoint: RouteLocation(title: title, x: x, y: y),
+          endPoint: state.endPoint.copyWith(
+            title: title,
+            x: x,
+            y: y,
+          ),
         );
       }
     } else {
       if (state.currentInputMode == RouteInputMode.start) {
         state = state.copyWith(
-          startPoint: RouteLocation(title: title, x: x, y: y),
+          startPoint: state.startPoint.copyWith(
+            title: title,
+            x: x,
+            y: y,
+          ),
           currentInputMode: null,
         );
       } else if (state.currentInputMode == RouteInputMode.end) {
         state = state.copyWith(
-          endPoint: RouteLocation(title: title, x: x, y: y),
+          endPoint: state.endPoint.copyWith(
+            title: title,
+            x: x,
+            y: y,
+          ),
           currentInputMode: null,
         );
       }
