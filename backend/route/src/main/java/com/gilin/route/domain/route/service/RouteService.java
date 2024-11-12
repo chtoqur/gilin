@@ -10,6 +10,7 @@ import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
 import com.gilin.route.global.config.APIKeyConfig;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.EnumSet;
@@ -18,7 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@Data
+@Slf4j
 @RequiredArgsConstructor
 public class RouteService {
 
@@ -35,7 +36,6 @@ public class RouteService {
         var request = new SearchPubTransPathRequest(apiKeyConfig.getODSayKey(), sx, sy, ex, ey);
         SearchPubTransPathResponse response = odSayClient.searchPubTransPathT(request);
         Optional<SearchPubTransPathResponse.Result.Path> path = Optional.empty();
-
         if (travelTypes.contains(TravelType.BUS) && travelTypes.contains(TravelType.METRO)) {
             path = response.getResult().getPath().stream().findFirst();
         } else if (travelTypes.contains(TravelType.METRO)) {
@@ -63,9 +63,9 @@ public class RouteService {
 
     private RouteResponse.SubPathh handleSubPath(SearchPubTransPathResponse.Result.SubPath subPath) {
         return switch (subPath.getTrafficType()){
-            case 1 -> busService.convertToSubPathh(subPath); //TODO- metroService 종호형 수정 예쩡
+            case 1 -> new RouteResponse.SubPathh(); //TODO- metroService 종호형 수정 예쩡
             case 2 -> busService.convertToSubPathh(subPath);
-            default -> busService.convertToSubPathh(subPath);
+            default -> new RouteResponse.SubPathh();
         };
     }
 
