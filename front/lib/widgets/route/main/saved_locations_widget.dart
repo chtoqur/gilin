@@ -7,51 +7,35 @@ class SavedLocationsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F5F0),
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            offset: const Offset(3, 4),
-            blurRadius: 10,
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          LayoutBuilder(
-            builder: (context, constraints) {
-              double containerWidth = (constraints.maxWidth / 2) - 10;
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  BookmarkContainer(
-                    title: '집',
-                    iconData: 'home',
-                    width: containerWidth,
-                  ),
-                  const Gap(20),
-                  BookmarkContainer(
-                    title: '회사/학교',
-                    iconData: 'building',
-                    width: containerWidth,
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        LayoutBuilder(
+          builder: (context, constraints) {
+            double containerWidth = (constraints.maxWidth / 2) - 10;
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                BookmarkContainer(
+                  title: '집',
+                  iconData: 'home',
+                  width: containerWidth,
+                ),
+                const Gap(20),
+                BookmarkContainer(
+                  title: '회사/학교',
+                  iconData: 'building',
+                  width: containerWidth,
+                ),
+              ],
+            );
+          },
+        ),
+      ],
     );
   }
 }
 
-// BookmarkContainer 클래스는 그대로 유지
 class BookmarkContainer extends StatelessWidget {
   final String title;
   final String iconData;

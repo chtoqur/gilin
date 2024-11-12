@@ -1,6 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:gilin/screens/search/search_result_sheet.dart';
+import 'package:gilin/widgets/route/main/saved_locations_widget.dart';
+import 'package:gilin/widgets/search/search_history_widget.dart';
 import '../../models/search/local_search_result.dart';
 import '../../services/search/local_search_service.dart';
 import '../search/search_result_map.dart';
@@ -162,6 +166,14 @@ class _SearchScreenState extends State<SearchScreen> {
     _hasMoreItems = true;
     _searchResults = [];
   }
+
+  final List<String> savedLocations = [
+    "삼성전자",
+    "멀티캠퍼스 역삼",
+    "선릉역 2번 출구",
+    "갤럭시"
+  ]; // 추후 실제 데이터로 교체
+
   @override
   Widget build(BuildContext context) {
     bool hasSearchQuery = _searchController.text.isNotEmpty;
@@ -172,19 +184,29 @@ class _SearchScreenState extends State<SearchScreen> {
         children: [
           // 검색어가 없을 때: 기본 화면
           if (!hasSearchQuery)
-            Container(
-              padding: const EdgeInsets.only(top: 70),
-              child: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.search, size: 100, color: Colors.grey),
-                    SizedBox(height: 16),
-                    Text('검색어를 입력해주세요',
-                        style: TextStyle(fontSize: 18, color: Colors.grey)),
-                  ],
+            Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  color: const Color(0xFFF8F5F0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Gap(70),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          child: const SavedLocationsWidget(),
+                        ),
+                      ),
+                      SearchHistoryWidget(
+                        savedLocations: savedLocations,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
           // 검색어가 있을 때: 검색 결과 화면 표시
           if (hasSearchQuery)
@@ -208,32 +230,21 @@ class _SearchScreenState extends State<SearchScreen> {
                               );
                             }
 
-                            var result = _searchResults[index];
-                            return Card(
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              child: ListTile(
-                                title: Text(result.title),
-                                subtitle: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: [
-                                    Text(result.category),
-                                    Text(result.roadAddress),
-                                  ],
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SearchResultMap(
-                                        searchResult: result,
-                                      ),
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SearchResultMap(
+                                      searchResult: _searchResults[index],
                                     ),
-                                  );
-                                },
+                                  ),
+                                );
+                              },
+                              child: SearchResultSheet(
+                                result: _searchResults[index],
+                                searchQuery: _searchController.text,
+                                showBorder: index > 0,  // 첫 번째 아이템은 border 없음
                               ),
                             );
                           },
