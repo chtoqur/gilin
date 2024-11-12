@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gilin/widgets/route/main/route_selector_widget.dart';
-import 'package:gilin/widgets/route/main/saved_locations_widget.dart';
 import 'package:gilin/widgets/route/main/transport_selector_widget.dart';
 import 'package:gap/gap.dart';
 
+import '../../state/route/route_state.dart';
 import '../../widgets/route/main/cupertino_time_picker.dart';
 
-class RouteScreen extends StatefulWidget {
+class RouteScreen extends ConsumerStatefulWidget {
   const RouteScreen({Key? key}) : super(key: key);
 
   @override
-  State<RouteScreen> createState() => _RouteScreenState();
+  ConsumerState<RouteScreen> createState() => _RouteScreenState();
 }
 
-class _RouteScreenState extends State<RouteScreen> {
+class _RouteScreenState extends ConsumerState<RouteScreen> {
   bool isPlaceTab = true;
+
   @override
   Widget build(BuildContext context) {
+    ref.watch(routeProvider);
+
     return Scaffold(
       backgroundColor: const Color(0xFF8C9F5F),
       body: Stack(
@@ -36,7 +40,32 @@ class _RouteScreenState extends State<RouteScreen> {
                     ),
                   ),
                   const Gap(15),
+                  // Container(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  //   decoration: BoxDecoration(
+                  //     color: const Color(0xFFF8F5F0),
+                  //     borderRadius: BorderRadius.circular(15),
+                  //     boxShadow: [
+                  //       BoxShadow(
+                  //         color: Colors.black.withOpacity(0.15),
+                  //         offset: const Offset(3, 4),
+                  //         blurRadius: 10,
+                  //         spreadRadius: 0,
+                  //       ),
+                  //     ],
+                  //   ),
+                  //   child: const SavedLocationsWidget(),
+                  // ),
                   const RouteSelectorWidget(),
+                  const Gap(30),
+                  const Text(
+                    '몇 시까지 가시나요?',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFFF8F5F0)
+                    ),
+                  ),
                   const Gap(15),
                   CupertinoTimePicker(
                     onDateTimeChanged: (DateTime time) {},
@@ -53,33 +82,7 @@ class _RouteScreenState extends State<RouteScreen> {
                   ),
                   const Gap(15),
                   const TransportSelectorWidget(),
-                  const Gap(30),
-                  const Text(
-                    '자주 가는 곳으로 빠른 길찾기',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFF8F5F0)
-                    ),
-                  ),
                   const Gap(15),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF8F5F0),
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
-                          offset: const Offset(3, 4),
-                          blurRadius: 10,
-                          spreadRadius: 0,
-                        ),
-                      ],
-                    ),
-                    child: const SavedLocationsWidget(),
-                  ),
-                  const Gap(30),
                 ],
               ),
             ),

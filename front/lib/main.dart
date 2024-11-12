@@ -21,7 +21,6 @@ Future<void> _initialize() async {
       onAuthFailed: (e) => log("네이버맵 인증오류: $e", name: "onAuthFailed"));
 }
 
-// ConsumerWidget: riverpod 위젯 업데이트를 위해 사용
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
