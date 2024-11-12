@@ -8,6 +8,7 @@ import lombok.*;
 import java.util.List;
 
 @Getter
+@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
@@ -48,6 +49,13 @@ public class RouteResponse {
         private double totalDistance;
         @Schema(description = "전체 배차간격 시간(분)", example = "13")
         private int totalIntervalTime;
+
+        static public Infoo of(SearchPubTransPathResponse.Result.Info info) {
+            return new Infoo(info.getTrafficDistance(), info.getTotalWalk(), info.getTotalTime(), info.getPayment(),
+                    info.getBusTransitCount(), info.getSubwayTransitCount(), info.getFirstStartStation(),
+                    info.getLastEndStation(), info.getTotalStationCount(), info.getBusStationCount(),
+                    info.getSubwayStationCount(), info.getTotalDistance(), info.getTotalIntervalTime());
+        }
     }
 
     @Getter

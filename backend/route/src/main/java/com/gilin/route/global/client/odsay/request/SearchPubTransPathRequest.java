@@ -15,14 +15,15 @@ public class SearchPubTransPathRequest {
     private final String output = "json";
     private final int OPT = 0;                // 0 추천 경로, 1 타입별 정렬
     private final Integer SearchType = 0;     // 0 도시내, 1 도시간
-    private final int SearchPathType = 0;     // 0 모두, 1 지하철, 2 버스
+    private int SearchPathType = 0;     // 0 모두, 1 지하철, 2 버스
 
     @Builder
-    public SearchPubTransPathRequest(String apiKey, double SX, double SY, double EX, double EY) {
+    public SearchPubTransPathRequest(String apiKey, double SX, double SY, double EX, double EY, int searchPathType) {
         this.apiKey = apiKey;
         this.SX = SX;
         this.SY = SY;
         this.EX = EX;
         this.EY = EY;
+        this.SearchPathType = searchPathType;
     }
 }
