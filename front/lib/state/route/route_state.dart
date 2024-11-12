@@ -1,6 +1,14 @@
 // route_state.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+enum TransportMode {
+  walk,
+  bicycle,
+  bus,
+  subway,
+  taxi
+}
+
 class RouteLocation {
   final String title;
   final double x;
@@ -29,22 +37,30 @@ class RouteState {
   final RouteLocation startPoint;
   final RouteLocation endPoint;
   final RouteInputMode? currentInputMode;
+  final DateTime? arrivalTime;
+  final Set<TransportMode> selectedTransportModes;
 
   const RouteState({
     this.startPoint = const RouteLocation(),
     this.endPoint = const RouteLocation(),
     this.currentInputMode,
+    this.arrivalTime,
+    this.selectedTransportModes = const {},
   });
 
   RouteState copyWith({
     RouteLocation? startPoint,
     RouteLocation? endPoint,
     RouteInputMode? currentInputMode,
+    DateTime? arrivalTime,
+    Set<TransportMode>? selectedTransportModes,
   }) {
     return RouteState(
       startPoint: startPoint ?? this.startPoint,
       endPoint: endPoint ?? this.endPoint,
       currentInputMode: currentInputMode ?? this.currentInputMode,
+      arrivalTime: arrivalTime ?? this.arrivalTime,
+      selectedTransportModes: selectedTransportModes ?? this.selectedTransportModes,
     );
   }
 }
@@ -72,14 +88,36 @@ class RouteNotifier extends StateNotifier<RouteState> {
     }
   }
 
+  void setArrivalTime(DateTime time) {
+    state = state.copyWith(arrivalTime: time);
+  }
+
+  void toggleTransportMode(TransportMode mode) {
+    var currentModes = Set<TransportMode>.from(state.selectedTransportModes);
+    if (currentModes.contains(mode)) {
+      currentModes.remove(mode);
+    } else {
+      currentModes.add(mode);
+    }
+    state = state.copyWith(selectedTransportModes: currentModes);
+  }
+
   void swapLocations() {
     state = state.copyWith(
       startPoint: state.endPoint,
       endPoint: state.startPoint,
     );
   }
+
+  bool isReadyToStart() {
+    return state.startPoint.title.isNotEmpty &&
+           state.endPoint.title.isNotEmpty &&
+           state.arrivalTime != null &&
+           state.selectedTransportModes.isNotEmpty; // 최소 하나 이상의 이동수단이 선택되어 있어야 함
+  }
 }
 
 final routeProvider = StateNotifierProvider<RouteNotifier, RouteState>((ref) {
   return RouteNotifier();
 });
+

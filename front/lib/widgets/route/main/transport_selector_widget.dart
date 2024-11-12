@@ -1,31 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../state/route/route_state.dart';
 
-class TransportSelectorWidget extends StatefulWidget {
+class TransportSelectorWidget extends ConsumerStatefulWidget {
   const TransportSelectorWidget({super.key});
 
   @override
-  State<TransportSelectorWidget> createState() => _TransportModeSelectorState();
+  ConsumerState<TransportSelectorWidget> createState() => _TransportModeSelectorState();
 }
 
-class _TransportModeSelectorState extends State<TransportSelectorWidget> {
-  final Map<String, bool> transportModes = {
-    '지하철': true,
-    '버스': true,
-    '택시': false,
-    '자전거': false,
-    '도보': true,
+class _TransportModeSelectorState extends ConsumerState<TransportSelectorWidget> {
+
+  final Map<TransportMode, IconData> transportIcons = {
+    TransportMode.subway: Icons.subway,
+    TransportMode.bus: Icons.directions_bus,
+    TransportMode.taxi: Icons.local_taxi,
+    TransportMode.bicycle: Icons.directions_bike,
+    TransportMode.walk: Icons.directions_walk,
   };
 
-  final Map<String, IconData> transportIcons = {
-    '지하철': Icons.subway,
-    '버스': Icons.directions_bus,
-    '택시': Icons.local_taxi,
-    '자전거': Icons.directions_bike,
-    '도보': Icons.directions_walk,
+  // TransportMode에 대한 한글 이름 매핑
+  final Map<TransportMode, String> transportNames = {
+    TransportMode.subway: '지하철',
+    TransportMode.bus: '버스',
+    TransportMode.taxi: '택시',
+    TransportMode.bicycle: '자전거',
+    TransportMode.walk: '도보',
   };
 
   @override
   Widget build(BuildContext context) {
+
+    var selectedMode = ref.watch(routeProvider).selectedTransportModes;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       decoration: BoxDecoration(
@@ -42,15 +49,15 @@ class _TransportModeSelectorState extends State<TransportSelectorWidget> {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: transportModes.keys.map((mode) {
-          var isSelected = transportModes[mode]!;
+        children: TransportMode.values.map((mode) {
+          var isSelected = selectedMode.contains(mode);
+
+
           return Column(
             children: [
               GestureDetector(
                 onTap: () {
-                  setState(() {
-                    transportModes[mode] = !transportModes[mode]!;
-                  });
+                  ref.read(routeProvider.notifier).toggleTransportMode(mode);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(8),
@@ -88,7 +95,7 @@ class _TransportModeSelectorState extends State<TransportSelectorWidget> {
               ),
               const SizedBox(height: 4),
               Text(
-                mode,
+                transportNames[mode]!,
                 style: TextStyle(
                   color: isSelected
                       ? const Color(0xFF463C33)

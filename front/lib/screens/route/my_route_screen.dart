@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:gilin/models/route/destination.dart';
 import 'package:gilin/widgets/route/main/destination_card.dart';
@@ -6,14 +7,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../widgets/route/main/transport_selector_widget.dart';
 
-class MyRouteScreen extends StatefulWidget {
+class MyRouteScreen extends ConsumerStatefulWidget {
   const MyRouteScreen({super.key});
 
   @override
-  State<MyRouteScreen> createState() => _MyRouteScreenState();
+  ConsumerState<MyRouteScreen> createState() => _MyRouteScreenState();
 }
 
-class _MyRouteScreenState extends State<MyRouteScreen> {
+class _MyRouteScreenState extends ConsumerState<MyRouteScreen> {
   int? selectedDestinationIndex;
   final List<Destination> destinations = [
     const Destination(
@@ -129,6 +130,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: const Color(0xFF8C9F5F),
       body: Column(
