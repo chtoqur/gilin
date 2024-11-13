@@ -1,20 +1,15 @@
 package com.gilin.route.domain.member.controller;
 
-import com.gilin.route.domain.member.dto.request.OAuthTokenRequest;
-import com.gilin.route.domain.member.dto.response.TokenResponse;
+import com.gilin.route.domain.member.dto.request.OAuthRegisterRequest;
+import com.gilin.route.domain.member.dto.request.OAuthLoginRequest;
+import com.gilin.route.domain.member.dto.response.LoginResponse;
+import com.gilin.route.domain.member.dto.request.MemberPlacePutRequest;
 import com.gilin.route.domain.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -24,13 +19,20 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/login")
-    @Operation(description = "OAuth 에서 받은 Token을 사용해 로그인/회원가입 합니다.", summary = "OAuth 에서 받은 Token을 사용해 로그인/회원가입 합니다.")
-    public ResponseEntity<TokenResponse> oauthLogin(@RequestBody OAuthTokenRequest oAuthTokenRequest) {
-        return ResponseEntity.ok(memberService.login(oAuthTokenRequest));
+    @Operation(description = "OAuth 에서 받은 Token을 사용해 로그인 합니다.", summary = "OAuth 에서 받은 Token을 사용해 로그인 합니다.")
+    public ResponseEntity<LoginResponse> oauthLogin(@RequestBody OAuthLoginRequest oAuthLoginRequest) {
+        return ResponseEntity.ok(memberService.login(oAuthLoginRequest));
+    }
+
+    @PostMapping("/register")
+    @Operation(description = "OAuth 에서 받은 Token과 사용자 정보로 회원가입 합니다.", summary = "OAuth 에서 받은 Token과 사용자 정보로 회원가입 합니다.")
+    public ResponseEntity<LoginResponse> oauthRegister(@RequestBody OAuthRegisterRequest oAuthRegisterRequest) {
+
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<TokenResponse> reissue(@RequestBody String refreshToken) {
+    public ResponseEntity<LoginResponse> reissue(@RequestBody String refreshToken) {
+
         return ResponseEntity.ok(memberService.reissue(refreshToken));
     }
 }
