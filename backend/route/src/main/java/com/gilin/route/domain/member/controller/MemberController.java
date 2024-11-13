@@ -35,4 +35,17 @@ public class MemberController {
 
         return ResponseEntity.ok(memberService.reissue(refreshToken));
     }
+
+    @PutMapping("/place")
+    @Operation(summary = "장소 정보 업데이트", description = "사용자의 장소 정보를 업데이트합니다. 이 엔드포인트는 인증이 필요합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "업데이트 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 실패",
+                    content = @Content(mediaType = "application/json"))
+    })
+    public ResponseEntity<?> updatePlace(@Authenticated Member member, @RequestBody MemberPlacePutRequest request) {
+        if (Objects.isNull(member)) throw new GilinException(HttpStatus.UNAUTHORIZED, "");
+        memberService.updatePlace(member, request);
+        return ResponseEntity.ok(null);
+    }
 }

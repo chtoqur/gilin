@@ -104,5 +104,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
         return new TokenResponse(newAccessToken, newRefreshToken);
+    @Override
+    public void updatePlace(Member member, MemberPlacePutRequest request) {
+        memberPlaceRepository.deleteByMemberAndType(member, request.type());
+        MemberPlace memberPlace = MemberPlace.builder()
+                .x(request.x())
+                .y(request.y())
+                .address(request.address())
+                .member(member)
+                .arrivalTime(request.arrivalTime()).build();
+        memberPlaceRepository.save(memberPlace);
     }
 }
