@@ -74,7 +74,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = Member.builder()
                 .oauthId(response.id())
                 .oAuthType(oAuthRegisterRequest.oAuthType())
-                .name(response.kakaoAccount().name())
+                .name(oAuthRegisterRequest.name())
                 .gender(oAuthRegisterRequest.gender())
                 .age(oAuthRegisterRequest.ageGroup())
                 .build();

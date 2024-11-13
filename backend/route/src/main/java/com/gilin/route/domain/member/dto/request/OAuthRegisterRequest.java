@@ -8,6 +8,8 @@ public record OAuthRegisterRequest(
         OAuthType oAuthType,
         String accessToken,
         String refreshToken,
+        @Schema(example = "조승기")
+        String name,
         @Schema(example = "M")
         String gender,
         @Schema(example = "20")
