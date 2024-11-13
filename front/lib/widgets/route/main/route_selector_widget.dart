@@ -38,7 +38,7 @@ class _RoutePickerWidgetState extends ConsumerState<RouteSelectorWidget> {
         "내 위치",
         position.longitude,
         position.latitude,
-        isStart: true,
+
       );
     } catch (e) {
       print('위치 가져오기 실패: $e');

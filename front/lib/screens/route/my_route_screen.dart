@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:gilin/models/route/destination.dart';
 import 'package:gilin/widgets/route/main/destination_card.dart';
