@@ -76,4 +76,10 @@ public class MemberController {
         memberService.updatePlace(member, request);
         return ResponseEntity.ok(null);
     }
+
+    @PostMapping("/test")
+    @Operation(summary = "테스트 유저 토큰 발급", description = "테스트 유저 토큰 발급")
+    public ResponseEntity<LoginResponse> test() {
+        return ResponseEntity.ok(memberService.testLogin(1L));
+    }
 }

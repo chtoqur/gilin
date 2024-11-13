@@ -111,4 +111,9 @@ public class MemberServiceImpl implements MemberService {
                 .arrivalTime(request.arrivalTime()).build();
         memberPlaceRepository.save(memberPlace);
     }
+
+    @Override
+    public LoginResponse testLogin(Long memberId) {
+        return makeLoginResponse(memberRepository.findById(memberId).orElseThrow());
+    }
 }

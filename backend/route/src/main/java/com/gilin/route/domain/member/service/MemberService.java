@@ -10,5 +10,6 @@ public interface MemberService {
     LoginResponse login(OAuthLoginRequest oAuthLoginRequest);
     LoginResponse reissue(String refreshToken);
     LoginResponse register(OAuthRegisterRequest oAuthRegisterRequest);
+    LoginResponse testLogin(Long memberId);
     void updatePlace(Member member, MemberPlacePutRequest request);
 }
