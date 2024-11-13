@@ -24,7 +24,7 @@ class SavedLocationsWidget extends StatelessWidget {
                 const Gap(20),
                 BookmarkContainer(
                   title: '회사/학교',
-                  iconData: 'building',
+                  iconData: 'company',
                   width: containerWidth,
                 ),
               ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:gilin/models/route/destination.dart';
 
@@ -33,34 +34,50 @@ class DestinationCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(destination.icon, size: 25),
-                const Gap(5),
+                Container(
+                  width: 35,
+                  height: 35,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xffF8F5F0),
+                    border: Border.all(color: const Color(0xff463C33), width: 1),
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      destination.iconPath,
+                      width: 20,
+                      height: 20,
+                    ),
+                  ),
+                ),
+                const Gap(10),
                 Text(
                   destination.name,
                   style: const TextStyle(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                     fontSize: 16,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 4),
+            const Gap(5),
             Text(
               destination.address,
-              style: TextStyle(
-                color: Colors.grey[600],
+              style: const TextStyle(
                 fontSize: 12,
+                fontWeight: FontWeight.w400
               ),
               overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.start,
             ),
-            const SizedBox(height: 4),
+            const Gap(2),
             Text(
               destination.arrivalTime,
               style: const TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
               ),
+              textAlign: TextAlign.start,
             ),
           ],
         ),
