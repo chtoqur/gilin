@@ -1,6 +1,8 @@
 package com.gilin.route.domain.member.service;
 
 import com.gilin.route.domain.member.dto.request.OAuthRegisterRequest;
+import com.gilin.route.domain.member.entity.MemberPlace;
+import com.gilin.route.domain.member.repository.MemberPlaceRepository;
 import com.gilin.route.global.client.oAuthKakao.KakaoInfoResponse;
 import com.gilin.route.domain.member.dto.request.OAuthLoginRequest;
 import com.gilin.route.domain.member.dto.response.LoginResponse;
@@ -11,7 +13,6 @@ import com.gilin.route.domain.member.repository.MemberRepository;
 import com.gilin.route.global.client.oAuthKakao.OAuthKakaoClient;
 import com.gilin.route.global.error.GilinException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,26 +20,24 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final MemberPlaceRepository memberPlaceRepository;
     private final OAuthKakaoClient kakaoClient;
     private final JwtTokenProvider jwtTokenProvider;
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
+
+    private static final String REFRESH_TOKEN_PREFIX = "RT:";
 
     @Override
     public LoginResponse login(OAuthLoginRequest oAuthLoginRequest) {
         KakaoInfoResponse response = kakaoClient.getUser(oAuthLoginRequest.accessToken());
 
-        Member member = memberRepository
-                .findByoAuthTypeAndOauthId(OAuthType.KAKAO, response.id())
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new GilinException(HttpStatus.BAD_REQUEST, "회원가입이 필요합니다."));
+        Member member = memberRepository.findByoAuthTypeAndOauthId(OAuthType.KAKAO, response.id())
+                .orElseThrow(() -> new GilinException(HttpStatus.UNAUTHORIZED, "회원가입이 필요합니다."));
 
         return makeLoginResponse(member);
     }
@@ -49,11 +48,11 @@ public class MemberServiceImpl implements MemberService {
 
         String refreshTokenUuid = jwtTokenProvider.extractRefreshTokenSubject(refreshToken);
 
-        String memberId = redisTemplate.opsForValue().get("RT:" + refreshTokenUuid);
+        String memberId = redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + refreshTokenUuid);
         if (Objects.isNull(memberId)) {
             throw new GilinException(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다.");
         }
-        redisTemplate.delete("RT:" + refreshTokenUuid);
+        redisTemplate.delete(REFRESH_TOKEN_PREFIX + refreshTokenUuid);
         Member member = memberRepository.findById(Long.parseLong(memberId))
                 .orElseThrow(() -> new GilinException(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다."));
 
@@ -65,10 +64,8 @@ public class MemberServiceImpl implements MemberService {
         KakaoInfoResponse response = kakaoClient.getUser(oAuthRegisterRequest.accessToken());
 
         memberRepository.findByoAuthTypeAndOauthId(OAuthType.KAKAO, response.id())
-                .stream()
-                .findFirst()
                 .ifPresent(m -> {
-                    throw new GilinException(HttpStatus.BAD_REQUEST, "이미 가입한 회원입니다.");
+                    throw new GilinException(HttpStatus.CONFLICT, "이미 가입한 회원입니다.");
                 });
 
         Member member = Member.builder()
@@ -89,7 +86,7 @@ public class MemberServiceImpl implements MemberService {
         String refreshTokenUuid = jwtTokenProvider.extractRefreshTokenSubject(refreshToken);
 
         redisTemplate.opsForValue().set(
-                "RT:" + refreshTokenUuid,
+                REFRESH_TOKEN_PREFIX + refreshTokenUuid,
                 member.getId().toString(),
                 jwtTokenProvider.getRefreshTokenExpiration(),
                 TimeUnit.MILLISECONDS
@@ -103,7 +100,6 @@ public class MemberServiceImpl implements MemberService {
                 .build();
     }
 
-        return new TokenResponse(newAccessToken, newRefreshToken);
     @Override
     public void updatePlace(Member member, MemberPlacePutRequest request) {
         memberPlaceRepository.deleteByMemberAndType(member, request.type());
