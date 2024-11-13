@@ -10,6 +10,7 @@ import com.gilin.route.domain.walk.service.WalkService;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse.Result.SubPath;
 import com.gilin.route.global.dto.Coordinate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +69,10 @@ public class MetroServiceImpl implements MetroService {
             }
             retList.addAll(posList);
             start++;
+        }
+        // 역방향일 경우 뒤집어서 전달
+        if (startId > endId) {
+            Collections.reverse(retList);
         }
         return retList;
     }
