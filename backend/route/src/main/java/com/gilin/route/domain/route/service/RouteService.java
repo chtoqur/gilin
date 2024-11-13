@@ -3,11 +3,16 @@ package com.gilin.route.domain.route.service;
 import com.gilin.route.domain.bus.service.BusService;
 import com.gilin.route.domain.metro.service.MetroService;
 import com.gilin.route.domain.route.dto.response.RouteResponse;
+import com.gilin.route.domain.route.dto.response.RouteResponse.SubPathh;
 import com.gilin.route.domain.route.dto.response.TravelType;
+import com.gilin.route.domain.walk.service.WalkService;
 import com.gilin.route.global.client.odsay.ODSayClient;
 import com.gilin.route.global.client.odsay.request.SearchPubTransPathRequest;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
+import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse.Result.SubPath;
 import com.gilin.route.global.config.APIKeyConfig;
+import com.gilin.route.global.dto.Coordinate;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +29,7 @@ public class RouteService {
     private final APIKeyConfig apiKeyConfig;
     private final BusService busService;
     private final MetroService metroService;
+    private final WalkService walkService;
 
     public RouteResponse getRoute(Double sx, Double sy, Double ex, Double ey,
         EnumSet<TravelType> travelTypes) {
@@ -44,28 +50,61 @@ public class RouteService {
                                                                         .stream()
                                                                         .findFirst();
 
-        return path.map(this::of)
-                   .orElse(null);
+        return of(path.orElseThrow(), new Coordinate(sx, sy), new Coordinate(ex, ey));
     }
 
-    private RouteResponse of(SearchPubTransPathResponse.Result.Path response) {
+    private RouteResponse of(SearchPubTransPathResponse.Result.Path response, Coordinate start,
+        Coordinate end) {
         RouteResponse.Infoo infoo = RouteResponse.Infoo.of(response.getInfo());
         List<RouteResponse.SubPathh> subPathhs = response.getSubPath()
                                                          .stream()
                                                          .map(this::handleSubPath)
                                                          .toList();
-        //TODO- 중간중간 걷기 추가
+        List<SubPathh> subPathhList = new ArrayList<>();
+        for (int i = 0; i < response.getSubPath()
+                                    .size(); i++) {
+            SubPath subPath = response.getSubPath()
+                                      .get(i);
+            // 걷기 타입
+            if (subPath.getTrafficType() == 3) {
+                SubPath prevSubPath = null;
+                SubPath nextSubPath = null;
+                if (i != 0) {
+                    prevSubPath = response.getSubPath()
+                                          .get(i - 1);
+                }
+                if (i != response.getSubPath()
+                                 .size() - 1) {
+                    nextSubPath = response.getSubPath()
+                                          .get(i + 1);
+                }
+                subPathhList.add(handleSubPath(prevSubPath, nextSubPath, start, end));
+            } else {
+                subPathhList.add(handleSubPath(subPath));
+            }
+        }
 
-        return new RouteResponse(infoo, subPathhs);
+        return new RouteResponse(infoo, subPathhList);
     }
 
     private RouteResponse.SubPathh handleSubPath(
         SearchPubTransPathResponse.Result.SubPath subPath) {
         return switch (subPath.getTrafficType()) {
-            case 1 -> metroService.convertToSubPathh(subPath); //TODO- metroService 종호형 수정 예쩡
+            case 1 -> metroService.convertToSubPathh(subPath);
             case 2 -> busService.convertToSubPathh(subPath);
             default -> new RouteResponse.SubPathh();
         };
     }
 
+    private RouteResponse.SubPathh handleSubPath(
+        SearchPubTransPathResponse.Result.SubPath prevSubPath
+        , SearchPubTransPathResponse.Result.SubPath nextSubPath,
+        Coordinate start,
+        Coordinate end
+    ) {
+        return walkService.convertToSubPathh(prevSubPath, nextSubPath, start, end);
+    }
+
+
 }
+
