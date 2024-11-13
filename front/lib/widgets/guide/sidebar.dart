@@ -105,7 +105,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
             widget.onSegmentTap(segment);
           },
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
                 width: 60,
@@ -132,7 +132,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                       Container(
                         width: 2,
                         height: 40,
-                        margin: const EdgeInsets.symmetric(vertical: 2),
+                        margin: const EdgeInsets.symmetric(vertical: 0),
                         child: CustomPaint(
                           painter: DashedLinePainter(
                             color: const Color(0xFFF8F5F0),
@@ -199,7 +199,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
               }
             },
             child: Container(
-              width: 300,
+              width: 150,
               height: double.infinity,
               decoration: BoxDecoration(
                 color: const Color(0xFF8DA05D),
@@ -284,7 +284,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          // TODO: 안내 시작 로직
+                          // 안내 시작 로직
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFF8F5F0),
@@ -295,7 +295,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                           ),
                         ),
                         child: const Text(
-                          '안내 시작하기',
+                          '안내 시작',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -311,7 +311,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
         ),
         // 탭 인덱스
         Positioned(
-          right: _isOpen ? 300 : 0,
+          right: _isOpen ? 150 : 0,
           top: MediaQuery.of(context).size.height * 0.4,
           child: GestureDetector(
             onTap: () {

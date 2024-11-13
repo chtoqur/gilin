@@ -26,7 +26,22 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
   List<NPathOverlay> pathOverlays = []; // 여기에 추가
   List<NMarker> markers = [];
   final ValueNotifier<TransitSegment?> _selectedSegmentNotifier = ValueNotifier(null);
+  final ValueNotifier<bool> _isSidebarVisible = ValueNotifier(true);
 
+  String _formatTime(int minutes) {
+    if (minutes < 60) {
+      return '$minutes분';
+    }
+    final hours = minutes ~/ 60;
+    final remainingMinutes = minutes % 60;
+    return '$hours시간 ${remainingMinutes}분';
+  }
+
+  String _getArrivalTime(int totalMinutes) {
+    final now = DateTime.now();
+    final arrival = now.add(Duration(minutes: totalMinutes));
+    return '${arrival.hour.toString().padLeft(2, '0')}:${arrival.minute.toString().padLeft(2, '0')} 도착 예정';
+  }
   IconData _getTransitIcon(TransitType type) {
     switch (type) {
       case TransitType.BUS:
@@ -66,10 +81,6 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
   Future<void> _initializeMapAndPath(NaverMapController controller) async {
     try {
       List<NLatLng> allCoordinates = [];
-      // List<NPathOverlay> pathOverlays = [];
-
-      print('=== Initialize Path Debug ===');
-      print('Total Segments: ${widget.routeData.subPath.length}');
 
       for (var segment in widget.routeData.subPath) {
         print('Creating overlay for segment type: ${segment.travelType}');
@@ -191,8 +202,6 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
             child: ValueListenableBuilder<TransitSegment?>(
               valueListenable: _selectedSegmentNotifier,
               builder: (context, selectedSegment, child) {
-                if (selectedSegment == null) return const SizedBox.shrink();
-
                 return Container(
                   constraints: const BoxConstraints(
                     minWidth: 170,
@@ -204,7 +213,35 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
                     borderRadius: BorderRadius.circular(20),
                     color: const Color(0xFFF8F5F0),
                   ),
-                  child: Column(
+                  child: selectedSegment == null
+                      ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _getArrivalTime(widget.routeData.info.totalTime),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Gap(12),
+                      Text(
+                        '소요시간: ${_formatTime(widget.routeData.info.totalTime)}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      const Gap(8),
+                      Text(
+                        '요금: ${widget.routeData.info.payment}원',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  )
+                      : // 선택된 세그먼트 정보 표시...
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -243,26 +280,63 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
               },
             ),
           ),
-          // 사이드바
-          Positioned(
-            right: 0,
-            top: 0,
-            bottom: 0,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.4,
-              child: GuideSidebar(
-                routeData: widget.routeData,
-                onSegmentTap: (TransitSegment segment) {
-                  _selectedSegmentNotifier.value = segment;
-                  mapController?.updateCamera(
-                    NCameraUpdate.withParams(
-                      target: segment.pathGraph.first,
-                      zoom: 17,
+          // 사이드바와 시작 버튼
+          ValueListenableBuilder<bool>(
+            valueListenable: _isSidebarVisible,
+            builder: (context, isVisible, child) {
+              return AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                right: isVisible ? 0 : -MediaQuery.of(context).size.width * 0.4,
+                top: 0,
+                bottom: 0,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      child: GuideSidebar(
+                        routeData: widget.routeData,
+                        onSegmentTap: (segment) {
+                          _selectedSegmentNotifier.value = segment;
+                          mapController?.updateCamera(
+                            NCameraUpdate.withParams(
+                              target: segment.pathGraph.first,
+                              zoom: 17,
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  );
-                },
-              ),
-            ),
+                    // Positioned(
+                    //   left: -80,
+                    //   bottom: 24,
+                    //   child: ElevatedButton(
+                    //     onPressed: () {
+                    //       // 안내 시작 로직
+                    //     },
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: const Color(0xFF8DA05D),
+                    //       padding: const EdgeInsets.symmetric(
+                    //         horizontal: 24,
+                    //         vertical: 16,
+                    //       ),
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(30),
+                    //       ),
+                    //     ),
+                    //     child: const Text(
+                    //       '안내 시작',
+                    //       style: TextStyle(
+                    //         color: Colors.white,
+                    //         fontWeight: FontWeight.bold,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),
