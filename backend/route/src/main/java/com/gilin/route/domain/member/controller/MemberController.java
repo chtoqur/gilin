@@ -5,6 +5,7 @@ import com.gilin.route.domain.member.dto.request.OAuthRegisterRequest;
 import com.gilin.route.domain.member.dto.request.OAuthLoginRequest;
 import com.gilin.route.domain.member.dto.response.LoginResponse;
 import com.gilin.route.domain.member.dto.request.MemberPlacePutRequest;
+import com.gilin.route.domain.member.dto.response.PlaceResponse;
 import com.gilin.route.domain.member.entity.Member;
 import com.gilin.route.domain.member.service.MemberService;
 import com.gilin.route.global.error.GilinException;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -81,5 +83,16 @@ public class MemberController {
     @Operation(summary = "테스트 유저 토큰 발급", description = "테스트 유저 토큰 발급")
     public ResponseEntity<LoginResponse> test() {
         return ResponseEntity.ok(memberService.testLogin(1L));
+    }
+
+    @GetMapping("/place")
+    @Operation(summary = "장소 정보 가져오기", description = "사용자의 장소 정보를 가져옵니다. JWT 토큰이 필요합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "가져오기 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json"))
+    })
+    public ResponseEntity<List<PlaceResponse>> getPlace(@Authenticated Member member) {
+        if (Objects.isNull(member)) throw new GilinException(HttpStatus.UNAUTHORIZED, "");
+        return ResponseEntity.ok(memberService.getPlace(member));
     }
 }

@@ -1,6 +1,7 @@
 package com.gilin.route.domain.member.service;
 
 import com.gilin.route.domain.member.dto.request.OAuthRegisterRequest;
+import com.gilin.route.domain.member.dto.response.PlaceResponse;
 import com.gilin.route.domain.member.entity.MemberPlace;
 import com.gilin.route.domain.member.repository.MemberPlaceRepository;
 import com.gilin.route.global.client.oAuthKakao.KakaoInfoResponse;
@@ -17,6 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -115,5 +117,13 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public LoginResponse testLogin(Long memberId) {
         return makeLoginResponse(memberRepository.findById(memberId).orElseThrow());
+    }
+
+    @Override
+    public List<PlaceResponse> getPlace(Member member) {
+        return memberPlaceRepository.findByMember(member)
+                .stream()
+                .map(PlaceResponse::of)
+                .toList();
     }
 }
