@@ -1,23 +1,19 @@
-import 'package:gap/gap.dart'; // Gap import 추가
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
 import '../../models/route/transit_route.dart';
-import '../../models/search/local_search_result.dart';
-import '../../models/route/custom_route.dart';
-
-// 테스트용
-import '../../utils/sample_data/route_samples.dart';
+import '../../state/route/route_state.dart';
 import '../../widgets/guide/sidebar.dart';
 
 class GuidePreviewScreen extends ConsumerStatefulWidget {
-  final LocalSearchResult selectedLocation;
-  final TransitRoute routeData; // 백엔드에서 받은 경로 데이터
+  final TransitRoute routeData;
+  final RouteState routeState;
 
   const GuidePreviewScreen({
     Key? key,
-    required this.selectedLocation,
     required this.routeData,
+    required this.routeState,
   }) : super(key: key);
 
   @override
@@ -28,36 +24,34 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
   NaverMapController? mapController;
   NPathOverlay? pathOverlay;
   List<NMarker> markers = [];
-  // ValueNotifier는 한 번만 선언
   final ValueNotifier<TransitSegment?> _selectedSegmentNotifier = ValueNotifier(null);
 
-  // 헬퍼 메서드들을 클래스 상단에 배치
   IconData _getTransitIcon(TransitType type) {
     switch (type) {
-      case TransitType.bus:
+      case TransitType.BUS:
         return Icons.directions_bus;
-      case TransitType.subway:
+      case TransitType.METRO:
         return Icons.subway;
-      case TransitType.taxi:
+      case TransitType.TAXI:
         return Icons.local_taxi;
-      case TransitType.walking:
+      case TransitType.WALK:
         return Icons.directions_walk;
-      case TransitType.bicycle:
+      case TransitType.BICYCLE:
         return Icons.pedal_bike;
     }
   }
 
   String _getTransitTypeText(TransitType type) {
     switch (type) {
-      case TransitType.bus:
+      case TransitType.BUS:
         return '버스';
-      case TransitType.subway:
+      case TransitType.METRO:
         return '지하철';
-      case TransitType.taxi:
+      case TransitType.TAXI:
         return '택시';
-      case TransitType.walking:
+      case TransitType.WALK:
         return '도보';
-      case TransitType.bicycle:
+      case TransitType.BICYCLE:
         return '자전거';
     }
   }
@@ -71,40 +65,35 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
   Future<void> _initializeMapAndPath(NaverMapController controller) async {
     try {
       List<NLatLng> allCoordinates = [];
-      for (var segment in widget.routeData.segments) {
-        allCoordinates.addAll(segment.coordinates);
+      for (var segment in widget.routeData.subPath) {
+        allCoordinates.addAll(segment.pathGraph);
       }
 
-      // 시작점과 도착점 좌표
-      final startPoint = allCoordinates.first;
-      final endPoint = allCoordinates.last;
+      final startPoint = NLatLng(widget.routeState.startPoint.y, widget.routeState.startPoint.x);
+      final endPoint = NLatLng(widget.routeState.endPoint.y, widget.routeState.endPoint.x);
 
-      // 시작점 마커 생성
       final startMarker = NMarker(
         id: 'start_marker',
         position: startPoint,
         icon: NOverlayImage.fromAssetImage('assets/images/start_marker.png'),
       );
 
-      // 도착점 마커 생성
       final endMarker = NMarker(
         id: 'end_marker',
         position: endPoint,
         icon: NOverlayImage.fromAssetImage('assets/images/end_marker.png'),
       );
 
-      // InfoWindow 생성
       final startInfoWindow = NInfoWindow.onMarker(
         id: 'start_info',
-        text: '시작점',
+        text: widget.routeState.startPoint.title,
       );
 
       final endInfoWindow = NInfoWindow.onMarker(
         id: 'end_info',
-        text: widget.selectedLocation.title,
+        text: widget.routeState.endPoint.title,
       );
 
-      // 마커와 InfoWindow 추가
       await controller.addOverlay(startMarker);
       await controller.addOverlay(endMarker);
       await startMarker.openInfoWindow(startInfoWindow);
@@ -112,7 +101,6 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
 
       markers.addAll([startMarker, endMarker]);
 
-      // 경로 오버레이 생성 및 추가
       pathOverlay = NPathOverlay(
         id: 'path_overlay',
         coords: allCoordinates,
@@ -127,7 +115,6 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
 
       await controller.addOverlay(pathOverlay!);
 
-      // 경로가 모두 보이도록 카메라 이동
       final bounds = NLatLngBounds(
         southWest: NLatLng(
           allCoordinates
@@ -184,7 +171,6 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
               _initializeMapAndPath(controller);
             },
           ),
-          // 경로 정보 표시
           Positioned(
             left: 16,
             top: 16,
@@ -211,12 +197,12 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
                       Row(
                         children: [
                           Icon(
-                            _getTransitIcon(selectedSegment.type),
+                            _getTransitIcon(selectedSegment.travelType),
                             color: const Color(0xFF8DA05D),
                           ),
                           const Gap(8),
                           Text(
-                            _getTransitTypeText(selectedSegment.type),
+                            _getTransitTypeText(selectedSegment.travelType),
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -231,7 +217,7 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
                       ),
                       const Gap(8),
                       Text(
-                        '${_formatDistance(selectedSegment.distance)} • ${selectedSegment.duration}분',
+                        '${_formatDistance(selectedSegment.distance)} • ${selectedSegment.sectionTime}분',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],
@@ -253,12 +239,10 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
               child: GuideSidebar(
                 routeData: widget.routeData,
                 onSegmentTap: (TransitSegment segment) {
-                  // TransitSegment를 받아서 처리
                   _selectedSegmentNotifier.value = segment;
-                  // segment의 coordinates에서 첫 번째 좌표를 사용
                   mapController?.updateCamera(
                     NCameraUpdate.withParams(
-                      target: segment.coordinates.first,
+                      target: segment.pathGraph.first,
                       zoom: 17,
                     ),
                   );

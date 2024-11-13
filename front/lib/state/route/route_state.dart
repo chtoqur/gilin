@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 
 class RouteLocation {
   final String title;
@@ -32,12 +33,13 @@ class RouteState {
   final List<String> selectedTransports;
 
   RouteState({
-    this.startPoint = const RouteLocation(),
+    RouteLocation? startPoint,
     this.endPoint = const RouteLocation(),
     this.currentInputMode,
     DateTime? arrivalTime,
     this.selectedTransports = const ['지하철', '버스', '도보'],
-  }) : arrivalTime = arrivalTime ?? _initializeTime();
+  }) :  startPoint = startPoint ?? RouteLocation(),
+        arrivalTime = arrivalTime ?? _initializeTime();
 
   static DateTime _initializeTime() { // 현재 시간으로 초기화
     var now = DateTime.now();
@@ -51,12 +53,23 @@ class RouteState {
     );
   }
 
+  static Future<RouteLocation> getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    return RouteLocation(
+      title: '현재 위치',
+      x: position.longitude,
+      y: position.latitude,
+    );
+  }
+
   RouteState copyWith({
     RouteLocation? startPoint,
     RouteLocation? endPoint,
     RouteInputMode? currentInputMode,
     DateTime? arrivalTime,
     List<String>? selectedTransports,
+
   }) {
     return RouteState(
       startPoint: startPoint ?? this.startPoint,
@@ -71,7 +84,14 @@ class RouteState {
 enum RouteInputMode { start, end }
 
 class RouteNotifier extends StateNotifier<RouteState> {
-  RouteNotifier() : super(RouteState());
+  RouteNotifier() : super(RouteState()) {
+    _initializeStartPoint();
+  }
+
+  void _initializeStartPoint() async {
+    final currentLocation = await RouteState.getCurrentLocation();
+    state = state.copyWith(startPoint: currentLocation);
+  }
 
   void setInputMode(RouteInputMode mode) {
     state = state.copyWith(currentInputMode: mode);

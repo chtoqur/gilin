@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
@@ -6,7 +7,13 @@ import 'package:gilin/state/router/router_provider.dart';
 
 void main() async {
   await _initialize();
-
+  if (kDebugMode) {
+    // FrameEvents 로그 필터링
+    debugPrint = (String? message, {int? wrapWidth}) {
+      if (message?.contains('FrameEvents') ?? false) return;
+      print(message);
+    };
+  }
   runApp(
     const ProviderScope(
       child: MyApp(),

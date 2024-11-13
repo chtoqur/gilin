@@ -1,11 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gilin/widgets/route/main/route_selector_widget.dart';
 import 'package:gilin/widgets/route/main/transport_selector_widget.dart';
 import 'package:gap/gap.dart';
+import 'package:dio/dio.dart';
 
+import '../../models/route/transit_route.dart';
 import '../../state/route/route_state.dart';
-import '../../widgets/route/main/cupertino_time_picker.dart';
+import '../../state/route/service_providers.dart';
+import '../guide/guide_preview_screen.dart';
 
 class RouteScreen extends ConsumerStatefulWidget {
   const RouteScreen({Key? key}) : super(key: key);
@@ -15,7 +19,57 @@ class RouteScreen extends ConsumerStatefulWidget {
 }
 
 class _RouteScreenState extends ConsumerState<RouteScreen> {
-  bool isPlaceTab = true;
+  Future<void> _requestRoute() async {
+    try {
+      final routeState = ref.read(routeProvider);
+      final routeService = ref.read(routeServiceProvider);
+
+      // 이동수단 매핑
+      final travelTypes = routeState.selectedTransports.map((transport) {
+        switch (transport) {
+          case '지하철':
+            return 'METRO';
+          case '버스':
+            return 'BUS';
+          case '택시':
+            return 'TAXI';
+          case '자전거':
+            return 'BICYCLE';
+          case '도보':
+            return 'WALK';
+          default:
+            return 'WALK';
+        }
+      }).toList();
+
+      final transitRoute = await routeService.getRoute(
+        sx: routeState.startPoint.x,
+        sy: routeState.startPoint.y,
+        ex: routeState.endPoint.x,
+        ey: routeState.endPoint.y,
+        travelTypes: travelTypes,
+        arrivalTime: routeState.arrivalTime,
+      );
+
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GuidePreviewScreen(
+              routeData: transitRoute,
+              routeState: routeState,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('경로 검색 중 오류가 발생했습니다: ${e.toString()}')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +105,23 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
                     ),
                   ),
                   const Gap(15),
-                  CupertinoTimePicker(
-                    onDateTimeChanged: (DateTime time) {
-                      ref.read(routeProvider.notifier).setArrivalTime(time);
-                    },
-                    initTimeStr: '',
-                    key: ValueKey(ref.watch(routeProvider).arrivalTime),
+                  Container(
+                    height: 140,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8F5F0),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: CupertinoDatePicker(
+                      initialDateTime: ref.read(routeProvider).arrivalTime ?? DateTime.now(),
+                      onDateTimeChanged: (DateTime time) {
+                        ref.read(routeProvider.notifier).setArrivalTime(time);
+                      },
+                      mode: CupertinoDatePickerMode.time,
+                      use24hFormat: false,
+                      minuteInterval: 5,
+                    ),
                   ),
+
                   const Gap(30),
                   const Text(
                     '이동수단을 선택해주세요.',
@@ -91,13 +155,7 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
         child: SafeArea(
           child: GestureDetector(
             onTap: () {
-              var routeState = ref.read(routeProvider);
-              print('=== 경로 정보 ===');
-              print('출발지: ${routeState.startPoint.title} (${routeState.startPoint.x}, ${routeState.startPoint.y})');
-              print('도착지: ${routeState.endPoint.title} (${routeState.endPoint.x}, ${routeState.endPoint.y})');
-              print('도착 시간: ${routeState.arrivalTime?.hour}시 ${routeState.arrivalTime?.minute}분');
-              print('선택된 이동수단: ${routeState.selectedTransports.join(", ")}');
-              print('===============');
+              _requestRoute();
             },
             child: const SizedBox(
               height: 35,

@@ -23,6 +23,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
   bool _isOpen = true;
+  int _selectedSegmentIndex = -1;
 
   @override
   void initState() {
@@ -57,28 +58,49 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
 
   IconData _getTransitIcon(TransitType type) {
     switch (type) {
-      case TransitType.bus:
+      case TransitType.BUS:
         return Icons.directions_bus;
-      case TransitType.subway:
+      case TransitType.METRO:
         return Icons.subway;
-      case TransitType.taxi:
+      case TransitType.TAXI:
         return Icons.local_taxi;
-      case TransitType.walking:
+      case TransitType.WALK:
         return Icons.directions_walk;
-      case TransitType.bicycle:
+      case TransitType.BICYCLE:
         return Icons.pedal_bike;
     }
   }
 
+  String _getTransitTypeText(TransitType type) {
+    switch (type) {
+      case TransitType.BUS:
+        return '버스';
+      case TransitType.METRO:
+        return '지하철';
+      case TransitType.TAXI:
+        return '택시';
+      case TransitType.WALK:
+        return '도보';
+      case TransitType.BICYCLE:
+        return '자전거';
+    }
+  }
+
+  String _formatDistance(double meters) {
+    return meters >= 1000
+        ? '${(meters / 1000).toStringAsFixed(1)}km'
+        : '${meters.toInt()}m';
+  }
+
   Widget _buildTimelineItem(TransitSegment segment, bool isLast) {
-    final bool isSelected = widget.routeData.segments.indexOf(segment) == _selectedSegmentIndex;
+    final bool isSelected = widget.routeData.subPath.indexOf(segment) == _selectedSegmentIndex;
 
     return Column(
       children: [
         InkWell(
           onTap: () {
             setState(() {
-              _selectedSegmentIndex = widget.routeData.segments.indexOf(segment);
+              _selectedSegmentIndex = widget.routeData.subPath.indexOf(segment);
             });
             widget.onSegmentTap(segment);
           },
@@ -101,7 +123,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                         ),
                       ),
                       child: Icon(
-                        _getTransitIcon(segment.type),
+                        _getTransitIcon(segment.travelType),
                         color: isSelected ? const Color(0xFF8DA05D) : const Color(0xFFF8F5F0),
                         size: 20,
                       ),
@@ -120,7 +142,6 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                   ],
                 ),
               ),
-              // 세그먼트 정보
               // Expanded(
               //   child: Padding(
               //     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -128,7 +149,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
               //       crossAxisAlignment: CrossAxisAlignment.start,
               //       children: [
               //         Text(
-              //           '${_getTransitTypeText(segment.type)} ${_formatDistance(segment.distance)}',
+              //           '${_getTransitTypeText(segment.travelType)} ${_formatDistance(segment.distance)}',
               //           style: const TextStyle(
               //             color: Color(0xFFF8F5F0),
               //             fontSize: 16,
@@ -145,7 +166,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
               //         ),
               //         const Gap(8),
               //         Text(
-              //           '소요시간 약 ${segment.duration}분',
+              //           '소요시간 약 ${segment.sectionTime}분',
               //           style: TextStyle(
               //             color: const Color(0xFFF8F5F0).withOpacity(0.6),
               //             fontSize: 12,
@@ -162,29 +183,8 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
       ],
     );
   }
-  int _selectedSegmentIndex = -1;
 
 
-  String _getTransitTypeText(TransitType type) {
-    switch (type) {
-      case TransitType.bus:
-        return '버스';
-      case TransitType.subway:
-        return '지하철';
-      case TransitType.taxi:
-        return '택시';
-      case TransitType.walking:
-        return '도보';
-      case TransitType.bicycle:
-        return '자전거';
-    }
-  }
-
-  String _formatDistance(double meters) {
-    return meters >= 1000
-        ? '${(meters / 1000).toStringAsFixed(1)}km'
-        : '${meters.toInt()}m';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -245,14 +245,14 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                         //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         //   children: [
                         //     Text(
-                        //       '총 거리 ${_formatDistance(widget.routeData.totalDistance)}',
+                        //       '총 거리 ${_formatDistance(widget.routeData.info.totalDistance.toDouble())}',
                         //       style: const TextStyle(
                         //         color: Color(0xFFF8F5F0),
                         //         fontSize: 14,
                         //       ),
                         //     ),
                         //     Text(
-                        //       '예상 소요시간 ${widget.routeData.totalDuration}분',
+                        //       '예상 소요시간 ${widget.routeData.info.totalTime}분',
                         //       style: const TextStyle(
                         //         color: Color(0xFFF8F5F0),
                         //         fontSize: 14,
@@ -269,10 +269,10 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         children: [
-                          for (int i = 0; i < widget.routeData.segments.length; i++)
+                          for (int i = 0; i < widget.routeData.subPath.length; i++)
                             _buildTimelineItem(
-                              widget.routeData.segments[i],
-                              i == widget.routeData.segments.length - 1,
+                              widget.routeData.subPath[i],
+                              i == widget.routeData.subPath.length - 1,
                             ),
                         ],
                       ),
