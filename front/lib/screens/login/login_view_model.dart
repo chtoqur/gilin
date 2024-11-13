@@ -1,23 +1,32 @@
-import 'package:gilin/screens/login/social_login.dart';
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import '../../core/storage/secure_storage.dart';
+import 'kakao_login.dart';
 
 class LoginViewModel {
-  final SocialLogin _socialLogin;
+  final KakaoLogin _kakaoLogin;
+  final SecureStorage _secureStorage;
   bool isLogined = false;
-  User? user;
 
-  LoginViewModel(this._socialLogin);
+  LoginViewModel(this._kakaoLogin, this._secureStorage);
 
-  Future login() async {
-    isLogined = await _socialLogin.login();
-    if (isLogined) {
-      user = await UserApi.instance.me();
+  Future<void> login() async {
+    try {
+      var kakaoData = await _kakaoLogin.login();
+
+      var response = await _kakaoLogin.authenticateWithServer(kakaoData);
+
+      await _secureStorage.write(
+        key: 'accessToken',
+        value: response['accessToken'],
+      );
+      await _secureStorage.write(
+        key: 'refreshToken',
+        value: response['refreshToken'],
+      );
+
+      isLogined = true;
+    } catch (e) {
+      isLogined = false;
+      rethrow;
     }
-  }
-
-  Future logout() async {
-    await _socialLogin.logout();
-    isLogined = false;
-    user = null;
   }
 }

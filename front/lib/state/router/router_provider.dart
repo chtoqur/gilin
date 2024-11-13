@@ -4,7 +4,6 @@ import 'package:gilin/screens/search/search_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gilin/screens/alert/alert_screen.dart';
 import 'package:gilin/screens/mypage/mypage_screen.dart';
-import 'package:gilin/screens/mypage/test_screen.dart';
 import 'package:gilin/screens/route/route_screen.dart';
 import 'package:gilin/screens/schedule/schedule_screen.dart';
 import 'package:gilin/screens/main_screen.dart';
@@ -40,10 +39,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/mypage',
             builder: (context, state) => const MypageScreen(),
-          ),
-          GoRoute(
-            path: '/test',
-            builder: (context, state) => TestScreen(),
           ),
           GoRoute(
             path: '/search',

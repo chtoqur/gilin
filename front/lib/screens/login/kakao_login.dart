@@ -1,39 +1,43 @@
-import 'package:gilin/screens/login/social_login.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:dio/dio.dart';
 
-class KakaoLogin implements SocialLogin {
-  @override
-  Future<bool> login() async {
+class KakaoLogin {
+  final Dio _dio;
+
+  KakaoLogin({required Dio dio}) : _dio = dio;
+
+  Future<Map<String, dynamic>> login() async {
     try {
-      bool isInstalled = await isKakaoTalkInstalled();
-      if (isInstalled) {
-        try {
-          await UserApi.instance.loginWithKakaoTalk();
-          return true;
-        } catch (e) {
-          return false;
-        }
+      OAuthToken token;
+      if (await isKakaoTalkInstalled()) {
+        token = await UserApi.instance.loginWithKakaoTalk();
       } else {
-        try {
-          await UserApi.instance.loginWithKakaoAccount();
-          return true;
-        } catch (e) {
-          return false;
-        }
+        token = await UserApi.instance.loginWithKakaoAccount();
       }
-    } catch (e) {
-      return false;
-    }
-  }
 
-  @override
-  Future<bool> logout() async {
-    try {
-      await UserApi.instance.unlink();
-      return true;
+      User user = await UserApi.instance.me();
+
+      return {
+        'kakaoId': user.id.toString(),
+        'email': user.kakaoAccount?.email,
+        'nickname': user.kakaoAccount?.profile?.nickname,
+        'accessToken': token.accessToken,
+      };
     } catch (error) {
-      return false;
+      throw Exception('카카오 로그인 실패: $error');
     }
   }
 
+  Future<Map<String, dynamic>> authenticateWithServer(Map<String, dynamic> kakaoData) async {
+    try {
+      var response = await _dio.post(
+        '/api/auth/kakao',
+        data: kakaoData,
+      );
+
+      return response.data;
+    } catch (error) {
+      throw Exception('서버 인증 실패: $error');
+    }
+  }
 }
