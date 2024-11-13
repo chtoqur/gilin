@@ -105,7 +105,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
             widget.onSegmentTap(segment);
           },
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
                 width: 60,
@@ -132,7 +132,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                       Container(
                         width: 2,
                         height: 40,
-                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        margin: const EdgeInsets.symmetric(vertical: 2),
                         child: CustomPaint(
                           painter: DashedLinePainter(
                             color: const Color(0xFFF8F5F0),
@@ -171,7 +171,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
               //             color: const Color(0xFFF8F5F0).withOpacity(0.6),
               //             fontSize: 12,
               //           ),
-              //         ),
+              //         ) ,
               //       ],
               //     ),
               //   ),
@@ -199,7 +199,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
               }
             },
             child: Container(
-              width: 400,
+              width: 300,
               height: double.infinity,
               decoration: BoxDecoration(
                 color: const Color(0xFF8DA05D),

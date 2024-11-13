@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import '../../models/route/transit_route.dart';
 import '../../state/route/route_state.dart';
 import '../../widgets/guide/sidebar.dart';
+import '../../utils/guide/path_style_utils.dart';
 
 class GuidePreviewScreen extends ConsumerStatefulWidget {
   final TransitRoute routeData;
@@ -65,7 +66,16 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
   Future<void> _initializeMapAndPath(NaverMapController controller) async {
     try {
       List<NLatLng> allCoordinates = [];
+      List<NPathOverlay> pathOverlays = [];
+
       for (var segment in widget.routeData.subPath) {
+        final pathOverlay = PathStyleUtils.createPathOverlay(
+          id: 'path_overlay_${widget.routeData.subPath.indexOf(segment)}',
+          coords: segment.pathGraph,
+          segment: segment,
+        );
+        await controller.addOverlay(pathOverlay);
+        pathOverlays.add(pathOverlay);
         allCoordinates.addAll(segment.pathGraph);
       }
 
