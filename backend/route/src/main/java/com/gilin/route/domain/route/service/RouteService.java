@@ -56,27 +56,19 @@ public class RouteService {
     private RouteResponse of(SearchPubTransPathResponse.Result.Path response, Coordinate start,
         Coordinate end) {
         RouteResponse.Infoo infoo = RouteResponse.Infoo.of(response.getInfo());
-        List<RouteResponse.SubPathh> subPathhs = response.getSubPath()
-                                                         .stream()
-                                                         .map(this::handleSubPath)
-                                                         .toList();
+        List<SubPath> subPathList = response.getSubPath();
         List<SubPathh> subPathhList = new ArrayList<>();
-        for (int i = 0; i < response.getSubPath()
-                                    .size(); i++) {
-            SubPath subPath = response.getSubPath()
-                                      .get(i);
+        for (int i = 0; i < subPathList.size(); i++) {
+            SubPath subPath = subPathList.get(i);
             // 걷기 타입
             if (subPath.getTrafficType() == 3) {
                 SubPath prevSubPath = null;
                 SubPath nextSubPath = null;
                 if (i != 0) {
-                    prevSubPath = response.getSubPath()
-                                          .get(i - 1);
+                    prevSubPath = subPathList.get(i - 1);
                 }
-                if (i != response.getSubPath()
-                                 .size() - 1) {
-                    nextSubPath = response.getSubPath()
-                                          .get(i + 1);
+                if (i != subPathList.size() - 1) {
+                    nextSubPath = subPathList.get(i + 1);
                 }
                 subPathhList.add(handleSubPath(prevSubPath, nextSubPath, start, end));
             } else {
@@ -104,7 +96,6 @@ public class RouteService {
     ) {
         return walkService.convertToSubPathh(prevSubPath, nextSubPath, start, end);
     }
-
 
 }
 
