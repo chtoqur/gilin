@@ -3,10 +3,11 @@ package com.gilin.route.domain.metro.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gilin.route.domain.metro.dto.MetroExitToDest;
 import com.gilin.route.domain.metro.dto.MetroLinkDto;
-import com.gilin.route.domain.metro.dto.PollyLinePos;
-import com.gilin.route.domain.metro.dto.PollyLineResponseDto;
+import com.gilin.route.domain.route.dto.response.RouteResponse;
+import com.gilin.route.domain.route.dto.response.RouteResponse.SubPathh;
 import com.gilin.route.domain.walk.dto.WalkInfo;
 import com.gilin.route.domain.walk.service.WalkService;
+import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse.Result.SubPath;
 import com.gilin.route.global.dto.Coordinate;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +46,10 @@ public class MetroServiceImpl implements MetroService {
      * @return PollyLine 을 그리기 위한 좌표 리스트
      */
     @Override
-    public PollyLineResponseDto getMetroPollyLine(Integer startId, Integer endId) {
+    public List<Coordinate> getMetroPollyLine(Integer startId, Integer endId) {
         Integer start = Math.min(startId, endId);
         Integer end = Math.max(startId, endId);
-        List<PollyLinePos> retList = new ArrayList<>();
+        List<Coordinate> retList = new ArrayList<>();
         while (start < end) {
             StringBuilder sb = new StringBuilder();
             sb.append(start)
@@ -56,24 +57,19 @@ public class MetroServiceImpl implements MetroService {
               .append(start + 1)
               .append(":graphPos");
             List<Object> posDataList = listOperations.range(sb.toString(), 0, -1);
-            List<PollyLinePos> posList = new ArrayList<>();
+            List<Coordinate> posList = new ArrayList<>();
             for (Object data : posDataList) {
                 String string = (String) data;
                 String cleaned = string.replaceAll("[()]", "");
                 String[] split = cleaned.split(",");
                 Double x = Double.parseDouble(split[0].trim());
                 Double y = Double.parseDouble(split[1].trim());
-                posList.add(PollyLinePos.builder()
-                                        .x(x)
-                                        .y(y)
-                                        .build());
+                posList.add(new Coordinate(x, y));
             }
             retList.addAll(posList);
             start++;
         }
-        return PollyLineResponseDto.builder()
-                                   .pollyLinePosList(retList)
-                                   .build();
+        return retList;
     }
 
     /**
@@ -133,4 +129,15 @@ public class MetroServiceImpl implements MetroService {
 
         return closestExit;
     }
+
+    @Override
+    public SubPathh convertToSubPathh(SubPath subPath) {
+        if (subPath.getTrafficType() != 1) {
+            return null;
+        }
+        Integer startId = subPath.getStartID();
+        Integer endId = subPath.getEndID();
+        return RouteResponse.SubPathh.of(subPath, getMetroPollyLine(startId, endId));
+    }
+
 }

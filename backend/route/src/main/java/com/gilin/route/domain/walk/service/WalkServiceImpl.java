@@ -1,5 +1,7 @@
 package com.gilin.route.domain.walk.service;
 
+import com.gilin.route.domain.route.dto.response.RouteResponse.SubPathh;
+import com.gilin.route.domain.route.dto.response.TravelType;
 import com.gilin.route.domain.walk.dto.WalkInfo;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse.Result.SubPath;
 import com.gilin.route.global.client.tmap.TMapClient;
@@ -71,8 +73,32 @@ public class WalkServiceImpl implements WalkService {
                        .build();
     }
 
+
     @Override
-    public SubPath walkInfoToSubPath() {
-        return null;
+    public SubPathh convertToSubPathh(SubPath prevSubPath, SubPath nextSubPath, Coordinate start,
+        Coordinate end) {
+        Coordinate walkStart, walkEnd;
+
+        if (prevSubPath == null) {
+            walkStart = start;
+        } else {
+            walkStart = new Coordinate(prevSubPath.getEndX(), prevSubPath.getEndY());
+        }
+
+        if (nextSubPath == null) {
+            walkEnd = end;
+        } else {
+            walkEnd = new Coordinate(nextSubPath.getStartX(), nextSubPath.getStartY());
+        }
+        WalkInfo info = getWalkGraphPath(walkStart, walkEnd);
+        return SubPathh.builder()
+                       .distance(info.distance())
+                       .pathGraph(info.coordinates())
+                       .travelType(TravelType.WALK)
+                       .startX(walkStart.x())
+                       .startY(walkStart.y())
+                       .endX(walkEnd.x())
+                       .endY(walkEnd.y())
+                       .build();
     }
 }
