@@ -1,6 +1,5 @@
 package com.gilin.route.global.client.oAuthKakao;
 
-import com.gilin.route.domain.member.dto.KakaoInfoResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

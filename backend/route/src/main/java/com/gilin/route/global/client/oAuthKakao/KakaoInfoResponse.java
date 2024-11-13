@@ -1,4 +1,4 @@
-package com.gilin.route.domain.member.dto;
+package com.gilin.route.global.client.oAuthKakao;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

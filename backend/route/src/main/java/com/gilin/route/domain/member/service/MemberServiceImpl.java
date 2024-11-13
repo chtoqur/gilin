@@ -1,8 +1,9 @@
 package com.gilin.route.domain.member.service;
 
-import com.gilin.route.domain.member.dto.KakaoInfoResponse;
-import com.gilin.route.domain.member.dto.OAuthTokenRequest;
-import com.gilin.route.domain.member.dto.TokenResponse;
+import com.gilin.route.global.client.oAuthKakao.KakaoInfoResponse;
+import com.gilin.route.domain.member.dto.request.OAuthTokenRequest;
+import com.gilin.route.domain.member.dto.response.TokenResponse;
+import com.gilin.route.domain.member.dto.request.MemberPlacePutRequest;
 import com.gilin.route.domain.member.entity.Member;
 import com.gilin.route.domain.member.entity.OAuthType;
 import com.gilin.route.domain.member.repository.MemberRepository;

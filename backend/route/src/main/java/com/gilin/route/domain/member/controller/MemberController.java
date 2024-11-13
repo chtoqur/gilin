@@ -1,7 +1,7 @@
 package com.gilin.route.domain.member.controller;
 
-import com.gilin.route.domain.member.dto.OAuthTokenRequest;
-import com.gilin.route.domain.member.dto.TokenResponse;
+import com.gilin.route.domain.member.dto.request.OAuthTokenRequest;
+import com.gilin.route.domain.member.dto.response.TokenResponse;
 import com.gilin.route.domain.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
