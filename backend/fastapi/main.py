@@ -34,38 +34,40 @@ class Location(BaseModel):
     longitude: float
     latitude: float
 
+
+# FastAPI 애플리케이션 설정
+app = FastAPI()
+scheduler = AsyncIOScheduler()
+redis_client = None
+
 #Redis 클라이언트 지연 초기화 함수
 async def get_redis_client():
-    global redis_client, REDIS_HOST, REDIS_PORT, REDIS_USER, REDIS_PASSWORD
+    global redis_client
     if redis_client is None:
-        return Redis(
+        redis_client = Redis(
             host=REDIS_HOST,
             port=REDIS_PORT,
             username=REDIS_USER,
             password=REDIS_PASSWORD,
             decode_responses=True
         )
-    else:
-        return redis_client
+    return redis_client
 
 @asynccontextmanager
 async def lifespan(app):
     global redis_client
-    # scheduler 실행
-    redis_client = Redis(
-        host=REDIS_HOST,
-        port=REDIS_PORT,
-        username=REDIS_USER,  # username 설정
-        password=REDIS_PASSWORD,
-        decode_responses=True)
-    await fetch_and_store_bike_station_status()
-    scheduler.add_job(lambda: asyncio.create_task(fetch_and_store_bike_station_status()), IntervalTrigger(minutes=5))
+    redis_client = await get_redis_client()
+    # 백그라운드에서 fetch 작업을 즉시 실행
+    asyncio.create_task(fetch_and_store_bike_station_status())
+
+    # 1분마다 fetch 작업을 실행하는 스케줄러 설정
+    scheduler.add_job(fetch_and_store_bike_station_status, IntervalTrigger(minutes=1))
     scheduler.start()
     yield
+    await redis_client.close()
+    scheduler.shutdown()
 
 app = FastAPI(lifespan=lifespan)
-redis_client = None
-scheduler = AsyncIOScheduler()
 
 
 @app.get("/")
@@ -75,9 +77,8 @@ async def read_root():
 async def fetch_and_store_bike_station_status():
     start_index, end_index = 1, stations_per_request
     all_stations = []
-    global redis_client
+    redis = await get_redis_client()
     try:
-        redis = redis_client
         while True:
             url = f"{BASE_URL}/{start_index}/{end_index}/"
             response = requests.get(url)
