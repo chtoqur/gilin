@@ -13,16 +13,17 @@ spring:
     password: ${USER_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: ${DDL_OPTION}
+      ddl-auto: update
+    defer-datasource-initialization: true
   data:
     redis:
       port: ${REDIS_PORT}
       host: ${HOST}
       password: ${REDIS_PW}
+  sql:
+    init:
+      mode: always
 logging:
   level:
     org.springframework.web: "info"
