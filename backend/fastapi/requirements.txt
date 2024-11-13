@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+requests
+redis[asyncio]
+pydantic
+apscheduler
