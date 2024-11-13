@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
     @ExceptionHandler(GilinException.class)
     public ResponseEntity<?> handleException(GilinException e) {
-        log.error(e.getMessage());
+        e.printStackTrace();
         return ResponseEntity.status(e.getStatus().value()).body(e.getMessage());
     }
 }
