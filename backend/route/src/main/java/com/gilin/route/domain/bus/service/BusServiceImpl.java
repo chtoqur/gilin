@@ -3,7 +3,8 @@ package com.gilin.route.domain.bus.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gilin.route.domain.bus.dto.Coordinate;
+import com.gilin.route.domain.bus.dto.BusCoordinate;
+import com.gilin.route.global.dto.Coordinate;
 import com.gilin.route.domain.route.dto.response.RouteResponse;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,34 +28,45 @@ public final class BusServiceImpl implements BusService {
     private final ObjectMapper objectMapper;
 
     @Override
-    public RouteResponse.SubPathh convertToSubPathh(SearchPubTransPathResponse.Result.SubPath subPath) {
-        if (subPath.getTrafficType() != 2) return null;
+    public RouteResponse.SubPathh convertToSubPathh(
+        SearchPubTransPathResponse.Result.SubPath subPath) {
+        if (subPath.getTrafficType() != 2) {
+            return null;
+        }
         if (subPath.getStartStationCityCode() > 1310) { // 서울 경기 외 지역
             return null;
         }
-        Long routeId = Long.parseLong(subPath.getLane().get(0).getBusLocalBlID());
+        Long routeId = Long.parseLong(subPath.getLane()
+                                             .get(0)
+                                             .getBusLocalBlID());
         Coordinate startStation = new Coordinate(subPath.getStartX(), subPath.getStartY());
         Coordinate endStation = new Coordinate(subPath.getEndX(), subPath.getEndY());
         List<Coordinate> pathGraph = getPathGraph(routeId, startStation, endStation);
-
         return RouteResponse.SubPathh.of(subPath, pathGraph);
     }
 
-    public List<Coordinate> getPathGraph(Long routeId, Coordinate startStation, Coordinate endStation) {
-        String json = redisTemplate.opsForValue().get(routeId.toString());
-        if (Objects.isNull(json)) return null;
+    public List<Coordinate> getPathGraph(Long routeId, Coordinate startStation,
+        Coordinate endStation) {
+        String json = redisTemplate.opsForValue()
+                                   .get(routeId.toString());
+        if (Objects.isNull(json)) {
+            return null;
+        }
 
-        List<Coordinate> fullPath;
+        List<BusCoordinate> fullPath;
         try {
-            fullPath = objectMapper.readValue(json,  new TypeReference<List<Coordinate>>() {});
+            fullPath = objectMapper.readValue(json, new TypeReference<List<BusCoordinate>>() {
+
+            });
         } catch (JsonProcessingException e) {
             return null;
         }
 
-        return getPathGraph(fullPath, startStation, endStation);
+        return getPathGraph(fullPath.stream().map(BusCoordinate::toCoordinate).toList(), startStation, endStation);
     }
 
-    private List<Coordinate> getPathGraph(List<Coordinate> fullPath, Coordinate startStation, Coordinate endStation) {
+    private List<Coordinate> getPathGraph(List<Coordinate> fullPath, Coordinate startStation,
+        Coordinate endStation) {
         int startIdx = 0, endIdx = 0;
         double minToStart = Double.MAX_VALUE, minToEnd = Double.MAX_VALUE;
 
@@ -73,7 +86,13 @@ public final class BusServiceImpl implements BusService {
         }
         List<Coordinate> subPath = new ArrayList<>();
         subPath.add(startStation);
-        subPath.addAll(fullPath.subList(startIdx, endIdx + 1));
+        if (startIdx > endIdx) {
+            List<Coordinate> reversedSubList = new ArrayList<>(fullPath.subList(endIdx, startIdx + 1));
+            Collections.reverse(reversedSubList);
+            subPath.addAll(reversedSubList);
+        } else {
+            subPath.addAll(fullPath.subList(startIdx, endIdx + 1));
+        }
         subPath.add(endStation);
 
         return subPath;

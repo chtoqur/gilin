@@ -7,18 +7,10 @@ import org.springframework.stereotype.Component;
 public class APIKeyConfig {
 
     private final String[] ODSayKeys;
-    private final String[] TMapKeys;
-    private final String[] SeoulKeys;
-    private final String[] KakaoKeys;
 
-    public APIKeyConfig(@Value("${apikey.odsays}") String[] ODSayKeys,
-        @Value("${apikey.tmap}") String[] TMapKeys,
-        @Value("${apikey.seouls}") String[] SeoulKeys,
-        @Value("${apikey.kakaos}") String[] KakaoKeys) {
+    public APIKeyConfig(@Value("${apikey.odsays}") String[] ODSayKeys
+    ) {
         this.ODSayKeys = ODSayKeys;
-        this.TMapKeys = TMapKeys;
-        this.SeoulKeys = SeoulKeys;
-        this.KakaoKeys = KakaoKeys;
     }
 
     public String getODSayKey() {
@@ -26,11 +18,4 @@ public class APIKeyConfig {
 
     }
 
-    public String getTMapKey() {
-        return TMapKeys[0];
-    }
-
-    public String getSeoulKey() { return SeoulKeys[0]; }
-
-    public String getKakaoKey() { return KakaoKeys[0]; }
 }

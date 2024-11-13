@@ -1,6 +1,6 @@
 package com.gilin.route.domain.route.dto.response;
 
-import com.gilin.route.domain.bus.dto.Coordinate;
+import com.gilin.route.global.dto.Coordinate;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -8,10 +8,12 @@ import lombok.*;
 import java.util.List;
 
 @Getter
+@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class RouteResponse {
+
     private Infoo info;
     private List<SubPathh> subPath;
 
@@ -20,6 +22,7 @@ public class RouteResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Infoo {
+
         @Schema(description = "도보를 제외한 총 이동 거리", example = "10075")
         private double trafficDistance;
         @Schema(description = "총 도보 이동 거리", example = "654")
@@ -46,6 +49,13 @@ public class RouteResponse {
         private double totalDistance;
         @Schema(description = "전체 배차간격 시간(분)", example = "13")
         private int totalIntervalTime;
+
+        static public Infoo of(SearchPubTransPathResponse.Result.Info info) {
+            return new Infoo(info.getTrafficDistance(), info.getTotalWalk(), info.getTotalTime(), info.getPayment(),
+                    info.getBusTransitCount(), info.getSubwayTransitCount(), info.getFirstStartStation(),
+                    info.getLastEndStation(), info.getTotalStationCount(), info.getBusStationCount(),
+                    info.getSubwayStationCount(), info.getTotalDistance(), info.getTotalIntervalTime());
+        }
     }
 
     @Getter
@@ -53,6 +63,7 @@ public class RouteResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SubPathh {
+
         @Schema(description = "이동 수단 종류 (도보, 버스, 지하철)")
         private TravelType travelType;
         @Schema(description = "경로 그래프")
@@ -111,18 +122,26 @@ public class RouteResponse {
         private Double endExitY;
         private PassStopListt passStopList;
 
-        public static SubPathh of(SearchPubTransPathResponse.Result.SubPath s, List<Coordinate> pathGraph) {
+        public static SubPathh of(SearchPubTransPathResponse.Result.SubPath s,
+            List<Coordinate> pathGraph) {
             return new SubPathh(
-                    TravelType.fromTrafficType(s.getTrafficType()),
-                    pathGraph, s.getDistance(), s.getSectionTime(), s.getStationCount(),
-                    s.getLane().stream().map(Lanee::of).toList(),
-                    s.getIntervalTime(), s.getStartName(), s.getStartX(), s.getStartY(),
-                    s.getEndName(), s.getEndX(), s.getEndY(), s.getWay(),
-                    s.getWayCode(), s.getDoor(), s.getStartID(), s.getStartLocalStationID(),
-                    s.getStartArsID(), s.getEndID(), s.getEndLocalStationID(), s.getEndArsID(),
-                    s.getStartExitNo(), s.getStartExitX(), s.getStartExitY(), s.getEndExitNo(),
-                    s.getEndExitX(), s.getEndExitY(),
-                    new PassStopListt(s.getPassStopList().getStations().stream().map(Stationn::of).toList())
+                TravelType.fromTrafficType(s.getTrafficType()),
+                pathGraph, s.getDistance(), s.getSectionTime(), s.getStationCount(),
+                s.getLane()
+                 .stream()
+                 .map(Lanee::of)
+                 .toList(),
+                s.getIntervalTime(), s.getStartName(), s.getStartX(), s.getStartY(),
+                s.getEndName(), s.getEndX(), s.getEndY(), s.getWay(),
+                s.getWayCode(), s.getDoor(), s.getStartID(), s.getStartLocalStationID(),
+                s.getStartArsID(), s.getEndID(), s.getEndLocalStationID(), s.getEndArsID(),
+                s.getStartExitNo(), s.getStartExitX(), s.getStartExitY(), s.getEndExitNo(),
+                s.getEndExitX(), s.getEndExitY(),
+                new PassStopListt(s.getPassStopList()
+                                   .getStations()
+                                   .stream()
+                                   .map(Stationn::of)
+                                   .toList())
             );
         }
     }
@@ -132,6 +151,7 @@ public class RouteResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Lanee {
+
         @Schema(description = "지하철 노선명")
         private String name;
         @Schema(description = "버스 번호", example = "95")
@@ -147,7 +167,7 @@ public class RouteResponse {
 
         public static Lanee of(SearchPubTransPathResponse.Result.Lane lane) {
             return new Lanee(lane.getName(), lane.getBusNo(), lane.getType(), lane.getBusID(),
-                    lane.getBusLocalBlID(), lane.getSubwayCode());
+                lane.getBusLocalBlID(), lane.getSubwayCode());
         }
     }
 
@@ -155,6 +175,7 @@ public class RouteResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PassStopListt {
+
         private List<Stationn> stations;
     }
 
@@ -163,6 +184,7 @@ public class RouteResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Stationn {
+
         @Schema(description = "정류장 순번", example = "0")
         private int index;
         @Schema(description = "정류장 ID", example = "109018")
@@ -181,9 +203,10 @@ public class RouteResponse {
         private String isNonStop;
 
         public static Stationn of(SearchPubTransPathResponse.Result.Station station) {
-            return new Stationn(station.getIndex(), station.getStationID(), station.getStationName(),
-                    station.getLocalStationID(), station.getArsID(), station.getX(), station.getY(),
-                    station.getIsNonStop());
+            return new Stationn(station.getIndex(), station.getStationID(),
+                station.getStationName(),
+                station.getLocalStationID(), station.getArsID(), station.getX(), station.getY(),
+                station.getIsNonStop());
         }
     }
 }
