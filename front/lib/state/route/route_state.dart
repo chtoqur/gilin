@@ -42,6 +42,8 @@ class RouteState {
 
   static DateTime _initializeTime() { // 현재 시간으로 초기화
     var now = DateTime.now();
+    // UTC 시간을 한국 시간으로 변환 (UTC+9)
+    now = now.add(const Duration(hours: 9));
     var roundedMinutes = (now.minute ~/ 5) * 5;
     return DateTime(
       now.year,

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gilin/widgets/route/main/route_selector_widget.dart';
@@ -5,7 +6,6 @@ import 'package:gilin/widgets/route/main/transport_selector_widget.dart';
 import 'package:gap/gap.dart';
 
 import '../../state/route/route_state.dart';
-import '../../widgets/route/main/cupertino_time_picker.dart';
 
 class RouteScreen extends ConsumerStatefulWidget {
   const RouteScreen({Key? key}) : super(key: key);
@@ -51,12 +51,21 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
                     ),
                   ),
                   const Gap(15),
-                  CupertinoTimePicker(
-                    onDateTimeChanged: (DateTime time) {
-                      ref.read(routeProvider.notifier).setArrivalTime(time);
-                    },
-                    initTimeStr: '',
-                    key: ValueKey(ref.watch(routeProvider).arrivalTime),
+                  Container(
+                    height: 140,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8F5F0),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: CupertinoDatePicker(
+                      initialDateTime: ref.read(routeProvider).arrivalTime ?? DateTime.now(),
+                      onDateTimeChanged: (DateTime time) {
+                        ref.read(routeProvider.notifier).setArrivalTime(time);
+                      },
+                      mode: CupertinoDatePickerMode.time,
+                      use24hFormat: false,
+                      minuteInterval: 5,
+                    ),
                   ),
                   const Gap(30),
                   const Text(

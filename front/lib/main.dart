@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'dart:developer';
@@ -32,6 +33,14 @@ class MyApp extends ConsumerWidget {
       routerConfig: router,
       title: 'GilIn',
       theme: ThemeData(primaryColor: Colors.white),
+      // time picker 한글 설정
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate
+      ],
+      supportedLocales: const [
+        Locale('ko', 'KR'),
+      ],
     );
   }
 }
