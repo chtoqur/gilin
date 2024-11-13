@@ -37,6 +37,18 @@ class PathStyleUtils {
     required List<NLatLng> coords,
     required TransitSegment segment,
   }) {
+    print('=== Path Overlay Debug ===');
+    print('Segment Type: ${segment.travelType}');
+    if (segment.lane.isNotEmpty) {
+      print('Lane Info:');
+      if (segment.travelType == TransitType.METRO) {
+        print('Subway Code: ${segment.lane.first.subwayCode}');
+      } else if (segment.travelType == TransitType.BUS) {
+        print('Bus Type: ${segment.lane.first.type}');
+      }
+    }
+    print('Selected Color: ${getPathColor(segment)}');
+    print('=====================');
     if (segment.travelType == TransitType.WALK) {
       // 도보 경로는 점선으로 표시
       return NPathOverlay(

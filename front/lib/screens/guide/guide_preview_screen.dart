@@ -23,7 +23,7 @@ class GuidePreviewScreen extends ConsumerStatefulWidget {
 
 class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
   NaverMapController? mapController;
-  NPathOverlay? pathOverlay;
+  List<NPathOverlay> pathOverlays = []; // 여기에 추가
   List<NMarker> markers = [];
   final ValueNotifier<TransitSegment?> _selectedSegmentNotifier = ValueNotifier(null);
 
@@ -66,9 +66,14 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
   Future<void> _initializeMapAndPath(NaverMapController controller) async {
     try {
       List<NLatLng> allCoordinates = [];
-      List<NPathOverlay> pathOverlays = [];
+      // List<NPathOverlay> pathOverlays = [];
+
+      print('=== Initialize Path Debug ===');
+      print('Total Segments: ${widget.routeData.subPath.length}');
 
       for (var segment in widget.routeData.subPath) {
+        print('Creating overlay for segment type: ${segment.travelType}');
+
         final pathOverlay = PathStyleUtils.createPathOverlay(
           id: 'path_overlay_${widget.routeData.subPath.indexOf(segment)}',
           coords: segment.pathGraph,
@@ -111,19 +116,18 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
 
       markers.addAll([startMarker, endMarker]);
 
-      pathOverlay = NPathOverlay(
-        id: 'path_overlay',
-        coords: allCoordinates,
-        color: Colors.blue,
-        width: 5,
-        outlineColor: Colors.white,
-        outlineWidth: 2,
-        patternImage:
-            NOverlayImage.fromAssetImage('assets/images/path_pattern.png'),
-        patternInterval: 30,
-      );
+      // pathOverlay = NPathOverlay(
+      //   id: 'path_overlay',
+      //   coords: allCoordinates,
+      //   color: Colors.blue,
+      //   width: 5,
+      //   outlineColor: Colors.white,
+      //   outlineWidth: 2,
+      //   patternImage:
+      //       NOverlayImage.fromAssetImage('assets/images/path_pattern.png'),
+      //   patternInterval: 30,
+      // );
 
-      await controller.addOverlay(pathOverlay!);
 
       final bounds = NLatLngBounds(
         southWest: NLatLng(
@@ -271,8 +275,8 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
       for (var marker in markers) {
         mapController?.deleteOverlay(marker.info);
       }
-      if (pathOverlay != null) {
-        mapController?.deleteOverlay(pathOverlay!.info);
+      for (var overlay in pathOverlays) {  // 모든 경로 오버레이 제거
+        mapController?.deleteOverlay(overlay.info);
       }
     }
     super.dispose();
