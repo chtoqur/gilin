@@ -18,15 +18,11 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: ${DDL_OPTION}
-    defer-datasource-initialization: true
   data:
     redis:
       port: ${REDIS_PORT}
       host: ${HOST}
       password: ${REDIS_PW}
-  sql:
-    init:
-      mode: always
 logging:
   level:
     org.springframework.web: "info"
