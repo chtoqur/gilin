@@ -6,7 +6,6 @@ import 'package:gilin/screens/signup/signup_step2_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gilin/screens/alert/alert_screen.dart';
 import 'package:gilin/screens/mypage/mypage_screen.dart';
-import 'package:gilin/screens/mypage/test_screen.dart';
 import 'package:gilin/screens/route/route_screen.dart';
 import 'package:gilin/screens/schedule/schedule_screen.dart';
 import 'package:gilin/screens/main_screen.dart';
@@ -41,11 +40,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/mypage',
-            builder: (context, state) => const MypageScreen(),
-          ),
-          GoRoute(
-            path: '/test',
-            builder: (context, state) => const TestScreen(),
+            builder: (context, state) => MypageScreen(),
           ),
           GoRoute(
             path: '/search',
@@ -54,7 +49,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/login',  // 로그인 경로 추가
             builder: (context, state) => const LoginScreenUI(),
-          ),
           ),
           GoRoute(
             path: '/signup_step1',
