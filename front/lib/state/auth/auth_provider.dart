@@ -18,7 +18,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
 
   AuthNotifier(this._storage) : super(const AsyncValue.data(AuthInitial()));
 
-  Future<void> signInWithKakao() async {
+  Future signInWithKakao() async {
     try {
       state = const AsyncValue.loading();
 
@@ -46,13 +46,36 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
       } catch (e) {
         if (e is DioException && e.response?.statusCode == 401) {
           print('회원가입이 필요한 사용자입니다.');
-          // 회원가입 화면으로 이동하기 위해 상태 변경
-          state = AsyncValue.data(
-            AuthNeedsRegistration(
-              token: token,
-              kakaoUser: kakaoUser,
-            ),
-          );
+
+          // 회원가입 API 호출 추가
+          try {
+            var registerResponse = await _dio.post(
+              '/user/register',
+              data: {
+                'oAuthType': 'KAKAO',
+                'accessToken': token.accessToken,
+                'refreshToken': token.refreshToken,
+                'name': kakaoUser.kakaoAccount?.profile?.nickname,
+                'gender': 'none',  // SignupStep1Screen에서 업데이트
+                'ageGroup': 0,     // SignupStep1Screen에서 업데이트
+              },
+            );
+
+            // 회원가입 성공 시 토큰 저장
+            await _storage.write(key: 'accessToken', value: registerResponse.data['accessToken']);
+            await _storage.write(key: 'refreshToken', value: registerResponse.data['refreshToken']);
+
+            // 추가 정보 입력을 위해 상태 변경
+            state = AsyncValue.data(
+              AuthNeedsRegistration(
+                token: token,
+                kakaoUser: kakaoUser,
+              ),
+            );
+          } catch (registerError) {
+            print('회원가입 실패: $registerError');
+            rethrow;
+          }
         } else {
           rethrow;
         }
@@ -63,7 +86,6 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
       rethrow;
     }
   }
-
   Future<void> signOut() async {
     try {
       state = const AsyncValue.loading();
@@ -76,3 +98,5 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
     }
   }
 }
+
+

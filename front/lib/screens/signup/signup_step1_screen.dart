@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import './signup_step2_screen.dart';
 import 'package:gilin/widgets/shared/cupertino_radio.dart';
-
+import '../../state/auth/auth_provider.dart';
+import '../../state/auth/auth_state.dart';
 import '../../state/signup/signup_state.dart';
 
 class SignupStep1Screen extends ConsumerStatefulWidget {
@@ -14,6 +16,19 @@ class SignupStep1Screen extends ConsumerStatefulWidget {
 }
 
 class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
+  int _convertAgeGroupToInt(String ageGroup) {
+    switch (ageGroup) {
+      case '10대': return 10;
+      case '20대': return 20;
+      case '30대': return 30;
+      case '40대': return 40;
+      case '50대': return 50;
+      case '60대': return 60;
+      case '70대': return 70;
+      case '80대 이상': return 80;
+      default: return 0;  // '선택 안함'
+    }
+  }
   final TextEditingController _nicknameController = TextEditingController();
   final List<String> ageGroups = [
     '선택 안함',
@@ -30,10 +45,14 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
   @override
   void initState() {
     super.initState();
-    _nicknameController.text = "길싸피";
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(signupStateProvider.notifier).updateNickname(_nicknameController.text);
-    });
+    var authState = ref.read(authProvider);
+    if (authState is AsyncData<AuthNeedsRegistration>) {
+      // 카카오 닉네임을 기본값으로 설정
+      _nicknameController.text = authState.value.kakaoUser.kakaoAccount?.profile?.nickname ?? "";
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(signupStateProvider.notifier).updateNickname(_nicknameController.text);
+      });
+    }
   }
 
   @override
@@ -233,22 +252,33 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                       child: CupertinoButton.filled(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         borderRadius: BorderRadius.zero,
-                        onPressed: signupState.nickname.isEmpty
-                            ? null
-                            : () {
-                          // 회원가입 완료 로직
+                        onPressed: () async {
+                          try {
+                            // SignupStep2로 이동
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignupStep2Screen(),
+                              ),
+                            );
+                          } catch (e) {
+                            print('에러 발생: $e');
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('오류가 발생했습니다.')),
+                              );
+                            }
+                          }
                         },
                         disabledColor: const Color(0xFFD9D9D9),
-                        child: Text(
-                          '회원가입 완료',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: signupState.nickname.isEmpty
-                              ? const Color(0xFF757575)
-                              : Colors.white,
-                        ),
-                        ),
+                          child: const Text(
+                            '다음',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
                       ),
                     ),
                   ),

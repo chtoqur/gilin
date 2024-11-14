@@ -40,6 +40,12 @@ class ScheduleScreen extends ConsumerWidget {
                 .navigateToPage(context, 1, '/signup_step1'),
             child: const Text('Go to SignUp Page'),
           ),
+          ElevatedButton(
+            onPressed: () => ref
+                .read(bottomNavProvider.notifier)
+                .navigateToPage(context, 1, '/login'),
+            child: const Text('Go to login Page'),
+          ),
         ],
       ),
     );
