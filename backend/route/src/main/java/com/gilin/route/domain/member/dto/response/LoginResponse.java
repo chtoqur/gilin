@@ -9,7 +9,7 @@ public record LoginResponse(
         String refreshToken,
         @Schema(example = "김서영")
         String name,
-        @Schema(example = "W")
+        @Schema(example = "F")
         String gender,
         Integer age
 ) {
