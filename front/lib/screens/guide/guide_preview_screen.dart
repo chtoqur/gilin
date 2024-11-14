@@ -200,11 +200,11 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
                 return RouteInfoBox(
                   selectedSegment: selectedSegment,
                   routeInfo: widget.routeData.info,
+                  transitRoute: widget.routeData,  // 추가된 부분
                 );
               },
             ),
-          ),
-          // 사이드바와 시작 버튼
+          ),          // 사이드바와 시작 버튼
           ValueListenableBuilder<bool>(
             valueListenable: _isSidebarVisible,
             builder: (context, isVisible, child) {
