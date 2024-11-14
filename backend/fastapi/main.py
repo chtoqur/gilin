@@ -10,6 +10,11 @@ from datetime import datetime
 from fastapi.responses import JSONResponse
 from redis.asyncio import Redis
 from pydantic import BaseModel
+import logging
+
+# 로깅 설정
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -26,21 +31,16 @@ BASE_URL = f"{os.getenv('SEOUL_API_BASE_URL')}/{API_KEY}/json/bikeList"
 stations_per_request = 1000
 
 
-
-
-# 위치 정보 모델
 class Location(BaseModel):
     name: str
     longitude: float
     latitude: float
 
 
-# FastAPI 애플리케이션 설정
 app = FastAPI()
 scheduler = AsyncIOScheduler()
 redis_client = None
 
-#Redis 클라이언트 지연 초기화 함수
 async def get_redis_client():
     global redis_client
     if redis_client is None:
@@ -55,12 +55,10 @@ async def get_redis_client():
 
 @asynccontextmanager
 async def lifespan(app):
-    global redis_client
+    global redis_client, scheduler
     redis_client = await get_redis_client()
-    # 백그라운드에서 fetch 작업을 즉시 실행
     asyncio.create_task(fetch_and_store_bike_station_status())
 
-    # 1분마다 fetch 작업을 실행하는 스케줄러 설정
     scheduler.add_job(fetch_and_store_bike_station_status, IntervalTrigger(minutes=1))
     scheduler.start()
     yield
@@ -75,6 +73,7 @@ async def read_root():
     return "hello"
 
 async def fetch_and_store_bike_station_status():
+    logger.info("Fetching and storing bike station data...")  # 스케줄러 실행 확인용 로그
     start_index, end_index = 1, stations_per_request
     all_stations = []
     redis = await get_redis_client()
@@ -109,23 +108,20 @@ async def fetch_and_store_bike_station_status():
             await redis.hmset(f"{station_id}", station_data)
             await redis.expire(f"{station_id}", REDIS_TTL)
 
-        print(f"Data successfully stored in Redis at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        logger.info(f"Data successfully stored in Redis at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching data from API: {e}")
+        logger.error(f"Error fetching data from API: {e}")
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        logger.error(f"Unexpected error: {e}")
 
 @app.get('/update_stations')
 async def update_stations():
     await fetch_and_store_bike_station_status()
     return JSONResponse(content={"message": "Stations updated successfully"})
 
-# 서버 실행 명령어
-# uvicorn main:app --reload
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run(app, host='127.0.0.1', port=5000)
 
 
