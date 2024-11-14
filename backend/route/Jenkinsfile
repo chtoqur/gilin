@@ -28,7 +28,7 @@ pipeline {
                         sh '''
                             export $(cat $ENV_FILE | xargs)
                             chmod +x ./gradlew
-                            ./gradlew clean build
+                            ./gradlew clean build -i
                         '''
                     }
                 }
