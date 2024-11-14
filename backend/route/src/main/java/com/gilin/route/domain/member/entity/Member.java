@@ -34,20 +34,16 @@ public class Member {
     @Column
     private String gender;
 
-    @Column
-    private Integer travelType;
-
     @OneToMany(mappedBy = "member")
     private List<MemberPlace> places = new ArrayList<>();
 
     @Builder
-    public Member(OAuthType oAuthType, String oauthId, String name, Integer age, String gender, Integer travelType) {
+    public Member(OAuthType oAuthType, String oauthId, String name, Integer age, String gender) {
         this.oAuthType = oAuthType;
         this.oauthId = oauthId;
         this.name = name;
         this.age = age;
         this.gender = gender;
-        this.travelType = travelType;
     }
 }
 
