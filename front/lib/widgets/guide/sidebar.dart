@@ -5,8 +5,8 @@ import '../../models/route/transit_route.dart';
 
 class GuideSidebar extends StatefulWidget {
   final TransitRoute routeData;
-  final Function(TransitSegment) onSegmentTap;  // NLatLng 대신 TransitSegment
-  final VoidCallback? onClose;  // onClose 콜백 추가
+  final Function(TransitSegment) onSegmentTap;
+  final VoidCallback? onClose;
 
   const GuideSidebar({
     Key? key,
@@ -21,7 +21,7 @@ class GuideSidebar extends StatefulWidget {
 
 class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<Offset> _slideAnimation;
+  late Animation<double> _slideAnimation;
   bool _isOpen = true;
   int _selectedSegmentIndex = -1;
 
@@ -33,9 +33,9 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
       duration: const Duration(milliseconds: 300),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(1.0, 0.0),
-      end: Offset.zero,
+    _slideAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
@@ -69,27 +69,6 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
       case TransitType.BICYCLE:
         return Icons.pedal_bike;
     }
-  }
-
-  String _getTransitTypeText(TransitType type) {
-    switch (type) {
-      case TransitType.BUS:
-        return '버스';
-      case TransitType.METRO:
-        return '지하철';
-      case TransitType.TAXI:
-        return '택시';
-      case TransitType.WALK:
-        return '도보';
-      case TransitType.BICYCLE:
-        return '자전거';
-    }
-  }
-
-  String _formatDistance(double meters) {
-    return meters >= 1000
-        ? '${(meters / 1000).toStringAsFixed(1)}km'
-        : '${meters.toInt()}m';
   }
 
   Widget _buildTimelineItem(TransitSegment segment, bool isLast) {
@@ -132,7 +111,6 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                       Container(
                         width: 2,
                         height: 40,
-                        margin: const EdgeInsets.symmetric(vertical: 0),
                         child: CustomPaint(
                           painter: DashedLinePainter(
                             color: const Color(0xFFF8F5F0),
@@ -142,40 +120,6 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                   ],
                 ),
               ),
-              // Expanded(
-              //   child: Padding(
-              //     padding: const EdgeInsets.symmetric(horizontal: 16),
-              //     child: Column(
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       children: [
-              //         Text(
-              //           '${_getTransitTypeText(segment.travelType)} ${_formatDistance(segment.distance)}',
-              //           style: const TextStyle(
-              //             color: Color(0xFFF8F5F0),
-              //             fontSize: 16,
-              //             fontWeight: FontWeight.bold,
-              //           ),
-              //         ),
-              //         const Gap(4),
-              //         Text(
-              //           '${segment.startName} → ${segment.endName}',
-              //           style: TextStyle(
-              //             color: const Color(0xFFF8F5F0).withOpacity(0.8),
-              //             fontSize: 14,
-              //           ),
-              //         ),
-              //         const Gap(8),
-              //         Text(
-              //           '소요시간 약 ${segment.sectionTime}분',
-              //           style: TextStyle(
-              //             color: const Color(0xFFF8F5F0).withOpacity(0.6),
-              //             fontSize: 12,
-              //           ),
-              //         ) ,
-              //       ],
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ),
@@ -184,180 +128,125 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        SlideTransition(
-          position: _slideAnimation,
-          child: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              if (details.primaryVelocity! > 0) {
-                _toggleSidebar();
-              }
-            },
-            child: Container(
-              width: 150,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                color: const Color(0xFF8DA05D),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(-2, 0),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Gap(48),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+    return AnimatedBuilder(
+      animation: _slideAnimation,
+      builder: (context, child) {
+        final slideValue = _slideAnimation.value;
+        final screenWidth = MediaQuery.of(context).size.width;
+        final sidebarWidth = screenWidth * 0.25; // 화면 너비의 25%
+
+        return Stack(
+          children: [
+            // 메인 사이드바
+            Transform.translate(
+              offset: Offset(sidebarWidth * (1 - slideValue), 0),
+              child: Container(
+                width: sidebarWidth,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF8DA05D),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(-2, 0),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Gap(48),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Color(0xFFF8F5F0),
+                        ),
+                        onPressed: _toggleSidebar,
+                      ),
+                    ),
+                    const Divider(color: Color(0xFFF8F5F0), height: 1),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
                           children: [
-                            IconButton(
-                              icon: const Icon(
-                                Icons.arrow_forward_ios,
-                                color: Color(0xFFF8F5F0),
+                            for (int i = 0; i < widget.routeData.subPath.length; i++)
+                              _buildTimelineItem(
+                                widget.routeData.subPath[i],
+                                i == widget.routeData.subPath.length - 1,
                               ),
-                              onPressed: _toggleSidebar,
-                            ),
-                            const Gap(8),
-                            // const Text(
-                            //   '경로 정보',
-                            //   style: TextStyle(
-                            //     color: Color(0xFFF8F5F0),
-                            //     fontSize: 20,
-                            //     fontWeight: FontWeight.bold,
-                            //   ),
-                            // ),
                           ],
                         ),
-                        const Gap(8),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: [
-                        //     Text(
-                        //       '총 거리 ${_formatDistance(widget.routeData.info.totalDistance.toDouble())}',
-                        //       style: const TextStyle(
-                        //         color: Color(0xFFF8F5F0),
-                        //         fontSize: 14,
-                        //       ),
-                        //     ),
-                        //     Text(
-                        //       '예상 소요시간 ${widget.routeData.info.totalTime}분',
-                        //       style: const TextStyle(
-                        //         color: Color(0xFFF8F5F0),
-                        //         fontSize: 14,
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // 안내 시작 로직
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF8F5F0),
+                            foregroundColor: const Color(0xFF8DA05D),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            '안내 시작',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // 토글 버튼
+            if (!_isOpen)
+              Positioned(
+                right: 0,
+                top: MediaQuery.of(context).size.height * 0.4,
+                child: GestureDetector(
+                  onTap: _toggleSidebar,
+                  child: Container(
+                    width: 40,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF8DA05D),
+                      borderRadius: const BorderRadius.horizontal(
+                        left: Radius.circular(12),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 4,
+                          offset: const Offset(-2, 0),
+                        ),
                       ],
                     ),
-                  ),
-                  const Divider(color: Color(0xFFF8F5F0), height: 1),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          for (int i = 0; i < widget.routeData.subPath.length; i++)
-                            _buildTimelineItem(
-                              widget.routeData.subPath[i],
-                              i == widget.routeData.subPath.length - 1,
-                            ),
-                        ],
-                      ),
+                    child: Icon(
+                      Icons.chevron_left,
+                      color: Colors.white.withOpacity(0.9),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // 안내 시작 로직
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF8F5F0),
-                          foregroundColor: const Color(0xFF8DA05D),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          '안내 시작',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        // 탭 인덱스
-        Positioned(
-          right: _isOpen ? 150 : 0,
-          top: MediaQuery.of(context).size.height * 0.4,
-          child: GestureDetector(
-            onTap: () {
-              if (!_isOpen) _toggleSidebar();
-            },
-            child: Container(
-              width: 40,
-              height: 100,
-              decoration: BoxDecoration(
-                color: const Color(0xFF8DA05D),
-                borderRadius: const BorderRadius.horizontal(
-                  left: Radius.circular(12),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 4,
-                    offset: const Offset(-2, 0),
-                  ),
-                ],
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // RotatedBox(
-                  //   quarterTurns: 3,
-                  //   child: Text(
-                  //     '경로 정보',
-                  //     style: TextStyle(
-                  //       color: Colors.white.withOpacity(0.9),
-                  //       fontSize: 16,
-                  //       fontWeight: FontWeight.bold,
-                  //     ),
-                  //   ),
-                  // ),
-                  // const Gap(8),
-                  Icon(
-                    _isOpen ? Icons.chevron_right : Icons.chevron_left,
-                    color: Colors.white.withOpacity(0.9),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
@@ -368,7 +257,6 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
   }
 }
 
-// 점선을 그리기 위한 CustomPainter
 class DashedLinePainter extends CustomPainter {
   final Color color;
 

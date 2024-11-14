@@ -284,56 +284,24 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
           ValueListenableBuilder<bool>(
             valueListenable: _isSidebarVisible,
             builder: (context, isVisible, child) {
-              return AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
-                right: isVisible ? 0 : -MediaQuery.of(context).size.width * 0.4,
+              return Positioned(
+                right: isVisible ? 0 : -(MediaQuery.of(context).size.width * 0.25),
                 top: 0,
                 bottom: 0,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      child: GuideSidebar(
-                        routeData: widget.routeData,
-                        onSegmentTap: (segment) {
-                          _selectedSegmentNotifier.value = segment;
-                          mapController?.updateCamera(
-                            NCameraUpdate.withParams(
-                              target: segment.pathGraph.first,
-                              zoom: 17,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    // Positioned(
-                    //   left: -80,
-                    //   bottom: 24,
-                    //   child: ElevatedButton(
-                    //     onPressed: () {
-                    //       // 안내 시작 로직
-                    //     },
-                    //     style: ElevatedButton.styleFrom(
-                    //       backgroundColor: const Color(0xFF8DA05D),
-                    //       padding: const EdgeInsets.symmetric(
-                    //         horizontal: 24,
-                    //         vertical: 16,
-                    //       ),
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(30),
-                    //       ),
-                    //     ),
-                    //     child: const Text(
-                    //       '안내 시작',
-                    //       style: TextStyle(
-                    //         color: Colors.white,
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.25,
+                  child: GuideSidebar(
+                    routeData: widget.routeData,
+                    onSegmentTap: (segment) {
+                      _selectedSegmentNotifier.value = segment;
+                      mapController?.updateCamera(
+                        NCameraUpdate.withParams(
+                          target: segment.pathGraph.first,
+                          zoom: 17,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               );
             },
