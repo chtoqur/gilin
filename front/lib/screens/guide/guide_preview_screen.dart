@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import '../../models/route/transit_route.dart';
 import '../../state/route/route_state.dart';
+import '../../widgets/guide/route_info_box.dart';
 import '../../widgets/guide/sidebar.dart';
 import '../../utils/guide/path_style_utils.dart';
 
@@ -196,86 +197,16 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
               _initializeMapAndPath(controller);
             },
           ),
+          // 인포박스
           Positioned(
             left: 16,
             top: 16,
             child: ValueListenableBuilder<TransitSegment?>(
               valueListenable: _selectedSegmentNotifier,
               builder: (context, selectedSegment, child) {
-                return Container(
-                  constraints: const BoxConstraints(
-                    minWidth: 170,
-                    maxWidth: 250,
-                    minHeight: 129,
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: const Color(0xFFF8F5F0),
-                  ),
-                  child: selectedSegment == null
-                      ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        _getArrivalTime(widget.routeData.info.totalTime),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Gap(12),
-                      Text(
-                        '소요시간: ${_formatTime(widget.routeData.info.totalTime)}',
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      const Gap(8),
-                      Text(
-                        '요금: ${widget.routeData.info.payment}원',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  )
-                      : // 선택된 세그먼트 정보 표시...
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            _getTransitIcon(selectedSegment.travelType),
-                            color: const Color(0xFF8DA05D),
-                          ),
-                          const Gap(8),
-                          Text(
-                            _getTransitTypeText(selectedSegment.travelType),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Gap(12),
-                      Text(
-                        '${selectedSegment.startName} → ${selectedSegment.endName}',
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      const Gap(8),
-                      Text(
-                        '${_formatDistance(selectedSegment.distance)} • ${selectedSegment.sectionTime}분',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
+                return RouteInfoBox(
+                  selectedSegment: selectedSegment,
+                  routeInfo: widget.routeData.info,
                 );
               },
             ),
