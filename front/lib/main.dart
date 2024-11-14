@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:gilin/state/auth/auth_state.dart';
@@ -64,6 +65,15 @@ class MyApp extends ConsumerWidget {
       ),
       // 디버그 배너 제거 (선택사항)
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(primaryColor: Colors.white),
+      // time picker 한글 설정
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate
+      ],
+      supportedLocales: const [
+        Locale('ko', 'KR'),
+      ],
     );
   }
 }

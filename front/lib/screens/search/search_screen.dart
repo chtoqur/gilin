@@ -202,6 +202,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       SearchHistoryWidget(
                         savedLocations: savedLocations,
+                        searchController: _searchController,  // searchController 전달
                       ),
                     ],
                   ),

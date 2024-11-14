@@ -1,9 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gilin/screens/route/my_route_screen.dart';
 import 'package:gilin/screens/search/search_screen.dart';
+import 'package:gilin/screens/signup/signup_step1_screen.dart';
+import 'package:gilin/screens/signup/signup_step2_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gilin/screens/alert/alert_screen.dart';
 import 'package:gilin/screens/mypage/mypage_screen.dart';
+import 'package:gilin/screens/mypage/test_screen.dart';
 import 'package:gilin/screens/route/route_screen.dart';
 import 'package:gilin/screens/schedule/schedule_screen.dart';
 import 'package:gilin/screens/main_screen.dart';
@@ -41,12 +44,25 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const MypageScreen(),
           ),
           GoRoute(
+            path: '/test',
+            builder: (context, state) => const TestScreen(),
+          ),
+          GoRoute(
             path: '/search',
             builder: (context, state) => const SearchScreen(),
           ),
           GoRoute(
             path: '/login',  // 로그인 경로 추가
             builder: (context, state) => const LoginScreenUI(),
+          ),
+          ),
+          GoRoute(
+            path: '/signup_step1',
+            builder: (context, state) => const SignupStep1Screen(),
+          ),
+          GoRoute(
+            path: '/signup_step2',
+            builder: (context, state) => const SignupStep2Screen(),
           ),
         ],
       ),

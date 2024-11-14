@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:gilin/models/route/destination.dart';
 import 'package:gilin/widgets/route/main/destination_card.dart';
@@ -17,31 +18,31 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
   int? selectedDestinationIndex;
   final List<Destination> destinations = [
     const Destination(
-      icon: Icons.home,
+      iconPath: 'assets/images/streamline/home.svg',
       name: '집',
       address: '서울 송파구 올림픽로 긴 텍스트 테스트',
       arrivalTime: 'PM 6:00',
     ),
     const Destination(
-      icon: Icons.business,
+      iconPath: 'assets/images/streamline/company.svg',
       name: '회사',
       address: '서울 송파구 올림픽로',
       arrivalTime: 'AM 8:00',
     ),
     const Destination(
-      icon: Icons.school,
+      iconPath: 'assets/images/streamline/school.svg',
       name: '학교',
       address: '서울 송파구 올림픽로',
       arrivalTime: 'AM 9:00',
     ),
     const Destination(
-      icon: Icons.local_cafe,
+      iconPath: 'assets/images/streamline/place.svg',
       name: '카페',
       address: '서울 송파구 올림픽로',
       arrivalTime: 'PM 2:00',
     ),
     const Destination(
-      icon: Icons.restaurant,
+      iconPath: 'assets/images/streamline/place.svg',
       name: '식당',
       address: '서울 송파구 올림픽로',
       arrivalTime: 'PM 7:00',
@@ -101,20 +102,31 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                   width: 1.5,
                 ),
               ),
-              child: const Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.add_circle_outline,
-                    size: 32,
-                    color: Color(0xff463C33),
+                  Container(
+                    width: 35,
+                    height: 35,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xffF8F5F0),
+                      border: Border.all(color: const Color(0xff463C33), width: 1),
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        'assets/images/streamline/add.svg',
+                        width: 20,
+                        height: 20,
+                      ),
+                    ),
                   ),
-                  SizedBox(height: 8),
-                  Text(
+                  const SizedBox(height: 8),
+                  const Text(
                     '추가하기',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: Color(0xff463C33),
                     ),
                   ),
@@ -138,7 +150,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
               child: SafeArea(
                 child: Column(
                   children: [
-                    const Gap(30),
+                    const Gap(40),
                     SizedBox(
                       width: double.infinity,
                       height: 160,
@@ -157,7 +169,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                           Expanded(
                             flex: 4,
                             child: Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 30, 30, 30),
+                              padding: const EdgeInsets.fromLTRB(0, 30, 30, 20),
                               child: Align(
                                 alignment: Alignment.bottomRight,
                                 child: RichText(
@@ -168,7 +180,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                         text: '싸피',
                                         style: TextStyle(
                                           color: Color(0xFFF8EAAB),
-                                          fontSize: 21,
+                                          fontSize: 23,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -176,7 +188,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                         text: '님,\n',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 21,
+                                          fontSize: 23,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -184,7 +196,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                                         text: '어디로 가시나요?',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 21,
+                                          fontSize: 23,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -247,6 +259,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                       if (selectedDestinationIndex == null) { // 다른 도착지
                         context.push('/route');
                       } else {  // 출발하기
+                        
                       }
                     },
                     style: FilledButton.styleFrom(
