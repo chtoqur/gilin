@@ -4,11 +4,12 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:gilin/state/auth/auth_state.dart';
 import 'dart:developer';
 import 'package:gilin/state/router/router_provider.dart';
-import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:gilin/state/auth/auth_provider.dart';
 
 void main() async {
   // Flutter 바인딩 초기화
+
   WidgetsFlutterBinding.ensureInitialized();
 
   // 카카오 SDK 초기화

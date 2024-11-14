@@ -1,19 +1,10 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorage {
-  static final SecureStorage _instance = SecureStorage._internal();
-  static SecureStorage get instance => _instance;
+  static final SecureStorage instance = SecureStorage._internal();
+  final _storage = const FlutterSecureStorage();
 
-  late final FlutterSecureStorage _storage;
-
-  // private constructor
-  SecureStorage._internal() {
-    _storage = const FlutterSecureStorage(
-      aOptions: AndroidOptions(
-        encryptedSharedPreferences: true,
-      ),
-    );
-  }
+  SecureStorage._internal();
 
   Future<void> write({required String key, required String value}) async {
     await _storage.write(key: key, value: value);

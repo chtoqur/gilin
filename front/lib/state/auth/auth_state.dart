@@ -1,6 +1,6 @@
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
-sealed class AuthState {
+abstract class AuthState {
   const AuthState();
 }
 
@@ -15,4 +15,15 @@ class AuthAuthenticated extends AuthState {
 
 class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated();
+}
+
+// 회원가입 필요 상태 추가
+class AuthNeedsRegistration extends AuthState {
+  final OAuthToken token;
+  final User kakaoUser;
+
+  const AuthNeedsRegistration({
+    required this.token,
+    required this.kakaoUser,
+  });
 }
