@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import '../../models/route/transit_route.dart';
+import '../../utils/guide/time_formatter.dart';
+import '../../utils/guide/transit_utils.dart';
 
 class RouteInfoBox extends StatelessWidget {
   final TransitSegment? selectedSegment;
@@ -12,56 +14,6 @@ class RouteInfoBox extends StatelessWidget {
     required this.routeInfo,
   }) : super(key: key);
 
-  String _formatTime(int minutes) {
-    if (minutes < 60) {
-      return '$minutes분';
-    }
-    final hours = minutes ~/ 60;
-    final remainingMinutes = minutes % 60;
-    return '$hours시간 ${remainingMinutes}분';
-  }
-
-  String _getArrivalTime(int totalMinutes) {
-    final now = DateTime.now();
-    final arrival = now.add(Duration(minutes: totalMinutes));
-    return '${arrival.hour.toString().padLeft(2, '0')}:${arrival.minute.toString().padLeft(2, '0')} 도착 예정';
-  }
-
-  String _formatDistance(double meters) {
-    return meters >= 1000
-        ? '${(meters / 1000).toStringAsFixed(1)}km'
-        : '${meters.toInt()}m';
-  }
-
-  IconData _getTransitIcon(TransitType type) {
-    switch (type) {
-      case TransitType.BUS:
-        return Icons.directions_bus;
-      case TransitType.METRO:
-        return Icons.subway;
-      case TransitType.TAXI:
-        return Icons.local_taxi;
-      case TransitType.WALK:
-        return Icons.directions_walk;
-      case TransitType.BICYCLE:
-        return Icons.pedal_bike;
-    }
-  }
-
-  String _getTransitTypeText(TransitType type) {
-    switch (type) {
-      case TransitType.BUS:
-        return '버스';
-      case TransitType.METRO:
-        return '지하철';
-      case TransitType.TAXI:
-        return '택시';
-      case TransitType.WALK:
-        return '도보';
-      case TransitType.BICYCLE:
-        return '자전거';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +40,7 @@ class RouteInfoBox extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          _getArrivalTime(routeInfo.totalTime),
+          TimeFormatter.formatArrivalTime(routeInfo.totalTime),
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -96,7 +48,7 @@ class RouteInfoBox extends StatelessWidget {
         ),
         const Gap(12),
         Text(
-          '소요시간: ${_formatTime(routeInfo.totalTime)}',
+          '소요시간: ${TimeFormatter.formatDuration(routeInfo.totalTime)}',
           style: const TextStyle(fontSize: 14),
         ),
         const Gap(8),
@@ -119,12 +71,12 @@ class RouteInfoBox extends StatelessWidget {
         Row(
           children: [
             Icon(
-              _getTransitIcon(segment.travelType),
+              TransitUtils.getTransitIcon(segment.travelType),
               color: const Color(0xFF8DA05D),
             ),
             const Gap(8),
             Text(
-              _getTransitTypeText(segment.travelType),
+              TransitUtils.getTransitTypeText(segment.travelType),
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -139,7 +91,7 @@ class RouteInfoBox extends StatelessWidget {
         ),
         const Gap(8),
         Text(
-          '${_formatDistance(segment.distance)} • ${segment.sectionTime}분',
+          '${DistanceFormatter.format(segment.distance)} • ${segment.sectionTime}분',
           style: TextStyle(
             fontSize: 12,
             color: Colors.grey[600],

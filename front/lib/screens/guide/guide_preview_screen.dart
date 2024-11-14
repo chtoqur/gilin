@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gap/gap.dart';
 import '../../models/route/transit_route.dart';
 import '../../state/route/route_state.dart';
 import '../../widgets/guide/route_info_box.dart';
 import '../../widgets/guide/sidebar.dart';
 import '../../utils/guide/path_style_utils.dart';
+import '../../utils/guide/transit_utils.dart';
+
 
 class GuidePreviewScreen extends ConsumerStatefulWidget {
   final TransitRoute routeData;
@@ -43,58 +44,53 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
     final arrival = now.add(Duration(minutes: totalMinutes));
     return '${arrival.hour.toString().padLeft(2, '0')}:${arrival.minute.toString().padLeft(2, '0')} 도착 예정';
   }
-  IconData _getTransitIcon(TransitType type) {
-    switch (type) {
-      case TransitType.BUS:
-        return Icons.directions_bus;
-      case TransitType.METRO:
-        return Icons.subway;
-      case TransitType.TAXI:
-        return Icons.local_taxi;
-      case TransitType.WALK:
-        return Icons.directions_walk;
-      case TransitType.BICYCLE:
-        return Icons.pedal_bike;
-    }
-  }
-
-  String _getTransitTypeText(TransitType type) {
-    switch (type) {
-      case TransitType.BUS:
-        return '버스';
-      case TransitType.METRO:
-        return '지하철';
-      case TransitType.TAXI:
-        return '택시';
-      case TransitType.WALK:
-        return '도보';
-      case TransitType.BICYCLE:
-        return '자전거';
-    }
-  }
 
   String _formatDistance(double meters) {
     return meters >= 1000
         ? '${(meters / 1000).toStringAsFixed(1)}km'
         : '${meters.toInt()}m';
   }
+  void _onMapZoomChanged() async {
+    if (mapController == null) return;
 
+    final cameraPosition = await mapController!.getCameraPosition();
+    final zoomLevel = cameraPosition.zoom;
+
+    // 기존 오버레이 제거
+    for (var overlay in pathOverlays) {
+      await mapController!.deleteOverlay(overlay.info);
+    }
+    pathOverlays.clear();
+
+    // 새로운 줌 레벨로 경로 다시 그리기
+    await _refreshPathOverlays(zoomLevel);
+  }
+
+  Future<void> _refreshPathOverlays(double zoomLevel) async {
+    for (var segment in widget.routeData.subPath) {
+      final pathOverlays = PathStyleUtils.createPathOverlay(
+        id: 'path_overlay_${widget.routeData.subPath.indexOf(segment)}',
+        coords: segment.pathGraph,
+        segment: segment,
+        zoomLevel: zoomLevel,
+      );
+
+      for (var overlay in pathOverlays) {
+        await mapController?.addOverlay(overlay);
+        this.pathOverlays.add(overlay);
+      }
+    }
+  }
   Future<void> _initializeMapAndPath(NaverMapController controller) async {
     try {
       List<NLatLng> allCoordinates = [];
 
-      for (var segment in widget.routeData.subPath) {
-        print('Creating overlay for segment type: ${segment.travelType}');
+      // 현재 줌 레벨 가져오기
+      final cameraPosition = await controller.getCameraPosition();
+      final zoomLevel = cameraPosition.zoom;
 
-        final pathOverlay = PathStyleUtils.createPathOverlay(
-          id: 'path_overlay_${widget.routeData.subPath.indexOf(segment)}',
-          coords: segment.pathGraph,
-          segment: segment,
-        );
-        await controller.addOverlay(pathOverlay);
-        pathOverlays.add(pathOverlay);
-        allCoordinates.addAll(segment.pathGraph);
-      }
+      // 경로 오버레이 생성
+      await _refreshPathOverlays(zoomLevel);
 
       final startPoint = NLatLng(widget.routeState.startPoint.y, widget.routeState.startPoint.x);
       final endPoint = NLatLng(widget.routeState.endPoint.y, widget.routeState.endPoint.x);
@@ -128,18 +124,10 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
 
       markers.addAll([startMarker, endMarker]);
 
-      // pathOverlay = NPathOverlay(
-      //   id: 'path_overlay',
-      //   coords: allCoordinates,
-      //   color: Colors.blue,
-      //   width: 5,
-      //   outlineColor: Colors.white,
-      //   outlineWidth: 2,
-      //   patternImage:
-      //       NOverlayImage.fromAssetImage('assets/images/path_pattern.png'),
-      //   patternInterval: 30,
-      // );
-
+      // bounds 계산을 위한 모든 좌표 수집
+      for (var segment in widget.routeData.subPath) {
+        allCoordinates.addAll(segment.pathGraph);
+      }
 
       final bounds = NLatLngBounds(
         southWest: NLatLng(
@@ -195,6 +183,11 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
             onMapReady: (controller) {
               mapController = controller;
               _initializeMapAndPath(controller);
+            },
+            onCameraChange: (reason, animated) {
+              if (reason == NCameraUpdateReason.gesture) {
+                _onMapZoomChanged();
+              }
             },
           ),
           // 인포박스
