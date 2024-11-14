@@ -22,9 +22,21 @@ class KakaoLogin {
         'email': user.kakaoAccount?.email,
         'nickname': user.kakaoAccount?.profile?.nickname,
         'accessToken': token.accessToken,
+        // 최신 버전에서는 expiresAt 사용
+        'expiresAt': token.expiresAt,
       };
     } catch (error) {
       throw Exception('카카오 로그인 실패: $error');
+    }
+  }
+
+  // 토큰 갱신 메소드 수정
+  Future<OAuthToken> refreshAccessToken() async {
+    try {
+      // refreshToken 파라미터 없이 호출
+      return await AuthApi.instance.refreshToken();
+    } catch (e) {
+      throw Exception('토큰 갱신 실패: $e');
     }
   }
 
