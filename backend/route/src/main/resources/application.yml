@@ -8,7 +8,7 @@ spring:
   application:
     name: ${APPLICATION_NAME}
   datasource:
-    url: jdbc:postgresql://:5432/gilin
+    url: jdbc:postgresql://k11a306.p.ssafy.io:5432/gilin
     username: gilin
     password: ssafy306
     driver-class-name: org.postgresql.Driver
