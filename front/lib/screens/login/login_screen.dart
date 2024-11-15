@@ -1,104 +1,176 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gilin/themes/color.dart';
-import 'package:gilin/widgets/login/login_text_field.dart';
 
-// 로그인 UI
-class LoginScreenUI extends StatelessWidget {
+import '../../state/auth/auth_provider.dart';
+import '../../state/auth/auth_state.dart';
+
+
+class LoginScreenUI extends ConsumerStatefulWidget {
   const LoginScreenUI({Key? key}) : super(key: key);
 
   @override
+  ConsumerState<LoginScreenUI> createState() => _LoginScreenUIState();
+}
+
+class _LoginScreenUIState extends ConsumerState<LoginScreenUI>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeIn,
+      ),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.5),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+    _animationController.forward();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var authState = ref.watch(authProvider);
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      backgroundColor: beige,
+      body: SafeArea(
+        child: Stack(
           children: [
-            Align(
-              alignment: Alignment.center,
-              child: Image.asset(
-                'assets/img/logo.png',
-                width: MediaQuery.of(context).size.width * 0.5,
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            LoginTextField(
-              onSaved: (String? val) {},
-              validator: (String? val) {
-                return null; // null을 반환하면 유효성 검사 통과
-              },
-              hintText: '이메일 입력',
-            ),
-            const SizedBox(height: 8.0),
-            LoginTextField(
-              obscureText: true,
-              onSaved: (String? val) {},
-              validator: (String? val) {
-                return null; // null을 반환하면 유효성 검사 통과
-              },
-              hintText: '비밀번호 입력',
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () async {
-                // 버튼을 눌렀을 때의 동작
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: seaGreen, // 버튼의 배경색
-                foregroundColor: white, // 버튼의 텍스트 색상
-              ),
-              child: const Text('로그인'),
-            ),
-            const SizedBox(height: 16.0),
-            Container(
-              width: 439,
-              height: 18,
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    '아이디 찾기',
-                    style: TextStyle(
-                      color: Color(0xFF979797),
-                      fontSize: 15,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      height: 0,
+                  const Spacer(flex: 2),
+                  FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: SlideTransition(
+                      position: _slideAnimation,
+                      child: Hero(
+                        tag: 'logo',
+                        child: Image.asset(
+                          'assets/images/icons/giraffe_login.png',
+                          height: 200,
+                        ),
+                      ),
                     ),
                   ),
-                  SizedBox(width: 16.0),
-                  Text(
-                    '비밀번호 찾기',
-                    style: TextStyle(
-                      color: Color(0xFF979797),
-                      fontSize: 15,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      height: 0,
+                  const SizedBox(height: 40),
+                  FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: const Column(
+                      children: [
+                        Text(
+                          'GilIn',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          '당신의 여행 길잡이',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(width: 16.0),
-                  Text(
-                    '회원가입',
-                    style: TextStyle(
-                      color: Color(0xFFA38265),
-                      fontSize: 15,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w600,
-                      height: 0,
+                  const Spacer(flex: 1),
+                  authState.when(
+                    data: (state) {
+                      if (state is AuthAuthenticated) {
+                        return Column(
+                          children: [
+                            Text('환영합니다, ${state.kakaoUser.kakaoAccount?.profile?.nickname}님'),
+                            ElevatedButton(
+                              onPressed: () => ref.read(authProvider.notifier).signOut(),
+                              child: const Text('로그아웃'),
+                            ),
+                          ],
+                        );
+                      }
+                      return FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: GestureDetector(
+                          onTap: () => ref.read(authProvider.notifier).signInWithKakao(),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  spreadRadius: 1,
+                                  blurRadius: 3,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Image.asset(
+                              'assets/images/buttons/kakao_login_medium_wide.png',
+                              height: 45,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    loading: () => const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    ),
+                    error: (error, stack) => Text('에러: $error'),
+                  ),
+                  const SizedBox(height: 16),
+                  FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: const Text(
+                      '시작하기 버튼을 누르면 이용약관과 개인정보 처리방침에 동의하게 됩니다.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black45,
+                      ),
                     ),
                   ),
-                  SizedBox(width: 16.0),
+                  const Spacer(flex: 1),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 }

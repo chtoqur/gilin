@@ -31,8 +31,13 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_naver_map: 1.3.0+1
+  kakao_flutter_sdk: ^1.9.6
+  kakao_flutter_sdk_user: ^1.9.6
   http: ^1.1.0
-
+  flutter_secure_storage: ^9.2.2
+  json_annotation: ^4.9.0
+  get: ^4.6.6
+  openid_client: ^0.4.8
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -43,6 +48,9 @@ dependencies:
   gap: ^3.0.1
   intl: ^0.19.0
   dio: ^5.7.0
+  scope: 5.1.0
+  jwt_decoder: ^2.0.1
+
   dotted_border: ^2.1.0
   flutter_localizations:
     sdk: flutter
@@ -61,12 +69,24 @@ dev_dependencies:
   build_runner: ^2.4.13
   custom_lint: ^0.7.0
   riverpod_lint: ^2.6.2
+  flutter_native_splash: ^2.4.2
+  json_serializable: ^6.8.0
+  flutter_launcher_icons: ^0.14.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+flutter_icons:
+    android: true
+    ios: false
+    image_path: "assets/images/icons/app_icon_nonback.png"
+    adaptive_icon_background: "#F8F5F0"  # 배경색 지정
+    adaptive_icon_foreground: "assets/images/icons/app_icon_nonback.png"
+
 flutter:
+
+
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -78,6 +98,7 @@ flutter:
     - assets/images/
     - assets/images/streamline/
     - assets/images/icons/
+    - assets/images/buttons/
 #    - assets/font/pdf/
 #    - assets/lottie/
 
@@ -118,3 +139,26 @@ flutter:
 #          weight: 700
 #        - asset: assets/fonts/Pretendard-Medium.otf
 #          weight: 500
+
+flutter_native_splash:
+  color: "#669358"
+  image: assets/images/icons/splash_default.png
+
+  ios: false
+  android: true
+
+
+  android_12:
+    # 안드로이드 12 이상을 위한 설정
+    image: assets/images/icons/splash_android12.png
+    color: "#669358"
+    icon_background_color: "#669358"
+
+  # 안드로이드 전용 설정
+  android_gravity: center  # 이미지 위치
+  #fullscreen: true  # 전체화면 모드 (필요시 주석 해제)
+
+  # 다크모드 지원 (필요시 주석 해제)
+  #color_dark: "#000000"
+  #image_dark: assets/splash_dark.png
+
