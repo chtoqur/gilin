@@ -9,12 +9,10 @@ import org.springframework.stereotype.Component;
 public class OpenApiUtil {
 
     private final HashMap<String, String> stationNameMap = new HashMap<>();
-    private final HashMap<Integer, String> metroLineMap = new HashMap<>();
 
     @PostConstruct
     public void init() {
         stationNameInit();
-        metroLaneInit();
     }
 
     public String convert(String stationName) {
@@ -24,11 +22,6 @@ public class OpenApiUtil {
         }
         return name;
     }
-
-    public String convert(Integer line) {
-        return metroLineMap.get(line);
-    }
-
 
     private void stationNameInit() {
         stationNameMap.put("쌍용", "쌍용(나사렛대)");
@@ -59,25 +52,4 @@ public class OpenApiUtil {
         stationNameMap.put("신촌", "신촌(경의중앙선)");
     }
 
-    private void metroLaneInit() {
-        metroLineMap.put(1001, "1호선");
-        metroLineMap.put(1002, "2호선");
-        metroLineMap.put(1003, "3호선");
-        metroLineMap.put(1004, "4호선");
-        metroLineMap.put(1005, "5호선");
-        metroLineMap.put(1006, "6호선");
-        metroLineMap.put(1007, "7호선");
-        metroLineMap.put(1008, "8호선");
-        metroLineMap.put(1009, "9호선");
-        metroLineMap.put(1061, "중앙선");
-        metroLineMap.put(1063, "경의중앙선");
-        metroLineMap.put(1065, "공항철도");
-        metroLineMap.put(1067, "경춘선");
-        metroLineMap.put(1075, "수의분당선");
-        metroLineMap.put(1077, "신분당선");
-        metroLineMap.put(1092, "우이신설선");
-        metroLineMap.put(1093, "서해선");
-        metroLineMap.put(1081, "경강선");
-        metroLineMap.put(1032, "GTX-A");
-    }
 }
