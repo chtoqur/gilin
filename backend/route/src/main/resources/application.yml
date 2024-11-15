@@ -24,6 +24,7 @@ spring:
       port: ${REDIS_PORT}
       host: ${HOST}
       password: ${REDIS_PW}
+      geokey: ${REDIS_GEO_KEY}
   sql:
     init:
       mode: always

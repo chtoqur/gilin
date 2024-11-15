@@ -1,8 +1,13 @@
 package com.gilin.route;
 
+import com.gilin.route.domain.bike.dto.BikeInfo;
+import com.gilin.route.domain.bike.dto.BikeStationStatus;
+import com.gilin.route.domain.bike.service.BikeServiceImpl;
 import com.gilin.route.domain.bus.service.BusService;
 import com.gilin.route.domain.metro.dto.MetroExitToDest;
 import com.gilin.route.domain.metro.service.MetroService;
+import com.gilin.route.domain.taxi.dto.TaxiInfo;
+import com.gilin.route.domain.taxi.service.TaxiServiceImpl;
 import com.gilin.route.domain.walk.dto.WalkInfo;
 import com.gilin.route.domain.walk.service.WalkService;
 import com.gilin.route.global.client.odsay.ODSayClient;
@@ -35,6 +40,8 @@ public class TestController {
     private final TMapClient tMapClient;
     private final MetroService metroService;
     private final WalkService walkService;
+    private final BikeServiceImpl bikeServiceImpl;
+    private final TaxiServiceImpl taxiServiceImpl;
 
     @GetMapping("/odsay/path")
     @Operation(description = "오디세이 호출입니다. https://lab.odsay.com/guide/releaseReference#searchPubTransPathT")
@@ -131,4 +138,35 @@ public class TestController {
         return walkService.getWalkGraphPath(new Coordinate(startX, startY),
             new Coordinate(endX, endY));
     }
+
+    @GetMapping("/bike/stations")
+    public List<BikeStationStatus> stationStatus(
+            @RequestParam(defaultValue = "127.039528") Double lat,
+            @RequestParam(defaultValue = "37.501363") Double lon
+    ) {
+        return bikeServiceImpl.searchNearbyBikeStations(new Coordinate(lat, lon));
+    }
+
+    @GetMapping("/taxi/path")
+    public TaxiInfo taxiPath(
+            @RequestParam(defaultValue = "127.104880") Double startX,
+            @RequestParam(defaultValue = "37.545736") Double startY,
+            @RequestParam(defaultValue = "127.039528") Double endX,
+            @RequestParam(defaultValue = "37.501363") Double endY
+    ) {
+        return taxiServiceImpl.getTaxiInfo(new Coordinate(startX, startY),
+                new Coordinate(endX, endY));
+    }
+
+    @GetMapping("/bike/path")
+    public BikeInfo bikePath(
+            @RequestParam(defaultValue = "127.104880") Double startX,
+            @RequestParam(defaultValue = "37.545736") Double startY,
+            @RequestParam(defaultValue = "127.039528") Double endX,
+            @RequestParam(defaultValue = "37.501363") Double endY
+    ) {
+        return bikeServiceImpl.getBikeInfo(new Coordinate(startX, startY),
+                new Coordinate(endX, endY));
+    }
+
 }
