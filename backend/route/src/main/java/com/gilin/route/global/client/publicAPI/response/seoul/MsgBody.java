@@ -4,7 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 
 import java.util.List;
 
-public record MsgBody(
+public record MsgBody<T> (
     @JacksonXmlElementWrapper(localName = "itemList", useWrapping = false)
-    List<ItemList> itemList
+    List<T> itemList
 ) {}

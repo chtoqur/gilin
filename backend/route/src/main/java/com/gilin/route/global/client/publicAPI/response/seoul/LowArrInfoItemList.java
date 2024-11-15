@@ -1,6 +1,6 @@
 package com.gilin.route.global.client.publicAPI.response.seoul;
 
-public record ItemList(
+public record LowArrInfoItemList(
         String arrmsg1,         // 첫번째 도착예정 버스의 도착정보 메시지
         String arrmsg2,         // 두번째 도착예정 버스의 도착정보 메시지
         String arsId,           // 정류소 번호
