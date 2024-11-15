@@ -40,7 +40,7 @@ public class TestController {
     private final MetroService metroService;
     private final WalkService walkService;
     private final OpenApiClient openApiClient;
-    private final TopsisAPIUtil openApiUtil;
+    private final TopsisAPIUtil topsisAPIUtil;
 
     @GetMapping("/odsay/path")
     @Operation(description = "오디세이 호출입니다. https://lab.odsay.com/guide/releaseReference#searchPubTransPathT")
@@ -149,7 +149,7 @@ public class TestController {
     public StationArrivalResponse getStationArrival(
         @RequestParam(defaultValue = "사당") String stationName
     ) {
-        return openApiClient.getRealTimeStationArrival(openApiUtil.convert(stationName));
+        return openApiClient.getRealTimeStationArrival(topsisAPIUtil.convert(stationName));
     }
 
 }

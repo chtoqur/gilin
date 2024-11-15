@@ -39,19 +39,19 @@ public class MetroServiceImpl implements MetroService {
     private final ObjectMapper objectMapper;
     private final WalkService walkService;
     private final OpenApiClient openApiClient;
-    private final TopsisAPIUtil openApiUtil;
+    private final TopsisAPIUtil topsisAPIUtil;
 
     @Autowired
     public MetroServiceImpl(RedisTemplate<String, Object> redisTemplate,
         ObjectMapper objectMapper, WalkService walkService, OpenApiClient openApiClient,
-        TopsisAPIUtil openApiUtil) {
+        TopsisAPIUtil topsisAPIUtil) {
         this.redisTemplate = redisTemplate;
         this.listOperations = redisTemplate.opsForList();
         this.hashOperations = redisTemplate.opsForHash();
         this.objectMapper = objectMapper;
         this.walkService = walkService;
         this.openApiClient = openApiClient;
-        this.openApiUtil = openApiUtil;
+        this.topsisAPIUtil = topsisAPIUtil;
     }
 
     /**
