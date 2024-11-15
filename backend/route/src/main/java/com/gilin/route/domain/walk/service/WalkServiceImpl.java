@@ -69,7 +69,7 @@ public class WalkServiceImpl implements WalkService {
         return WalkInfo.builder()
                        .coordinates(path)
                        .distance(totalDistance)
-                       .time(totalTime)
+                       .time(totalTime / 60 + 1) // 분으로 변환
                        .build();
     }
 
@@ -91,8 +91,24 @@ public class WalkServiceImpl implements WalkService {
             walkEnd = new Coordinate(nextSubPath.getStartX(), nextSubPath.getStartY());
         }
         WalkInfo info = getWalkGraphPath(walkStart, walkEnd);
+        // 환승타입일 경우(앞 뒤가 모두 지하철)
+        if (prevSubPath != null && nextSubPath != null
+            && prevSubPath.getTrafficType() == 1 && nextSubPath.getTrafficType() == 1
+        ) {
+            return SubPathh.builder()
+                           .distance(info.distance())
+                           .sectionTime(info.time())
+                           .pathGraph(new ArrayList<>())
+                           .travelType(TravelType.TRANSFER)
+                           .startX(walkStart.x())
+                           .startY(walkStart.y())
+                           .endX(walkEnd.x())
+                           .endY(walkEnd.y())
+                           .build();
+        }
         return SubPathh.builder()
                        .distance(info.distance())
+                       .sectionTime(info.time())
                        .pathGraph(info.coordinates())
                        .travelType(TravelType.WALK)
                        .startX(walkStart.x())
