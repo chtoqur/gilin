@@ -30,7 +30,7 @@ public class BusController {
             parameters = {
                     @Parameter(name = "stationId", description = "정류소 고유 ID", required = true, example = "122000201"),
                     @Parameter(name = "arsId", description = "정류소 ARS ID", required = true, example = "23305"),
-                    @Parameter(name = "routeIds", description = "조회할 노선 ID 리스트", required = true, example = "[\"104900005\"]")
+                    @Parameter(name = "routeIds", description = "조회할 노선 ID 리스트", required = true, example = "[\"104000014\", \"100100025\", \"104000006\"]")
             },
             responses = {
                     @ApiResponse(

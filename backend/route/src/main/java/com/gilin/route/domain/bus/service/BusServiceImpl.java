@@ -22,10 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -121,14 +118,15 @@ public final class BusServiceImpl implements BusService {
 
         List<BusArrivalResponse> response = parseGGBus(ggResponse, routeIds);
         response.addAll(parseSeoulBus(seoulResponse, routeIds));
-
+        Collections.sort(response, Comparator.comparingInt(BusArrivalResponse::predictTimeSecond));
         return response;
     }
 
     private List<BusArrivalResponse> parseGGBus(GyeonggiBusArrivalResponse response, List<String> routeIds) {
         if (Objects.isNull(response)
                 || Objects.isNull(response.msgHeader())
-                || "0".equals(response.msgHeader().resultCode())) {
+                || "0".equals(response.msgHeader().resultCode())
+                || Objects.isNull(response.msgBody())) {
             return new ArrayList<>();
         }
 
@@ -141,7 +139,8 @@ public final class BusServiceImpl implements BusService {
                 if (Objects.isNull(busName)) {
                     continue;
                 }
-                arrivalResponses.add(new BusArrivalResponse(busName, arrival.predictTime1(), -1));
+                arrivalResponses.add(new BusArrivalResponse(busName, arrival.predictTime1() * 60, -1));
+                arrivalResponses.add(new BusArrivalResponse(busName, arrival.predictTime2() * 60, -1));
             }
         }
 
