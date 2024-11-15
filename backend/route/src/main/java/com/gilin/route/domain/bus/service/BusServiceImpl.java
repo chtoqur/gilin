@@ -137,7 +137,11 @@ public final class BusServiceImpl implements BusService {
 
         for (BusArrivalList arrival : busArrivalList) {
             if (routeIds.contains(arrival.routeId())) {
-                arrivalResponses.add(new BusArrivalResponse(arrival.routeId(), arrival.predictTime1(), -1));
+                String busName = redisTemplate.opsForValue().get("r" + arrival.routeId());
+                if (Objects.isNull(busName)) {
+                    continue;
+                }
+                arrivalResponses.add(new BusArrivalResponse(busName, arrival.predictTime1(), -1));
             }
         }
 
@@ -152,8 +156,8 @@ public final class BusServiceImpl implements BusService {
         return response.msgBody().itemList().stream()
                 .filter(item -> routeIds.contains(item.busRouteId()))
                 .flatMap(item -> Stream.of(
-                        createBusArrivalResponse(item.busRouteId(), item.arrmsg1(), item.rtNm()),
-                        createBusArrivalResponse(item.busRouteId(), item.arrmsg2(), item.rtNm())
+                        createBusArrivalResponse(item.rtNm(), item.arrmsg1(), item.rtNm()),
+                        createBusArrivalResponse(item.rtNm(), item.arrmsg2(), item.rtNm())
                 ))
                 .filter(Objects::nonNull) // Null 제거
                 .toList();
