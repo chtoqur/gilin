@@ -35,3 +35,5 @@ apikey:
     ${ODSAY_API_CSK}
   tmap:
     ${TMAP_API_DINO}
+  public:
+    ${PUBLIC_API_CSK}
