@@ -11,7 +11,7 @@ import com.gilin.route.global.client.odsay.request.SubwayStationInfoRequest;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
 import com.gilin.route.global.client.odsay.response.SubwayStationInfoResponse;
 import com.gilin.route.global.client.openApi.OpenApiClient;
-import com.gilin.route.global.client.openApi.OpenApiUtil;
+import com.gilin.route.global.client.openApi.TopsisAPIUtil;
 import com.gilin.route.global.client.openApi.dto.response.MetroPositionResponse;
 import com.gilin.route.global.client.openApi.dto.response.StationArrivalResponse;
 import com.gilin.route.global.client.tmap.TMapClient;
@@ -40,7 +40,7 @@ public class TestController {
     private final MetroService metroService;
     private final WalkService walkService;
     private final OpenApiClient openApiClient;
-    private final OpenApiUtil openApiUtil;
+    private final TopsisAPIUtil openApiUtil;
 
     @GetMapping("/odsay/path")
     @Operation(description = "오디세이 호출입니다. https://lab.odsay.com/guide/releaseReference#searchPubTransPathT")

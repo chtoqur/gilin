@@ -11,7 +11,7 @@ import com.gilin.route.domain.walk.dto.WalkInfo;
 import com.gilin.route.domain.walk.service.WalkService;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse.Result.SubPath;
 import com.gilin.route.global.client.openApi.OpenApiClient;
-import com.gilin.route.global.client.openApi.OpenApiUtil;
+import com.gilin.route.global.client.openApi.TopsisAPIUtil;
 import com.gilin.route.global.client.openApi.dto.response.MetroPositionResponse;
 import com.gilin.route.global.client.openApi.dto.response.MetroPositionResponse.RealtimePosition;
 import com.gilin.route.global.client.openApi.dto.response.StationArrivalResponse;
@@ -39,12 +39,12 @@ public class MetroServiceImpl implements MetroService {
     private final ObjectMapper objectMapper;
     private final WalkService walkService;
     private final OpenApiClient openApiClient;
-    private final OpenApiUtil openApiUtil;
+    private final TopsisAPIUtil openApiUtil;
 
     @Autowired
     public MetroServiceImpl(RedisTemplate<String, Object> redisTemplate,
         ObjectMapper objectMapper, WalkService walkService, OpenApiClient openApiClient,
-        OpenApiUtil openApiUtil) {
+        TopsisAPIUtil openApiUtil) {
         this.redisTemplate = redisTemplate;
         this.listOperations = redisTemplate.opsForList();
         this.hashOperations = redisTemplate.opsForHash();

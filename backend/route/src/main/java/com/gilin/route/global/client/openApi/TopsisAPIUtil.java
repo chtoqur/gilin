@@ -6,7 +6,7 @@ import java.util.HashMap;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OpenApiUtil {
+public class TopsisAPIUtil {
 
     private final HashMap<String, String> stationNameMap = new HashMap<>();
 
