@@ -22,7 +22,9 @@ public class BusController {
     @GetMapping("/arrivalTime")
     public ResponseEntity<List<BusArrivalResponse>> getArrivalTime(
             @RequestParam("stationId") String stationId,
+            @RequestParam("arsId") String arsId,
             @RequestParam("routeIds") List<String> routeIds) {
-        return ResponseEntity.ok(busService.getArrivalTime(stationId, routeIds));
+        return ResponseEntity.ok(busService.getArrivalTime(stationId, arsId, routeIds));
     }
+
 }

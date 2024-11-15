@@ -13,5 +13,5 @@ public interface BusService {
 
     List<Coordinate> getPathGraph(Long routeId, Coordinate startStation, Coordinate endStation);
 
-    List<BusArrivalResponse> getArrivalTime(String stationId, List<String> routeId);
+    List<BusArrivalResponse> getArrivalTime(String stationId, String arsId, List<String> routeId);
 }
