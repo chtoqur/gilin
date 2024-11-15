@@ -107,7 +107,7 @@ class _LoginScreenUIState extends ConsumerState<LoginScreenUI>
                       if (state is AuthAuthenticated) {
                         return Column(
                           children: [
-                            Text('환영합니다, ${state.user.kakaoAccount?.profile?.nickname}님'),
+                            Text('환영합니다, ${state.kakaoUser.kakaoAccount?.profile?.nickname}님'),
                             ElevatedButton(
                               onPressed: () => ref.read(authProvider.notifier).signOut(),
                               child: const Text('로그아웃'),

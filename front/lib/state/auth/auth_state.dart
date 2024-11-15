@@ -1,29 +1,16 @@
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
-abstract class AuthState {
-  const AuthState();
-}
+// AuthState 정의
+abstract class AuthState {}
 
-class AuthInitial extends AuthState {
-  const AuthInitial();
-}
+class AuthInitial extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
-  final User user;
-  const AuthAuthenticated(this.user);
+  final User kakaoUser; // 카카오 사용자 정보 필드 추가
+
+  AuthAuthenticated(this.kakaoUser); // 생성자 수정
 }
 
-class AuthUnauthenticated extends AuthState {
-  const AuthUnauthenticated();
-}
+class AuthUnauthenticated extends AuthState {}
 
-// 회원가입 필요 상태 추가
-class AuthNeedsRegistration extends AuthState {
-  final OAuthToken token;
-  final User kakaoUser;
-
-  const AuthNeedsRegistration({
-    required this.token,
-    required this.kakaoUser,
-  });
-}
+class AuthNeedsRegistration extends AuthState {}

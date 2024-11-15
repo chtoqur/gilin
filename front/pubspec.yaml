@@ -71,11 +71,22 @@ dev_dependencies:
   riverpod_lint: ^2.6.2
   flutter_native_splash: ^2.4.2
   json_serializable: ^6.8.0
+  flutter_launcher_icons: ^0.14.1
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+flutter_icons:
+    android: true
+    ios: false
+    image_path: "assets/images/icons/app_icon_nonback.png"
+    adaptive_icon_background: "#F8F5F0"  # 배경색 지정
+    adaptive_icon_foreground: "assets/images/icons/app_icon_nonback.png"
+
 flutter:
+
+
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -150,3 +161,4 @@ flutter_native_splash:
   # 다크모드 지원 (필요시 주석 해제)
   #color_dark: "#000000"
   #image_dark: assets/splash_dark.png
+
