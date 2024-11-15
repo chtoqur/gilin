@@ -1,4 +1,4 @@
-package com.gilin.route.global.client.publicAPI.response;
+package com.gilin.route.global.client.publicAPI.response.gyeonggi;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
