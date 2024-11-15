@@ -1,7 +1,7 @@
 package com.gilin.route.domain.bus.dto;
 
 public record BusArrivalResponse(
-        String routeId,
+        String busName,
         Integer predictTimeSecond,
         Integer remainStation
 ) {
