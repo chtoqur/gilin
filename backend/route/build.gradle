@@ -48,6 +48,9 @@ dependencies {
 
     //Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    //Jackson XMl
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.0'
 }
 
 dependencyManagement {
