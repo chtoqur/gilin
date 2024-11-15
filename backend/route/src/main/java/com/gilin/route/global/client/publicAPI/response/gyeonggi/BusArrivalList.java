@@ -1,4 +1,4 @@
-package com.gilin.route.global.client.publicAPI.response;
+package com.gilin.route.global.client.publicAPI.response.gyeonggi;
 
 public record BusArrivalList(
     String flag,
