@@ -42,6 +42,13 @@ class ScheduleScreen extends ConsumerWidget {
             },
             child: const Text('Go to SignUp Page'),
           ),
+          ElevatedButton(
+            onPressed: () {
+              ref.read(bottomNavProvider.notifier).updateIndex(3);
+              context.push('/success');
+            },
+            child: const Text('Go to Success Page'),
+          ),
         ],
       ),
     );

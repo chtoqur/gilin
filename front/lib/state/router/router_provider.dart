@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gilin/screens/route/my_route_screen.dart';
+import 'package:gilin/screens/route/success_screen.dart';
 import 'package:gilin/screens/search/search_screen.dart';
 import 'package:gilin/screens/signup/signup_step1_screen.dart';
 import 'package:gilin/screens/signup/signup_step2_screen.dart';
@@ -56,6 +57,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/signup_step2',
             builder: (context, state) => const SignupStep2Screen(),
+          ),
+          GoRoute(
+            path: '/success',
+            builder: (context, state) => const SuccessScreen(),
           ),
         ],
       ),

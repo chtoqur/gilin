@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TaxiInfoPopup extends StatelessWidget {
@@ -26,11 +27,9 @@ class TaxiInfoPopup extends StatelessWidget {
       );
 
       if (!launched) {
-        // 앱이 설치되어 있지 않은 경우 플레이스토어로 이동
         await launchUrl(kakaoTaxiPlayStore);
       }
     } catch (e) {
-      // URL 실행 실패시 플레이스토어로 이동
       await launchUrl(kakaoTaxiPlayStore);
     }
   }
@@ -40,7 +39,7 @@ class TaxiInfoPopup extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFF8F5F0),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -49,13 +48,16 @@ class TaxiInfoPopup extends StatelessWidget {
             offset: const Offset(0, 4),
           ),
         ],
+        border: Border.all(
+          color: const Color(0xFF463C33).withOpacity(0.3),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // 헤더
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -63,7 +65,8 @@ class TaxiInfoPopup extends StatelessWidget {
                   '택시 승차 안내',
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF463C33),
                   ),
                 ),
                 GestureDetector(
@@ -77,25 +80,36 @@ class TaxiInfoPopup extends StatelessWidget {
               ],
             ),
           ),
-          // 정보 영역
+          const Gap(15),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
                 Container(
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: Colors.grey[200],
                     shape: BoxShape.circle,
+                    color: Color(0xFFF8F5F0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFF463C33).withOpacity(0.3),
+                        spreadRadius: 0,
+                        blurRadius: 2,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                    border: Border.all(
+                      color: Color(0xFF463C33).withOpacity(0.3),
+                    )
                   ),
                   child: const Icon(
                     Icons.local_taxi,
-                    color: Colors.black54,
-                    size: 24,
+                    color: Color(0xFF463C33),
+                    size: 30,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const Gap(16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,40 +121,63 @@ class TaxiInfoPopup extends StatelessWidget {
                             const TextSpan(
                               text: '승차 장소: ',
                               style: TextStyle(
-                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFF463C33),
                               ),
                             ),
-                            TextSpan(text: location),
+                            TextSpan(
+                              text: location,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF463C33),
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const Gap(4),
                       RichText(
                         text: TextSpan(
-                          style: const TextStyle(color: Colors.black87),
+                          style: const TextStyle(color: Color(0xFF463C33)),
                           children: [
                             const TextSpan(
                               text: '도착 예정: ',
                               style: TextStyle(
-                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
-                            TextSpan(text: estimatedTime),
+                            TextSpan(
+                                text: estimatedTime,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                            ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const Gap(4),
                       RichText(
                         text: TextSpan(
-                          style: const TextStyle(color: Colors.black87),
+                          style: const TextStyle(color: Color(0xFF463C33)),
                           children: [
                             const TextSpan(
                               text: '예상 비용: ',
                               style: TextStyle(
-                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
-                            TextSpan(text: '${estimatedCost.toString()}원'),
+                            TextSpan(
+                              text: '${estimatedCost.toString()}원',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -150,33 +187,34 @@ class TaxiInfoPopup extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          Gap(8),
           // 카카오 택시 버튼
           Padding(
             padding: const EdgeInsets.all(16),
             child: InkWell(
               onTap: _openKakaoTaxi,
               child: Container(
-                width: double.infinity,
+                width: MediaQuery.of(context).size.width / 2,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF392020),
+                  color: const Color(0xFF282C4B),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Image.asset(
-                      'assets/images/kakao_t_logo.png', // 카카오 T 로고 이미지
-                      width: 24,
-                      height: 24,
+                      'assets/images/kakao_taxi.webp',
+                      width: 25,
+                      height: 25,
                     ),
-                    const SizedBox(width: 8),
+                    const Gap(8),
                     const Text(
                       '카카오 T 호출하기',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
