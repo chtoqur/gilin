@@ -2,6 +2,7 @@ package com.gilin.route.domain.bike.service;
 
 import com.gilin.route.domain.bike.dto.BikeInfo;
 import com.gilin.route.domain.bike.dto.BikeStationStatus;
+import com.gilin.route.domain.route.dto.response.RouteResponse;
 import com.gilin.route.global.client.kakao.KakaoClient;
 import com.gilin.route.global.client.kakao.request.SearchKakaoCarDirectionRequest;
 import com.gilin.route.global.client.kakao.response.SearchKakaoCarDirectionResponse;
@@ -26,17 +27,49 @@ import java.util.stream.Collectors;
 public class BikeServiceImpl implements BikeService {
 
     private final KakaoClient kakaoClient;
+
     @Value("${apikey.kakaos}")
     private String apiKey;
+
     private final StringRedisTemplate redisTemplate;
 
 
     private static final int SEARCH_RADIUS_METERS = 300;
     private static final Distance SEARCH_RADIUS = new Distance(SEARCH_RADIUS_METERS, Metrics.METERS);
-
     @Value("${spring.data.redis.geokey}")
     private String GEO_KEY;
 
+    /**
+     * 주변 300m 이내의 공공자전거 보관소 중 가장 가까우면서 자전거 보유 대수가 3대 이상인 보관소에서
+     * 도착지 좌표에서 가장 가까운 공공자전거 보관소까지의 자전거 경로 BikeInfo를 Return
+     * @param start
+     * @param end
+     * @return
+     */
+    public BikeInfo getBestBikePath(Coordinate start, Coordinate end) {
+
+        List<BikeStationStatus> startBikeStations = searchNearbyBikeStations(start);
+        BikeStationStatus startBikeStation = null;
+        BikeStationStatus endBikeStation = searchNearestBikeStation(end);
+
+        if(startBikeStations.isEmpty() || endBikeStation==null) return null;
+
+        for (BikeStationStatus bikeStationStatus : startBikeStations) {
+            if(bikeStationStatus.parkingBikeTotCnt() >= 3) {
+                startBikeStation = bikeStationStatus;
+                break;
+            }
+        }
+
+        if(startBikeStation==null) return null;
+        return getBikeInfoBetweenStations(startBikeStation, endBikeStation);
+    }
+
+    /**
+     * point 주변 SEARCH_RADIUS_METERS 이내의 따릉이 보관소의 상태 리스트 반환
+     * @param point
+     * @return
+     */
     @Override
     public List<BikeStationStatus> searchNearbyBikeStations(Coordinate point) {
 
@@ -52,6 +85,12 @@ public class BikeServiceImpl implements BikeService {
                 .collect(Collectors.toList());
     }
 
+
+    /**
+     * point 주변의 가장 가까운 공공자전거 보관함 위치를 return합니다.
+     * @param point
+     * @return
+     */
     @Override
     public BikeStationStatus searchNearestBikeStation(Coordinate point) {
 
@@ -66,6 +105,13 @@ public class BikeServiceImpl implements BikeService {
     }
 
 
+    /**
+     * redis geo를 이용해 point 주변 radius 내 근접검색을 수행합니다.
+     * @param point
+     * @param radius
+     * @param limit
+     * @return
+     */
     private GeoResults<RedisGeoCommands.GeoLocation<String>> queryGeoLocations(Coordinate point, Distance radius, Integer limit) {
 
         RedisGeoCommands.GeoRadiusCommandArgs args = RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs()
@@ -81,6 +127,11 @@ public class BikeServiceImpl implements BikeService {
     }
 
 
+    /**
+     * 해당 공공자전거 보관서의 상태를 불러옵니다.
+     * @param stationId
+     * @return
+     */
     public Optional<BikeStationStatus> getStationStatus(String stationId) {
         Map<Object, Object> stationData = redisTemplate.opsForHash().entries(stationId);
 
@@ -93,6 +144,22 @@ public class BikeServiceImpl implements BikeService {
                         .build());
     }
 
+    /**
+     * 두 공공자전거 보관소 사이의 자전거 경로를 구해서 return한다.
+     * @param start
+     * @param end
+     * @return
+     */
+    public BikeInfo getBikeInfoBetweenStations(BikeStationStatus start, BikeStationStatus end) {
+        return getBikeInfo(new Coordinate(start.latitude(), start.latitude()), new Coordinate(end.latitude(), end.latitude()));
+    }
+
+    /**
+     * 카카오의 자동차 경로 탐색을 기반으로 자전거 경로를 탐색합니다.
+     * @param start
+     * @param end
+     * @return
+     */
     @Override
     public BikeInfo getBikeInfo(Coordinate start, Coordinate end) {
         SearchKakaoCarDirectionRequest searchKakaoCarDirectionRequest = SearchKakaoCarDirectionRequest.builder()
@@ -115,6 +182,11 @@ public class BikeServiceImpl implements BikeService {
     }
 
 
+    /**
+     * 카카오의 자동차 길찾기 기반으로 시속 15km로 이동할 때 얼마나 걸리는지 예상 시간을 계산합니다.
+     * @param route
+     * @return
+     */
     public int calculateEstimatedBikeTime(SearchKakaoCarDirectionResponse.RouteResponse route) {
         double averageBikeSpeedMetersPerSecond = 15_000.0 / 3600.0;
 
@@ -122,7 +194,7 @@ public class BikeServiceImpl implements BikeService {
 
         for (SearchKakaoCarDirectionResponse.RouteSection section : route.sections()) {
             for (SearchKakaoCarDirectionResponse.RouteRoad road : section.roads()) {
-                int roadDistance = road.distance(); // m 단위 거리
+                int roadDistance = road.distance();
                 totalDuration += (int) Math.ceil(roadDistance / averageBikeSpeedMetersPerSecond);
             }
         }

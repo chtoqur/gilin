@@ -8,7 +8,9 @@ import java.util.Map;
 public record BikeStationStatus (
     String stationId,
     String stationName,
-    Integer parkingBikeTotCnt
+    Integer parkingBikeTotCnt,
+    Double latitude,
+    Double longitude
 ){
 
 }

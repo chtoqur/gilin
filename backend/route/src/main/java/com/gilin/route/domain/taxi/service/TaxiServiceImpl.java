@@ -25,6 +25,12 @@ public class TaxiServiceImpl implements TaxiService {
     @Value("${apikey.kakaos}")
     private String apiKey;
 
+    /**
+     * 두 지점 사이의 택시 경로 정보를 return합니다.
+     * @param start
+     * @param end
+     * @return
+     */
     @Override
     public TaxiInfo getTaxiInfo(Coordinate start, Coordinate end) {
         SearchKakaoCarDirectionRequest searchKakaoCarDirectionRequest = SearchKakaoCarDirectionRequest.builder()
