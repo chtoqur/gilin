@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:gilin/widgets/shared/cupertino_radio.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../state/signup/signup_state.dart';
 
@@ -92,7 +93,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        '닉네임을 입력해주세요.',
+                        '닉네임을 입력해주세요',
                         style: TextStyle(
                             fontSize: 23,
                             fontWeight: FontWeight.w700,
@@ -125,7 +126,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                       ),
                       const Gap(40),
                       const Text(
-                        '성별/연령대를 선택해주세요.',
+                        '성별/연령대를 선택해주세요',
                         style: TextStyle(
                           fontSize: 23,
                           fontWeight: FontWeight.w700,
@@ -134,7 +135,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                       ),
                       const Gap(8),
                       const Text(
-                        '입력한 정보는 맞춤형 서비스를 위해 사용되며\n외부에 공개되지 않습니다.',
+                        '입력한 정보는 맞춤형 서비스를 위해 사용되며\n외부에 공개되지 않습니다',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -214,16 +215,6 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
               ),
               child: Column(
                 children: [
-                  // const Text(
-                  //   '다음이 마지막 단계입니다!',
-                  //   textAlign: TextAlign.center,
-                  //   style: TextStyle(
-                  //     fontSize: 14,
-                  //     fontWeight: FontWeight.w500,
-                  //     color: Color(0xff463C33)
-                  //   ),
-                  // ),
-                  // const Gap(14),
                   SizedBox(
                     width: double.infinity,
                     child: CupertinoTheme(
@@ -237,6 +228,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                             ? null
                             : () {
                           // 회원가입 완료 로직
+                          context.push('/signup_step2');
                         },
                         disabledColor: const Color(0xFFD9D9D9),
                         child: Text(

@@ -9,6 +9,10 @@ class BottomNavState extends StateNotifier<int> {
     state = index;
     context.go(route);
   }
+
+  void updateIndex(int index) {
+    state = index;
+  }
 }
 
 final bottomNavProvider = StateNotifierProvider<BottomNavState, int>((ref) {
