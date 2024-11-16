@@ -3,11 +3,19 @@ package com.gilin.route.domain.metro.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gilin.route.domain.metro.dto.MetroExitToDest;
 import com.gilin.route.domain.metro.dto.MetroLinkDto;
+import com.gilin.route.domain.metro.dto.MetroPositionDto;
+import com.gilin.route.domain.metro.dto.StationArrivalDto;
 import com.gilin.route.domain.route.dto.response.RouteResponse;
 import com.gilin.route.domain.route.dto.response.RouteResponse.SubPathh;
 import com.gilin.route.domain.walk.dto.WalkInfo;
 import com.gilin.route.domain.walk.service.WalkService;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse.Result.SubPath;
+import com.gilin.route.global.client.openApi.OpenApiClient;
+import com.gilin.route.global.client.openApi.TopsisAPIUtil;
+import com.gilin.route.global.client.openApi.dto.response.MetroPositionResponse;
+import com.gilin.route.global.client.openApi.dto.response.MetroPositionResponse.RealtimePosition;
+import com.gilin.route.global.client.openApi.dto.response.StationArrivalResponse;
+import com.gilin.route.global.client.openApi.dto.response.StationArrivalResponse.RealtimeArrival;
 import com.gilin.route.global.dto.Coordinate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,15 +38,20 @@ public class MetroServiceImpl implements MetroService {
     private final HashOperations<String, String, String> hashOperations;
     private final ObjectMapper objectMapper;
     private final WalkService walkService;
+    private final OpenApiClient openApiClient;
+    private final TopsisAPIUtil topsisAPIUtil;
 
     @Autowired
     public MetroServiceImpl(RedisTemplate<String, Object> redisTemplate,
-        ObjectMapper objectMapper, WalkService walkService) {
+        ObjectMapper objectMapper, WalkService walkService, OpenApiClient openApiClient,
+        TopsisAPIUtil topsisAPIUtil) {
         this.redisTemplate = redisTemplate;
         this.listOperations = redisTemplate.opsForList();
         this.hashOperations = redisTemplate.opsForHash();
         this.objectMapper = objectMapper;
         this.walkService = walkService;
+        this.openApiClient = openApiClient;
+        this.topsisAPIUtil = topsisAPIUtil;
     }
 
     /**
@@ -131,7 +144,6 @@ public class MetroServiceImpl implements MetroService {
                 e.printStackTrace();
             }
         }
-
         return closestExit;
     }
 
@@ -145,4 +157,46 @@ public class MetroServiceImpl implements MetroService {
         return RouteResponse.SubPathh.of(subPath, getMetroPollyLine(startId, endId));
     }
 
+    @Override
+    public List<StationArrivalDto> getStationArrival(String stationName, String nextStationName) {
+        List<StationArrivalDto> retList = new ArrayList<>();
+        StationArrivalResponse response = openApiClient.getRealTimeStationArrival(stationName);
+        for (RealtimeArrival realtimeArrival : response.getRealtimeArrivalList()) {
+            if (realtimeArrival.getTrainLineNm()
+                               .contains(nextStationName)) {
+                retList.add(StationArrivalDto.builder()
+                                             .stationName(realtimeArrival.getStatnNm())
+                                             .line(realtimeArrival.getStatnNm())
+                                             .trainNo(realtimeArrival.getBtrainNo())
+                                             .trainLineNm(realtimeArrival.getTrainLineNm())
+                                             .time(Integer.parseInt(realtimeArrival.getBarvlDt()))
+                                             .build());
+                if (retList.size() >= 2) {
+                    break;
+                }
+            }
+        }
+
+        return retList;
+    }
+
+    @Override
+    public MetroPositionDto getMetroPosition(String trainNo, String lineName) {
+        MetroPositionResponse response = openApiClient.getRealTimePosition(lineName);
+        for (RealtimePosition position : response.getRealtimePositionList()) {
+            if (position.getTrainNo()
+                        .equals(trainNo)) {
+                return MetroPositionDto.builder()
+                                       .line(lineName)
+                                       .stationName(position.getStatnNm())
+                                       .trainNo(position.getTrainNo())
+                                       .trainLineNm(position.getSubwayNm())
+                                       .status(MetroPositionDto.stat(position.getTrainSttus()))
+                                       .build();
+            }
+
+        }
+
+        return null;
+    }
 }

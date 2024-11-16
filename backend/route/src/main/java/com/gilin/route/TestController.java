@@ -10,6 +10,10 @@ import com.gilin.route.global.client.odsay.request.SearchPubTransPathRequest;
 import com.gilin.route.global.client.odsay.request.SubwayStationInfoRequest;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse;
 import com.gilin.route.global.client.odsay.response.SubwayStationInfoResponse;
+import com.gilin.route.global.client.openApi.OpenApiClient;
+import com.gilin.route.global.client.openApi.TopsisAPIUtil;
+import com.gilin.route.global.client.openApi.dto.response.MetroPositionResponse;
+import com.gilin.route.global.client.openApi.dto.response.StationArrivalResponse;
 import com.gilin.route.global.client.tmap.TMapClient;
 import com.gilin.route.global.client.tmap.request.PedestrianPathRequest;
 import com.gilin.route.global.client.tmap.response.PedestrianPathResponse;
@@ -35,6 +39,8 @@ public class TestController {
     private final TMapClient tMapClient;
     private final MetroService metroService;
     private final WalkService walkService;
+    private final OpenApiClient openApiClient;
+    private final TopsisAPIUtil topsisAPIUtil;
 
     @GetMapping("/odsay/path")
     @Operation(description = "오디세이 호출입니다. https://lab.odsay.com/guide/releaseReference#searchPubTransPathT")
@@ -131,4 +137,19 @@ public class TestController {
         return walkService.getWalkGraphPath(new Coordinate(startX, startY),
             new Coordinate(endX, endY));
     }
+
+    @GetMapping("/metro/position")
+    public MetroPositionResponse getMetroPosition(
+        @RequestParam(defaultValue = "1호선") String line
+    ) {
+        return openApiClient.getRealTimePosition(line);
+    }
+
+    @GetMapping("/metro/arrival")
+    public StationArrivalResponse getStationArrival(
+        @RequestParam(defaultValue = "사당") String stationName
+    ) {
+        return openApiClient.getRealTimeStationArrival(topsisAPIUtil.convert(stationName));
+    }
+
 }
