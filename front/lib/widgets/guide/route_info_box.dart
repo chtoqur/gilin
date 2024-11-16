@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:gilin/widgets/guide/transit_schedule.dart';
 import '../../models/route/transit_route.dart';
 import '../../themes/path_color.dart';
 import '../../utils/guide/time_formatter.dart';
@@ -28,6 +29,10 @@ class RouteInfoBox extends StatelessWidget {
         Text(
           '정류장 승차',
           style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+        ),
+        TransitSchedule(
+          segment: segment,
+          type: TransitType.BUS,
         ),
         const Gap(8),
         Wrap(
@@ -124,6 +129,10 @@ class RouteInfoBox extends StatelessWidget {
             ),
           ],
         ),
+        TransitSchedule(
+          segment: segment,
+          type: TransitType.METRO,
+        ),
         const Gap(8),
         Text(
           '${segment.sectionTime}분, ${segment.stationCount}개역 이동',
@@ -171,7 +180,7 @@ class RouteInfoBox extends StatelessWidget {
           )
         else if (nextSegment?.travelType == TransitType.METRO)
           Text(
-            '${nextSegment?.startName}역까지',  // 수정된 부분
+            '${nextSegment?.startName}역까지',
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           )
         else if (prevSegment?.travelType == TransitType.METRO &&
@@ -179,7 +188,12 @@ class RouteInfoBox extends StatelessWidget {
             Text(
               '${segment.endExitNo}번 출구로 나와서',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
+            )
+          else if (nextSegment == null)
+              Text(
+                '목적지까지',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
         const Gap(8),
         Text(
           '${segment.sectionTime}분, ${DistanceFormatter.format(segment.distance)} 걷기',
