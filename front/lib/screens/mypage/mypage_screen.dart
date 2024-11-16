@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod 관련 패키지 추가
 import 'package:gap/gap.dart';
 
+import '../../state/auth/auth_provider.dart'; // authProvider import
 import '../../widgets/mypage/place_card.dart';
 
-class MypageScreen extends StatelessWidget {
+class MypageScreen extends ConsumerWidget { // ConsumerWidget으로 변경
   MypageScreen({super.key});
 
   static const List<Map<String, String>> menuItems = [
     {'title': '내 정보 변경', 'route': '/profile'},
     {'title': '알림 설정', 'route': '/alert'},
-    {'title': '내 장소/경로 수정', 'route': '/payment'},
+    {'title': '내 장소/경로 수정', 'route': '/route'},
     {'title': '회원 탈퇴', 'route': '/support'},
   ];
 
@@ -21,7 +23,7 @@ class MypageScreen extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) { // WidgetRef 추가
     return Scaffold(
       backgroundColor: const Color(0xffF8F5F0),
       body: SafeArea(
@@ -135,24 +137,23 @@ class MypageScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30),
 
-            Expanded(  // 전체 영역을 Expanded로 감싸기
+            Expanded(
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                 ),
-                child: Column(  // Column 추가
+                child: Column(
                   children: [
-                    Expanded(  // ListView를 Expanded로 감싸서 남은 공간 차지
-                      child: SingleChildScrollView(  // SingleChildScrollView로 변경
-                        child: Column(  // 세로 스크롤을 위한 Column
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
                           children: [
                             ListView.separated(
-                              shrinkWrap: true,  // SingleChildScrollView 내부에서는 필요
-                              physics: const NeverScrollableScrollPhysics(),  // 부모 스크롤 사용
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
                               itemCount: menuItems.length,
-                              separatorBuilder: (context, index) =>
-                              const Divider(height: 1),
+                              separatorBuilder: (context, index) => const Divider(height: 1),
                               itemBuilder: (context, index) {
                                 return TextButton(
                                   onPressed: () {
@@ -162,10 +163,7 @@ class MypageScreen extends StatelessWidget {
                                     );
                                   },
                                   style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 8
-                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                   ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -197,7 +195,9 @@ class MypageScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          ref.read(authProvider.notifier).signOut(); // 로그아웃 로직 연결
+                        },
                         child: const Text(
                           '로그아웃',
                           style: TextStyle(
@@ -219,3 +219,4 @@ class MypageScreen extends StatelessWidget {
     );
   }
 }
+

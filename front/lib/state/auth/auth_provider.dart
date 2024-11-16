@@ -33,7 +33,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
 
   Future<void> signOut() async {
     try {
-      state = AsyncValue.loading();
+      state = const AsyncValue.loading();
       await UserApi.instance.logout();
       await _secureStorage.deleteAll();
       state = AsyncValue.data(AuthUnauthenticated());
@@ -66,5 +66,18 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
   // accessToken 가져오기 메서드
   Future<String?> getAccessToken() async {
     return await _secureStorage.read(key: 'accessToken');
+  }
+
+  // 토큰 갱신 메서드
+  Future<void> refreshToken() async {
+    try {
+      var token = await TokenManagerProvider.instance.manager.getToken();
+      if (token != null) {
+        await _secureStorage.write(key: 'accessToken', value: token.accessToken);
+      }
+    } catch (e) {
+      print('토큰 갱신 실패: $e');
+      throw Exception('토큰 갱신에 실패했습니다.');
+    }
   }
 }
