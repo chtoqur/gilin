@@ -124,7 +124,7 @@ public final class BusServiceImpl implements BusService {
 
     private List<BusArrivalResponse> parseGGBus(GyeonggiBusArrivalResponse response, List<String> routeIds) {
         if (Objects.isNull(response)
-                || Objects.isNull(response.msgHeader())
+                || null == (response.msgHeader())
                 || "0".equals(response.msgHeader().resultCode())
                 || Objects.isNull(response.msgBody())) {
             return new ArrayList<>();
