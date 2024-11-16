@@ -149,7 +149,8 @@ public class TestController {
     public StationArrivalResponse getStationArrival(
         @RequestParam(defaultValue = "사당") String stationName
     ) {
-        return openApiClient.getRealTimeStationArrival(topsisAPIUtil.convert(stationName));
+        return openApiClient.getRealTimeStationArrival(
+            topsisAPIUtil.convertStationName(stationName));
     }
 
 }

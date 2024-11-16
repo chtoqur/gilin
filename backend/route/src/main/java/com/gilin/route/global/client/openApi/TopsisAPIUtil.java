@@ -9,18 +9,24 @@ import org.springframework.stereotype.Component;
 public class TopsisAPIUtil {
 
     private final HashMap<String, String> stationNameMap = new HashMap<>();
+    private final HashMap<String, String> metroLineMap = new HashMap<>();
 
     @PostConstruct
     public void init() {
         stationNameInit();
+        metroLineInit();
     }
 
-    public String convert(String stationName) {
+    public String convertStationName(String stationName) {
         String name = stationNameMap.get(stationName);
         if (name == null) {
             return stationName;
         }
         return name;
+    }
+
+    public String convertLineName(String lineName) {
+        return metroLineMap.get(lineName);
     }
 
     private void stationNameInit() {
@@ -50,6 +56,28 @@ public class TopsisAPIUtil {
         stationNameMap.put("몽촌토성", "몽촌토성(평화의문)");
         stationNameMap.put("남한산성입구", "남한산성입구(성남법원,검찰청)");
         stationNameMap.put("신촌", "신촌(경의중앙선)");
+    }
+
+    private void metroLineInit() {
+        metroLineMap.put("1001", "1호선");
+        metroLineMap.put("1002", "2호선");
+        metroLineMap.put("1003", "3호선");
+        metroLineMap.put("1004", "4호선");
+        metroLineMap.put("1005", "5호선");
+        metroLineMap.put("1006", "6호선");
+        metroLineMap.put("1007", "7호선");
+        metroLineMap.put("1008", "8호선");
+        metroLineMap.put("1009", "9호선");
+        metroLineMap.put("1061", "중앙선");
+        metroLineMap.put("1063", "경의중앙선");
+        metroLineMap.put("1065", "공항철도");
+        metroLineMap.put("1067", "경춘선");
+        metroLineMap.put("1075", "수의분당선");
+        metroLineMap.put("1077", "신분당선");
+        metroLineMap.put("1092", "우이신설선");
+        metroLineMap.put("1093", "서해선");
+        metroLineMap.put("1081", "경강선");
+        metroLineMap.put("1032", "GTX-A");
     }
 
 }
