@@ -159,6 +159,8 @@ public class MetroServiceImpl implements MetroService {
 
     @Override
     public List<StationArrivalDto> getStationArrival(String stationName, String nextStationName) {
+        stationName = topsisAPIUtil.convertStationName(stationName);
+        nextStationName = topsisAPIUtil.convertStationName(nextStationName);
         List<StationArrivalDto> retList = new ArrayList<>();
         StationArrivalResponse response = openApiClient.getRealTimeStationArrival(stationName);
         for (RealtimeArrival realtimeArrival : response.getRealtimeArrivalList()) {
@@ -166,7 +168,8 @@ public class MetroServiceImpl implements MetroService {
                                .contains(nextStationName)) {
                 retList.add(StationArrivalDto.builder()
                                              .stationName(realtimeArrival.getStatnNm())
-                                             .line(realtimeArrival.getStatnNm())
+                                             .line(topsisAPIUtil.convertLineName(
+                                                 realtimeArrival.getSubwayId()))
                                              .trainNo(realtimeArrival.getBtrainNo())
                                              .trainLineNm(realtimeArrival.getTrainLineNm())
                                              .time(Integer.parseInt(realtimeArrival.getBarvlDt()))
