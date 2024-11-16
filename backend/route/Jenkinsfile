@@ -108,4 +108,26 @@ EOF
             }
         }
     }
+   post {
+       success {
+           script {
+               mattermostSend (
+                   color: 'good',
+                   message: "빌드 성공 :jongho_gun::seoyounggun: : ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)",
+                   endpoint: 'https://meeting.ssafy.com/hooks/tjaw1nyqxtrozniwy1w8iak1ko',
+                   channel: 'jenkins306'
+               )
+           }
+       }
+       failure {
+           script {
+               mattermostSend (
+                   color: 'danger',
+                   message: "빌드 실패 :seoyoung2::jongho_cakeburn: : ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)",
+                   endpoint: 'https://meeting.ssafy.com/hooks/tjaw1nyqxtrozniwy1w8iak1ko',
+                   channel: 'jenkins306'
+               )
+           }
+       }
+   }
 }
