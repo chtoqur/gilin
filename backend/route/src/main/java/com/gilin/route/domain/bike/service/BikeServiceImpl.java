@@ -81,7 +81,6 @@ public class BikeServiceImpl implements BikeService {
     }
 
 
-
     public Optional<BikeStationStatus> getStationStatus(String stationId) {
         Map<Object, Object> stationData = redisTemplate.opsForHash().entries(stationId);
 
@@ -96,10 +95,9 @@ public class BikeServiceImpl implements BikeService {
 
     @Override
     public BikeInfo getBikeInfo(Coordinate start, Coordinate end) {
-        // 자전거 경로 요청 생성
         SearchKakaoCarDirectionRequest searchKakaoCarDirectionRequest = SearchKakaoCarDirectionRequest.builder()
-                .origin(start.x() + "," + start.y())
-                .destination(end.x() + "," + end.y())
+                .origin(start.toCoordinateString())
+                .destination(end.toCoordinateString())
                 .priority("TIME")
                 .avoid("ferries|toll|motorway|uturn")
                 .carType(7)

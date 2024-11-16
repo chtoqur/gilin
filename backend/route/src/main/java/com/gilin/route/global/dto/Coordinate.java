@@ -13,4 +13,8 @@ public record Coordinate(
         double lngDiff = other.x - x;
         return Math.sqrt(Math.pow(latDiff, 2) + Math.pow(lngDiff, 2));
     }
+
+    public String toCoordinateString() {
+        return x + "," + y;
+    }
 }
