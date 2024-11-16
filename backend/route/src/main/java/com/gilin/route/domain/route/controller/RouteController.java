@@ -5,6 +5,7 @@ import com.gilin.route.domain.route.dto.response.TravelType;
 import com.gilin.route.domain.route.service.RouteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class RouteController {
 
     private final RouteService routeService;
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RouteResponse> getRoute(
             @RequestParam(defaultValue = "127.1032167") double sx,
             @RequestParam(defaultValue = "37.5441833") double sy,
