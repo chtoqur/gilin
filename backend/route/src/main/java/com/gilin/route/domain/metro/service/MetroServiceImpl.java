@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
@@ -166,13 +168,28 @@ public class MetroServiceImpl implements MetroService {
         for (RealtimeArrival realtimeArrival : response.getRealtimeArrivalList()) {
             if (realtimeArrival.getTrainLineNm()
                                .contains(nextStationName)) {
+                int time = Integer.parseInt(realtimeArrival.getBarvlDt());
+                // 일부 역은 도착 예정 시간을 제공하지 않아 0으로 반환함
+                if (time == 0) {
+                    // 전역, [2] 전역, [4] 전역 형식을 로되어있기 때문에
+                    int number = 1;
+                    // 숫자 부분을 추출하는 정규식
+                    Pattern pattern = Pattern.compile("\\d+");
+                    Matcher matcher = pattern.matcher(realtimeArrival.getArvlMsg2());
+                    // 숫자가 해당 숫자만큼 전에 있는것, 없다면 바로 전역
+                    if (matcher.find()) {
+                        number = Integer.parseInt(matcher.group());
+                    }
+                    // 한 역당 2분으로 계산
+                    time += 120 * number;
+                }
                 retList.add(StationArrivalDto.builder()
                                              .stationName(realtimeArrival.getStatnNm())
                                              .line(topsisAPIUtil.convertLineName(
                                                  realtimeArrival.getSubwayId()))
                                              .trainNo(realtimeArrival.getBtrainNo())
                                              .trainLineNm(realtimeArrival.getTrainLineNm())
-                                             .time(Integer.parseInt(realtimeArrival.getBarvlDt()))
+                                             .time(time)
                                              .build());
                 if (retList.size() >= 2) {
                     break;
@@ -197,7 +214,6 @@ public class MetroServiceImpl implements MetroService {
                                        .status(MetroPositionDto.stat(position.getTrainSttus()))
                                        .build();
             }
-
         }
 
         return null;
