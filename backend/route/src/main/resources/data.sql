@@ -1,7 +1,7 @@
-INSERT INTO member (member_id, oauth_type, oauth_id, name, age, gender, travel_type)
+INSERT INTO member (member_id, oauth_type, oauth_id, name, age, gender)
 VALUES
-    (1, 'KAKAO', 'oauth_id_1', '조승기', 30, 'M', 1),
-    (2, 'KAKAO', 'oauth_id_2', '김종호', 25, 'F', 2)
+    (1, 'KAKAO', 'oauth_id_1', '조승기', 30, 'M'),
+    (2, 'KAKAO', 'oauth_id_2', '김종호', 25, 'F')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO member_place (member_place_id, member_id, type, x, y, address, arrival_time)

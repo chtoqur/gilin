@@ -33,10 +33,15 @@ public class MemberServiceImpl implements MemberService {
     private final RedisTemplate<String, String> redisTemplate;
 
     private static final String REFRESH_TOKEN_PREFIX = "RT:";
+    private static final String BEARER_PREFIX = "Bearer ";
 
     @Override
     public LoginResponse login(OAuthLoginRequest oAuthLoginRequest) {
-        KakaoInfoResponse response = kakaoClient.getUser(oAuthLoginRequest.accessToken());
+        KakaoInfoResponse response = kakaoClient.getUser(BEARER_PREFIX + oAuthLoginRequest.accessToken());
+
+        if (Objects.isNull(response) || Objects.isNull(response.id())) {
+            throw new GilinException(HttpStatus.UNAUTHORIZED, "회원가입이 필요합니다.");
+        }
 
         Member member = memberRepository.findByoAuthTypeAndOauthId(OAuthType.KAKAO, response.id())
                 .orElseThrow(() -> new GilinException(HttpStatus.UNAUTHORIZED, "회원가입이 필요합니다."));
@@ -63,7 +68,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public LoginResponse register(OAuthRegisterRequest oAuthRegisterRequest) {
-        KakaoInfoResponse response = kakaoClient.getUser(oAuthRegisterRequest.accessToken());
+        KakaoInfoResponse response = kakaoClient.getUser(BEARER_PREFIX + oAuthRegisterRequest.accessToken());
 
         memberRepository.findByoAuthTypeAndOauthId(OAuthType.KAKAO, response.id())
                 .ifPresent(m -> {
