@@ -3,7 +3,6 @@ import 'package:gap/gap.dart';
 import '../../models/route/transit_route.dart';
 import '../../themes/path_color.dart';
 import '../../utils/guide/time_formatter.dart';
-import '../../utils/guide/transit_utils.dart';
 
 class RouteInfoBox extends StatelessWidget {
   final TransitSegment? selectedSegment;
@@ -70,6 +69,25 @@ class RouteInfoBox extends StatelessWidget {
   }
 
   Widget _buildSubwaySegment(TransitSegment segment) {
+    final currentIndex = transitRoute.subPath.indexOf(segment);
+    final prevSegment = currentIndex > 0 ? transitRoute.subPath[currentIndex - 1] : null;
+    final isTransfer = prevSegment?.travelType == TransitType.TRANSFER;
+
+    String getSubwayDisplay(int code) {
+      switch (code) {
+        case 116:
+          return '수인분당';
+        case 108:
+          return '경춘';
+        case 101:
+          return '공항';
+        case 109:
+          return '신분당';
+        default:
+          return code.toString();
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -78,7 +96,7 @@ class RouteInfoBox extends StatelessWidget {
           children: [
             ...segment.lane.map((lane) {
               return Container(
-                width: 24,
+                width: lane.subwayCode >= 100 ? 48 : 24,  // 특수 노선은 더 넓게                height: 24,
                 height: 24,
                 margin: const EdgeInsets.only(right: 8),
                 decoration: BoxDecoration(
@@ -88,10 +106,10 @@ class RouteInfoBox extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    lane.subwayCode.toString(),
-                    style: const TextStyle(
+                    getSubwayDisplay(lane.subwayCode),
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 12,
+                      fontSize: lane.subwayCode >= 100 ? 8 : 12,  // 특수 노선은 더 작게
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -100,24 +118,23 @@ class RouteInfoBox extends StatelessWidget {
             }),
             Expanded(
               child: Text(
-                '${segment.startName} 승차',
-                style: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.bold),
+                '${segment.startName}역 ${isTransfer ? '환승' : '승차'}',  // 여기 수정
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ],
         ),
         const Gap(8),
         Text(
-          '${segment.sectionTime}분, ${segment.stationCount}역 이동',
+          '${segment.sectionTime}분, ${segment.stationCount}개역 이동',
           style: const TextStyle(fontSize: 14),
         ),
         const Gap(8),
         Text(
-          '${segment.endName} 하차',
+          '${segment.endName}역 하차',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        if (segment.door != null) ...[
+        if (segment.door != null && segment.door != 'null') ...[
           const Gap(4),
           Text(
             '빠른 하차 ${segment.door}',
@@ -152,51 +169,20 @@ class RouteInfoBox extends StatelessWidget {
             '${nextSegment?.startName}까지',
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           )
-        else
-          if (nextSegment?.travelType == TransitType.METRO)
-            Row(
-              children: [
-                Text(
-                  '${nextSegment?.startName} ',
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                if (segment.startExitNo != null) Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.yellow,
-                    border: Border.all(color: Colors.black),
-                  ),
-                  child: Center(
-                    child: Text(
-                      segment.startExitNo!,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                const Text(
-                  '번 출구까지',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ],
-            )
-          else
-            if (prevSegment?.travelType == TransitType.METRO &&
-                segment.endExitNo != null)
-              Text(
-                '${segment.endExitNo}번 출구로 나와서',
-                style: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+        else if (nextSegment?.travelType == TransitType.METRO)
+          Text(
+            '${nextSegment?.startName}역까지',  // 수정된 부분
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          )
+        else if (prevSegment?.travelType == TransitType.METRO &&
+              segment.endExitNo != null)
+            Text(
+              '${segment.endExitNo}번 출구로 나와서',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
         const Gap(8),
         Text(
-          '${segment.sectionTime}분, ${DistanceFormatter.format(
-              segment.distance)} 걷기',
+          '${segment.sectionTime}분, ${DistanceFormatter.format(segment.distance)} 걷기',
           style: const TextStyle(fontSize: 14),
         ),
       ],

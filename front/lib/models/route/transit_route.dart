@@ -7,7 +7,8 @@ enum TransitType {
   BUS,
   TAXI,
   BICYCLE,
-  WALK
+  WALK,
+  TRANSFER,
 }
 
 class RouteInfo {

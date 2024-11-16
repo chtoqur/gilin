@@ -29,6 +29,9 @@ class PathStyleUtils {
 
       case TransitType.WALK:
         return PathColors.walkColor;
+
+      case TransitType.TRANSFER:
+        return PathColors.walkColor;
     }
   }
 

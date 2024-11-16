@@ -16,6 +16,8 @@ class TransitUtils {
         return Icons.directions_walk;
       case TransitType.BICYCLE:
         return Icons.pedal_bike;
+      case TransitType.TRANSFER:
+        return Icons.pedal_bike;
     }
   }
 
@@ -31,6 +33,8 @@ class TransitUtils {
         return '도보';
       case TransitType.BICYCLE:
         return '자전거';
+      case TransitType.TRANSFER:
+        return '환승';
     }
   }
 }

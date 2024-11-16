@@ -68,14 +68,20 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
         return Icons.directions_walk;
       case TransitType.BICYCLE:
         return Icons.pedal_bike;
+      case TransitType.TRANSFER:
+        return Icons.transfer_within_a_station;
     }
   }
 
   Widget _buildTimelineItem(TransitSegment segment, bool isLast) {
+    if (segment.travelType == TransitType.TRANSFER) {
+      return const SizedBox.shrink();
+    }
     final bool isSelected = widget.routeData.subPath.indexOf(segment) == _selectedSegmentIndex;
 
     return Column(
       children: [
+
         InkWell(
           onTap: () {
             setState(() {

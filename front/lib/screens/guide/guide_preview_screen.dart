@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +8,6 @@ import '../../state/route/route_state.dart';
 import '../../widgets/guide/route_info_box.dart';
 import '../../widgets/guide/sidebar.dart';
 import '../../utils/guide/path_style_utils.dart';
-import '../../utils/guide/transit_utils.dart';
 
 
 class GuidePreviewScreen extends ConsumerStatefulWidget {
@@ -25,62 +26,89 @@ class GuidePreviewScreen extends ConsumerStatefulWidget {
 
 class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
   NaverMapController? mapController;
-  List<NPathOverlay> pathOverlays = []; // 여기에 추가
+  final Map<String, NPathOverlay> _activeOverlays = {};
   List<NMarker> markers = [];
   final ValueNotifier<TransitSegment?> _selectedSegmentNotifier = ValueNotifier(null);
   final ValueNotifier<bool> _isSidebarVisible = ValueNotifier(true);
+  Timer? _debounceTimer;
 
-  String _formatTime(int minutes) {
-    if (minutes < 60) {
-      return '$minutes분';
+  Future<void> _safeDeleteOverlay(String id) async {
+    try {
+      final overlay = _activeOverlays[id];
+      if (overlay != null) {
+        await mapController?.deleteOverlay(overlay.info);
+        _activeOverlays.remove(id);
+      }
+    } catch (e) {
+      print('Failed to delete overlay $id: $e');
     }
-    final hours = minutes ~/ 60;
-    final remainingMinutes = minutes % 60;
-    return '$hours시간 ${remainingMinutes}분';
   }
 
-  String _getArrivalTime(int totalMinutes) {
-    final now = DateTime.now();
-    final arrival = now.add(Duration(minutes: totalMinutes));
-    return '${arrival.hour.toString().padLeft(2, '0')}:${arrival.minute.toString().padLeft(2, '0')} 도착 예정';
-  }
-
-  String _formatDistance(double meters) {
-    return meters >= 1000
-        ? '${(meters / 1000).toStringAsFixed(1)}km'
-        : '${meters.toInt()}m';
-  }
-  void _onMapZoomChanged() async {
-    if (mapController == null) return;
-
-    final cameraPosition = await mapController!.getCameraPosition();
-    final zoomLevel = cameraPosition.zoom;
-
-    // 기존 오버레이 제거
-    for (var overlay in pathOverlays) {
-      await mapController!.deleteOverlay(overlay.info);
+  // 새로운 메서드: 오버레이 추가를 위한 안전한 방법
+  Future<void> _safeAddOverlay(NPathOverlay overlay) async {
+    try {
+      await mapController?.addOverlay(overlay);
+      _activeOverlays[overlay.info.id] = overlay;
+    } catch (e) {
+      print('Failed to add overlay ${overlay.info.id}: $e');
     }
-    pathOverlays.clear();
-
-    // 새로운 줌 레벨로 경로 다시 그리기
-    await _refreshPathOverlays(zoomLevel);
   }
 
   Future<void> _refreshPathOverlays(double zoomLevel) async {
+    // 기존 오버레이 제거
+    final overlayIds = [..._activeOverlays.keys];
+    for (var id in overlayIds) {
+      await _safeDeleteOverlay(id);
+    }
+
+    // 새 오버레이 생성 및 추가
     for (var segment in widget.routeData.subPath) {
-      final pathOverlays = PathStyleUtils.createPathOverlay(
+      final overlays = PathStyleUtils.createPathOverlay(
         id: 'path_overlay_${widget.routeData.subPath.indexOf(segment)}',
         coords: segment.pathGraph,
         segment: segment,
         zoomLevel: zoomLevel,
       );
 
-      for (var overlay in pathOverlays) {
-        await mapController?.addOverlay(overlay);
-        this.pathOverlays.add(overlay);
+      for (var overlay in overlays) {
+        await _safeAddOverlay(overlay);
       }
     }
   }
+
+  void _onMapZoomChanged() {
+    // 이전 타이머 취소
+    _debounceTimer?.cancel();
+
+    // 새로운 타이머 시작 (300ms 딜레이)
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
+      if (mapController == null) return;
+
+      try {
+        final cameraPosition = await mapController!.getCameraPosition();
+        await _refreshPathOverlays(cameraPosition.zoom);
+      } catch (e) {
+        print('Error updating overlays: $e');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    for (var overlay in _activeOverlays.values) {
+      try {
+        mapController?.deleteOverlay(overlay.info);
+      } catch (e) {
+        print('Failed to delete overlay on dispose: $e');
+      }
+    }
+    for (var marker in markers) {
+      mapController?.deleteOverlay(marker.info);
+    }
+    super.dispose();
+  }
+
   Future<void> _initializeMapAndPath(NaverMapController controller) async {
     try {
       List<NLatLng> allCoordinates = [];
@@ -234,17 +262,17 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    if (mapController != null) {
-      for (var marker in markers) {
-        mapController?.deleteOverlay(marker.info);
-      }
-      for (var overlay in pathOverlays) {  // 모든 경로 오버레이 제거
-        mapController?.deleteOverlay(overlay.info);
-      }
-    }
-    super.dispose();
-  }
+  //
+  // @override
+  // void dispose() {
+  //   if (mapController != null) {
+  //     for (var marker in markers) {
+  //       mapController?.deleteOverlay(marker.info);
+  //     }
+  //     for (var overlay in pathOverlays) {  // 모든 경로 오버레이 제거
+  //       mapController?.deleteOverlay(overlay.info);
+  //     }
+  //   }
+  //   super.dispose();
+  // }
 }
