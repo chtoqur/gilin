@@ -1,6 +1,8 @@
 package com.gilin.route;
 
 import com.gilin.route.domain.bus.service.BusService;
+import com.gilin.route.domain.member.dto.Authenticated;
+import com.gilin.route.domain.member.entity.Member;
 import com.gilin.route.domain.metro.dto.MetroExitToDest;
 import com.gilin.route.domain.metro.service.MetroService;
 import com.gilin.route.domain.walk.dto.WalkInfo;
@@ -122,9 +124,10 @@ public class TestController {
     public MetroExitToDest exitToDest(
         @RequestParam(defaultValue = "221") Integer stationId,
         @RequestParam(defaultValue = "127.039528") Double destX,
-        @RequestParam(defaultValue = "37.501363") Double destY
+        @RequestParam(defaultValue = "37.501363") Double destY,
+        @Authenticated Member member
     ) {
-        return metroService.getClosestExit(stationId, new Coordinate(destX, destY));
+        return metroService.getClosestExit(stationId, new Coordinate(destX, destY), member);
     }
 
     @GetMapping("/walk/path")
@@ -132,10 +135,11 @@ public class TestController {
         @RequestParam(defaultValue = "127.0287449") Double startX,
         @RequestParam(defaultValue = "37.4981050") Double startY,
         @RequestParam(defaultValue = "127.039528") Double endX,
-        @RequestParam(defaultValue = "37.501363") Double endY
+        @RequestParam(defaultValue = "37.501363") Double endY,
+        @Authenticated Member member
     ) {
         return walkService.getWalkGraphPath(new Coordinate(startX, startY),
-            new Coordinate(endX, endY));
+            new Coordinate(endX, endY), member);
     }
 
     @GetMapping("/metro/position")
