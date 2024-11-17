@@ -1,6 +1,7 @@
 package com.gilin.route.domain.route.service;
 
 import com.gilin.route.domain.bus.service.BusService;
+import com.gilin.route.domain.member.entity.Member;
 import com.gilin.route.domain.metro.service.MetroService;
 import com.gilin.route.domain.route.dto.response.RouteResponse;
 import com.gilin.route.domain.route.dto.response.RouteResponse.SubPathh;
@@ -32,7 +33,7 @@ public class RouteService {
     private final WalkService walkService;
 
     public RouteResponse getRoute(Double sx, Double sy, Double ex, Double ey,
-        EnumSet<TravelType> travelTypes) {
+        EnumSet<TravelType> travelTypes, Member member) {
         if (!travelTypes.contains(TravelType.BUS) && !travelTypes.contains(TravelType.METRO)) {
             //TODO- 걷기, 따릉이, 택시 만 있는 경우 추가
             return null;
@@ -50,11 +51,11 @@ public class RouteService {
                                                                         .stream()
                                                                         .findFirst();
 
-        return of(path.orElseThrow(), new Coordinate(sx, sy), new Coordinate(ex, ey));
+        return of(path.orElseThrow(), new Coordinate(sx, sy), new Coordinate(ex, ey), member);
     }
 
     private RouteResponse of(SearchPubTransPathResponse.Result.Path response, Coordinate start,
-        Coordinate end) {
+        Coordinate end, Member member) {
         RouteResponse.Infoo infoo = RouteResponse.Infoo.of(response.getInfo());
         List<SubPath> subPathList = response.getSubPath();
         List<SubPathh> subPathhList = new ArrayList<>();
@@ -70,7 +71,7 @@ public class RouteService {
                 if (i != subPathList.size() - 1) {
                     nextSubPath = subPathList.get(i + 1);
                 }
-                subPathhList.add(handleSubPath(prevSubPath, nextSubPath, start, end));
+                subPathhList.add(handleSubPath(prevSubPath, nextSubPath, start, end, member));
             } else {
                 subPathhList.add(handleSubPath(subPath));
             }
@@ -92,9 +93,10 @@ public class RouteService {
         SearchPubTransPathResponse.Result.SubPath prevSubPath
         , SearchPubTransPathResponse.Result.SubPath nextSubPath,
         Coordinate start,
-        Coordinate end
+        Coordinate end,
+        Member member
     ) {
-        return walkService.convertToSubPathh(prevSubPath, nextSubPath, start, end);
+        return walkService.convertToSubPathh(prevSubPath, nextSubPath, start, end, member);
     }
 
 }

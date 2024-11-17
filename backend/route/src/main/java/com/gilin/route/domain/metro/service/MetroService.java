@@ -1,5 +1,6 @@
 package com.gilin.route.domain.metro.service;
 
+import com.gilin.route.domain.member.entity.Member;
 import com.gilin.route.domain.metro.dto.MetroExitToDest;
 import com.gilin.route.domain.metro.dto.MetroLinkDto;
 import com.gilin.route.domain.metro.dto.MetroPositionDto;
@@ -15,7 +16,7 @@ public interface MetroService {
 
     MetroLinkDto getMetroLink(Integer startId, Integer endId);
 
-    MetroExitToDest getClosestExit(Integer startStationId, Coordinate dest);
+    MetroExitToDest getClosestExit(Integer startStationId, Coordinate dest, Member member);
 
     SubPathh convertToSubPathh(SubPath subPath);
 
