@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 
 final notificationSettingsProvider = StateNotifierProvider<NotificationSettingsNotifier, NotificationSettings>((ref) {
   return NotificationSettingsNotifier();
@@ -69,7 +68,7 @@ class NotificationSettingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settings = ref.watch(notificationSettingsProvider);
+    var settings = ref.watch(notificationSettingsProvider);
 
     return CupertinoPageScaffold(
       backgroundColor: const Color(0xffF8F5F0),

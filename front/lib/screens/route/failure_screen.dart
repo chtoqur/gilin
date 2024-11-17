@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:gap/gap.dart';
-import 'dart:ui';
 
 class FailureScreen extends StatelessWidget {
   const FailureScreen({
@@ -11,7 +10,7 @@ class FailureScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
+    var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
       body: Stack(

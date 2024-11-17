@@ -18,10 +18,10 @@ class TaxiInfoPopup extends StatelessWidget {
 
   Future<void> _openKakaoTaxi() async {
     const kakaoTaxiUrlScheme = 'kakaot://';
-    final kakaoTaxiPlayStore = Uri.parse('market://details?id=com.kakao.taxi');
+    var kakaoTaxiPlayStore = Uri.parse('market://details?id=com.kakao.taxi');
 
     try {
-      final launched = await launchUrl(
+      var launched = await launchUrl(
         Uri.parse(kakaoTaxiUrlScheme),
         mode: LaunchMode.externalApplication,
       );
@@ -90,17 +90,17 @@ class TaxiInfoPopup extends StatelessWidget {
                   height: 48,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color(0xFFF8F5F0),
+                    color: const Color(0xFFF8F5F0),
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xFF463C33).withOpacity(0.3),
+                        color: const Color(0xFF463C33).withOpacity(0.3),
                         spreadRadius: 0,
                         blurRadius: 2,
                         offset: const Offset(0, 2),
                       ),
                     ],
                     border: Border.all(
-                      color: Color(0xFF463C33).withOpacity(0.3),
+                      color: const Color(0xFF463C33).withOpacity(0.3),
                     )
                   ),
                   child: const Icon(
@@ -128,7 +128,7 @@ class TaxiInfoPopup extends StatelessWidget {
                             ),
                             TextSpan(
                               text: location,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF463C33),
@@ -151,7 +151,7 @@ class TaxiInfoPopup extends StatelessWidget {
                             ),
                             TextSpan(
                                 text: estimatedTime,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -173,7 +173,7 @@ class TaxiInfoPopup extends StatelessWidget {
                             ),
                             TextSpan(
                               text: '${estimatedCost.toString()}원',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -187,7 +187,7 @@ class TaxiInfoPopup extends StatelessWidget {
               ],
             ),
           ),
-          Gap(8),
+          const Gap(8),
           // 카카오 택시 버튼
           Padding(
             padding: const EdgeInsets.all(16),

@@ -34,7 +34,7 @@ class MypageScreen extends StatelessWidget {
               padding: const EdgeInsets.all(30),
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: ShapeDecoration(
-                color: Color(0xffF8F5F0),
+                color: const Color(0xffF8F5F0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

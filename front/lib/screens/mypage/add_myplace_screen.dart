@@ -7,7 +7,6 @@ import 'package:gilin/state/user/location_state.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../state/route/route_state.dart';
-import '../../state/user/locations_state.dart';
 
 final selectedTabProvider = StateProvider<String>((ref) => 'home');
 final placeNameProvider = StateProvider<String>((ref) => '');
@@ -49,9 +48,9 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedTab = ref.watch(selectedTabProvider);
-    final placeName = ref.watch(placeNameProvider);
-    final hasInput = selectedTab == 'other' ? placeName.isNotEmpty : true;
+    var selectedTab = ref.watch(selectedTabProvider);
+    var placeName = ref.watch(placeNameProvider);
+    var hasInput = selectedTab == 'other' ? placeName.isNotEmpty : true;
     var locationState = ref.watch(locationProvider);
 
     return CupertinoPageScaffold(
@@ -210,7 +209,7 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
                             ),
                             child: Consumer(
                               builder: (context, ref, child) {
-                                final selectedTime = ref.watch(selectedTimeProvider);
+                                var selectedTime = ref.watch(selectedTimeProvider);
                                 return Text(
                                   '${selectedTime.hour < 12 ? "오전" : "오후"} '
                                       '${(selectedTime.hour > 12 ? selectedTime.hour - 12 : selectedTime.hour).toString().padLeft(2, '0')}:'
@@ -273,7 +272,7 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
   }
 
   Widget _buildTabButton(WidgetRef ref, String value, String label, String icon, String selectedTab) {
-    final isSelected = value == selectedTab;
+    var isSelected = value == selectedTab;
 
     return Expanded(
       child: GestureDetector(
@@ -284,9 +283,9 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
           height: 44,
           decoration: BoxDecoration(
             color: isSelected ? const Color(0xFFE5DCCF) : null,
-            border: value != 'other' ? Border(
+            border: value != 'other' ? const Border(
               right: BorderSide(
-                color: const Color(0xFF463C33),
+                color: Color(0xFF463C33),
                 width: 2,
               ),
             ) : null,
@@ -295,7 +294,7 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SvgPicture.asset(
-                'assets/images/streamline/${icon}.svg',
+                'assets/images/streamline/$icon.svg',
                 width: 18,
                 height: 18,
               ),

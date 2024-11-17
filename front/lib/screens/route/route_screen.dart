@@ -155,6 +155,6 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
 
     String period = time.hour < 12 ? '오전' : '오후';
     int hour = time.hour <= 12 ? time.hour : time.hour - 12;
-    return '$period ${hour}시 ${time.minute}분';
+    return '$period $hour시 ${time.minute}분';
   }
 }

@@ -57,7 +57,7 @@ class MyplaceScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final places = ref.watch(placesProvider);
+    var places = ref.watch(placesProvider);
 
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
@@ -149,7 +149,7 @@ class MyplaceScreen extends ConsumerWidget {
                   color: Color(0xFFF2F2F2),
                 ),
                 itemBuilder: (context, index) {
-                  final place = places[index];
+                  var place = places[index];
                   return Container(
                     padding: const EdgeInsets.fromLTRB(25, 20, 10, 20),
                     child: Row(
@@ -198,7 +198,7 @@ class MyplaceScreen extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        Gap(15),
+                        const Gap(15),
                         if (!place.isEmpty) ...[
                           CupertinoButton(
                             padding: EdgeInsets.zero,
