@@ -1,4 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gilin/screens/mypage/add_myplace_screen.dart';
+import 'package:gilin/screens/mypage/modify_user_info_screen.dart';
+import 'package:gilin/screens/mypage/myplace_screen.dart';
+import 'package:gilin/screens/mypage/notification_setting_screen.dart';
+import 'package:gilin/screens/route/failure_screen.dart';
 import 'package:gilin/screens/route/my_route_screen.dart';
 import 'package:gilin/screens/route/success_screen.dart';
 import 'package:gilin/screens/search/search_screen.dart';
@@ -61,6 +66,26 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/success',
             builder: (context, state) => const SuccessScreen(),
+          ),
+          GoRoute(
+            path: '/failure',
+            builder: (context, state) => const FailureScreen(),
+          ),
+          GoRoute(
+            path: '/modify_user',
+            builder: (context, state) => const ModifyUserInfoScreen(),
+          ),
+          GoRoute(
+            path: '/notification_setting',
+            builder: (context, state) => const NotificationSettingScreen(),
+          ),
+          GoRoute(
+            path: '/myplace',
+            builder: (context, state) => const MyplaceScreen(),
+          ),
+          GoRoute(
+            path: '/add_myplace',
+            builder: (context, state) => const AddMyPlaceScreen(),
           ),
         ],
       ),

@@ -15,6 +15,7 @@ class SuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // backgroundColor: Colors.white,
       body: Stack(
         children: [
           // 배경 이미지
@@ -32,7 +33,7 @@ class SuccessScreen extends StatelessWidget {
                 sigmaY: 5.0,
               ),
               child: Container(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withOpacity(0.5),
               ),
             ),
           ),
@@ -53,46 +54,43 @@ class SuccessScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    '수고하셨어요',
+                    '수고하셨어요!',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const Gap(12),
                   const Text(
                     '다음 여정도 길인과 함께해요.',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 16,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const Gap(32),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          context.pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF8EAAB),
-                          foregroundColor: const Color(0xFF463C33),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 0,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 2.5,
+                    height: 45,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF8EAAB),
+                        foregroundColor: const Color(0xFF463C33),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Text(
-                          '확인',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        '확인',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),

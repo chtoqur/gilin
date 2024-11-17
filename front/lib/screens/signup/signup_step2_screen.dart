@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 
-import '../../state/user/location_state.dart';
+import '../../state/user/locations_state.dart';
 import '../../widgets/mypage/place_input_widget.dart';
 
 class SignupStep2Screen extends ConsumerWidget {
@@ -12,7 +12,7 @@ class SignupStep2Screen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    var locationState = ref.watch(locationProvider);
+    var locationState = ref.watch(locationsProvider);
     var hasAddress = locationState.homePoint.address.isNotEmpty ||
         locationState.companyPoint.address.isNotEmpty ||
         locationState.schoolPoint.address.isNotEmpty;

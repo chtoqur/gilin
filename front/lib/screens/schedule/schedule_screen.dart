@@ -49,6 +49,13 @@ class ScheduleScreen extends ConsumerWidget {
             },
             child: const Text('Go to Success Page'),
           ),
+          ElevatedButton(
+            onPressed: () {
+              ref.read(bottomNavProvider.notifier).updateIndex(3);
+              context.push('/failure');
+            },
+            child: const Text('Go to Failure Page'),
+          ),
         ],
       ),
     );

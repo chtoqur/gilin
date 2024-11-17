@@ -6,7 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../state/route/route_state.dart';
-import '../../state/user/location_state.dart';
+import '../../state/user/locations_state.dart';
 
 class PlaceInputWidget extends ConsumerStatefulWidget {
   final String placeName;
@@ -96,7 +96,7 @@ class _LocationInputWidgetState extends ConsumerState<PlaceInputWidget> {
               height: 35,
               child: Consumer(
                   builder: (context, ref, child) {
-                    var locationState = ref.watch(locationProvider);
+                    var locationState = ref.watch(locationsProvider);
 
                     String address = '';
                     switch(widget.identifier) {
@@ -203,14 +203,14 @@ class _LocationInputWidgetState extends ConsumerState<PlaceInputWidget> {
           child: GestureDetector(
             onTap: () {
               ref.read(routeProvider.notifier).setCurrentScreen('signup_step2');
-              ref.read(locationProvider.notifier).setSelectedWidget(widget.identifier);
+              ref.read(locationsProvider.notifier).setSelectedWidget(widget.identifier);
               context.push('/search');
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Consumer(
                 builder: (context, ref, child) {
-                  var locationState = ref.watch(locationProvider);
+                  var locationState = ref.watch(locationsProvider);
 
                   String address = '';
                   switch(widget.identifier) {

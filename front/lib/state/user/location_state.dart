@@ -29,29 +29,17 @@ class RouteLocation {
 }
 
 class LocationState {
-  final RouteLocation homePoint;
-  final RouteLocation companyPoint;
-  final RouteLocation schoolPoint;
-  final String? selectedWidget;
+  final RouteLocation point;
 
   LocationState({
-    this.homePoint = const RouteLocation(),
-    this.companyPoint = const RouteLocation(),
-    this.schoolPoint = const RouteLocation(),
-    this.selectedWidget,
+    this.point = const RouteLocation(),
   });
 
   LocationState copyWith({
-    RouteLocation? homePoint,
-    RouteLocation? companyPoint,
-    RouteLocation? schoolPoint,
-    String? selectedWidget,
+    RouteLocation? point,
   }) {
     return LocationState(
-      homePoint: homePoint ?? this.homePoint,
-      companyPoint: companyPoint ?? this.companyPoint,
-      schoolPoint: schoolPoint ?? this.schoolPoint,
-      selectedWidget: selectedWidget ?? this.selectedWidget,
+      point: point ?? this.point,
     );
   }
 }
@@ -59,43 +47,15 @@ class LocationState {
 class LocationNotifier extends StateNotifier<LocationState> {
   LocationNotifier() : super(LocationState());
 
-  void setSelectedWidget(String widget) {
-    state = state.copyWith(selectedWidget: widget);
-  }
-
   void updateLocation(String title, double x, double y, String address) {
-    switch(state.selectedWidget) {
-      case 'home':
-        state = state.copyWith(
-          homePoint: RouteLocation(
-            title: title,
-            x: x,
-            y: y,
-            address: address,
-          ),
-        );
-        break;
-      case 'company':
-        state = state.copyWith(
-          companyPoint: RouteLocation(
-            title: title,
-            x: x,
-            y: y,
-            address: address,
-          ),
-        );
-        break;
-      case 'school':
-        state = state.copyWith(
-          schoolPoint: RouteLocation(
-            title: title,
-            x: x,
-            y: y,
-            address: address,
-          ),
-        );
-        break;
-    }
+    state = state.copyWith(
+      point: RouteLocation(
+        title: title,
+        x: x,
+        y: y,
+        address: address,
+      ),
+    );
   }
 }
 
