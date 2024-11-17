@@ -1,6 +1,7 @@
 package com.gilin.route.domain.metro.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gilin.route.domain.member.entity.Member;
 import com.gilin.route.domain.metro.dto.MetroExitToDest;
 import com.gilin.route.domain.metro.dto.MetroLinkDto;
 import com.gilin.route.domain.metro.dto.MetroPositionDto;
@@ -118,7 +119,7 @@ public class MetroServiceImpl implements MetroService {
     }
 
     @Override
-    public MetroExitToDest getClosestExit(Integer startStationId, Coordinate dest) {
+    public MetroExitToDest getClosestExit(Integer startStationId, Coordinate dest, Member member) {
         MetroExitToDest closestExit = null;
         double minDistance = Double.MAX_VALUE;
 
@@ -133,7 +134,7 @@ public class MetroServiceImpl implements MetroService {
             try {
                 Coordinate exitCoordinate = objectMapper.readValue(jsonValue, Coordinate.class);
 
-                WalkInfo walkInfo = walkService.getWalkGraphPath(exitCoordinate, dest);
+                WalkInfo walkInfo = walkService.getWalkGraphPath(exitCoordinate, dest, member);
                 if (walkInfo.distance() < minDistance) {
                     minDistance = walkInfo.distance();
                     closestExit = MetroExitToDest.builder()

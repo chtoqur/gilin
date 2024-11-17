@@ -1,8 +1,13 @@
 package com.gilin.route.domain.walk.service;
 
+import com.gilin.route.domain.member.entity.Member;
 import com.gilin.route.domain.route.dto.response.RouteResponse.SubPathh;
 import com.gilin.route.domain.route.dto.response.TravelType;
 import com.gilin.route.domain.walk.dto.WalkInfo;
+import com.gilin.route.domain.walk.dto.request.WalkHistoryRequestDto;
+import com.gilin.route.domain.walk.dto.response.WalkHistoryResponseDto;
+import com.gilin.route.domain.walk.entity.WalkHistory;
+import com.gilin.route.domain.walk.repository.WalkHistoryRepository;
 import com.gilin.route.global.client.odsay.response.SearchPubTransPathResponse.Result.SubPath;
 import com.gilin.route.global.client.tmap.TMapClient;
 import com.gilin.route.global.client.tmap.request.PedestrianPathRequest;
@@ -11,6 +16,7 @@ import com.gilin.route.global.client.tmap.response.PedestrianPathResponse.Featur
 import com.gilin.route.global.client.tmap.response.PedestrianPathResponse.Feature.LineStringGeometry;
 import com.gilin.route.global.client.tmap.response.PedestrianPathResponse.Feature.PointGeometry;
 import com.gilin.route.global.dto.Coordinate;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,19 +30,22 @@ import org.springframework.stereotype.Service;
 public class WalkServiceImpl implements WalkService {
 
     final private TMapClient tMapClient;
+    final private WalkHistoryRepository walkHistoryRepository;
 
     @Override
-    public WalkInfo getWalkGraphPath(Coordinate start, Coordinate end) {
+    public WalkInfo getWalkGraphPath(Coordinate start, Coordinate end, Member member) {
         List<Coordinate> path = new ArrayList<>();
         Integer totalDistance = 0;
         Integer totalTime = 0;
+        WalkHistoryResponseDto walkHistory = getWalkHistory(member);
+        Double mps = walkHistory.average();
         PedestrianPathResponse pedestrianPath = tMapClient.getPedestrianPath(
             PedestrianPathRequest.builder()
                                  .startX(start.x())
                                  .startY(start.y())
                                  .endX(end.x())
                                  .endY(end.y())
-                                 .speed(60)
+                                 .speed((int) (mps * 3.6))
                                  .startName("start")
                                  .endName("end")
                                  .build());
@@ -69,14 +78,14 @@ public class WalkServiceImpl implements WalkService {
         return WalkInfo.builder()
                        .coordinates(path)
                        .distance(totalDistance)
-                       .time(totalTime / 60 + 1) // 분으로 변환
+                       .time((int) (totalDistance / mps) / 60 + 1) // 분으로 변환
                        .build();
     }
 
 
     @Override
     public SubPathh convertToSubPathh(SubPath prevSubPath, SubPath nextSubPath, Coordinate start,
-        Coordinate end) {
+        Coordinate end, Member member) {
         Coordinate walkStart, walkEnd;
 
         if (prevSubPath == null) {
@@ -90,7 +99,7 @@ public class WalkServiceImpl implements WalkService {
         } else {
             walkEnd = new Coordinate(nextSubPath.getStartX(), nextSubPath.getStartY());
         }
-        WalkInfo info = getWalkGraphPath(walkStart, walkEnd);
+        WalkInfo info = getWalkGraphPath(walkStart, walkEnd, member);
         // 환승타입일 경우(앞 뒤가 모두 지하철)
         if (prevSubPath != null && nextSubPath != null
             && prevSubPath.getTrafficType() == 1 && nextSubPath.getTrafficType() == 1
@@ -116,5 +125,56 @@ public class WalkServiceImpl implements WalkService {
                        .endX(walkEnd.x())
                        .endY(walkEnd.y())
                        .build();
+    }
+
+    @Override
+    @Transactional
+    public void saveWalkHistory(WalkHistoryRequestDto request, Member member) {
+        if (member == null) {
+            return;
+        }
+        if (request.time() == 0 || request.distance() == 0) {
+            throw new IllegalArgumentException("시간, 거리는 0이 될 수 없습니다.");
+        }
+        WalkHistory walkHistory = new WalkHistory(request.distance(), request.time(), member);
+        walkHistoryRepository.save(walkHistory);
+    }
+
+    @Override
+    public WalkHistoryResponseDto getWalkHistory(Member member) {
+        if (member == null) {
+            return WalkHistoryResponseDto.builder()
+                                         .average(1.1d)
+                                         .max(1.1d)
+                                         .build();
+        }
+        List<WalkHistory> histories = walkHistoryRepository.findAllByMember(member);
+        // 기록이 없을 경우 기본 속도 4m/s
+        if (histories.isEmpty()) {
+            return WalkHistoryResponseDto.builder()
+                                         .average(1.1d)
+                                         .max(1.1d)
+                                         .build();
+        }
+        double max = 0d;
+        double time = 0d;
+        double distance = 0d;
+        double curTime;
+        double curDistance;
+        for (WalkHistory history : histories) {
+            curDistance = history.getDistance();
+            curTime = history.getTime();
+            double speed = curDistance / curTime;
+            if (speed > max) {
+                max = speed;
+            }
+            distance += curDistance;
+            time += curTime;
+        }
+
+        return WalkHistoryResponseDto.builder()
+                                     .max(max)
+                                     .average(distance / time)
+                                     .build();
     }
 }
