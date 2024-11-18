@@ -32,12 +32,28 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
   @override
   void initState() {
     super.initState();
-    _nicknameController.text = "길싸피";
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
+    _loadKakaoNickname();
+  }
+
+  Future<void> _loadKakaoNickname() async {
+    try {
+      // Kakao 닉네임 불러오기
+      var kakaoNickname = await ref
           .read(signupStateProvider.notifier)
-          .updateNickname(_nicknameController.text);
-    });
+          .fetchKakaoNickname();
+
+      if (kakaoNickname.isNotEmpty) {
+        _nicknameController.text = kakaoNickname;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(signupStateProvider.notifier).updateNickname(kakaoNickname);
+        });
+      } else {
+        _nicknameController.text = "길싸피";
+      }
+    } catch (e) {
+      print('닉네임 불러오기 오류: $e');
+      _nicknameController.text = "길싸피";
+    }
   }
 
   @override
@@ -74,8 +90,8 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
       }
 
       int ageGroup = 20;
-      int? parsedAgeGroup =
-          int.tryParse(signupState.ageGroup.replaceAll(RegExp(r'[^0-9]'), ''));
+      int? parsedAgeGroup = int.tryParse(
+          signupState.ageGroup.replaceAll(RegExp(r'[^0-9]'), ''));
       if (parsedAgeGroup != null) {
         ageGroup = parsedAgeGroup;
       }
@@ -202,7 +218,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
               child: SingleChildScrollView(
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 45, horizontal: 35),
+                  const EdgeInsets.symmetric(vertical: 45, horizontal: 35),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -231,7 +247,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           border:
-                              Border.all(color: CupertinoColors.systemGrey4),
+                          Border.all(color: CupertinoColors.systemGrey4),
                           borderRadius: BorderRadius.circular(8),
                           color: CupertinoColors.white,
                         ),
@@ -309,7 +325,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                           padding: const EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             border:
-                                Border.all(color: CupertinoColors.systemGrey4),
+                            Border.all(color: CupertinoColors.systemGrey4),
                             borderRadius: BorderRadius.circular(8),
                             color: Colors.white,
                           ),
@@ -350,8 +366,8 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                         onPressed: signupState.nickname.isEmpty
                             ? null
                             : () async {
-                                await _submitAdditionalInfo();
-                              },
+                          await _submitAdditionalInfo();
+                        },
                         disabledColor: const Color(0xFFD9D9D9),
                         child: Text(
                           '회원가입 완료',
