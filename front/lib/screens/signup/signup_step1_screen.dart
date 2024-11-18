@@ -1,14 +1,14 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:gilin/widgets/shared/cupertino_radio.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gilin/widgets/shared/token_intercepter.dart';
 import '../../core/storage/secure_storage.dart';
 import '../../state/auth/auth_provider.dart';
-import '../../state/auth/auth_state.dart';
 import '../../state/signup/signup_state.dart';
 
 class SignupStep1Screen extends ConsumerStatefulWidget {
@@ -100,7 +100,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
             },
-            responseType: ResponseType.json,
+            responseType: ResponseType.plain, // JSON이 아닌 경우에 대비하여 plain으로 설정
           ),
         );
 
@@ -113,7 +113,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
             context.push('/signup_step2');
           }
         } else if (response.statusCode == 409) {
-          print('이미 가입한 회원입니다');
+          print('이미 가입한 회원입니다.');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -124,17 +124,25 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
             context.push('/signup_step2');
           }
         } else {
-          throw DioException(
-            requestOptions: response.requestOptions,
-            response: response,
-            type: DioExceptionType.badResponse,
-            message: '회원가입 실패: ${response.statusCode} - ${response.data}',
+          print('회원가입 실패: ${response.statusCode}');
+          throw Exception('회원가입에 실패했습니다.');
+        }
+      } catch (e) {
+        print('Dio 에러: $e');
+
+        if (e is DioException && e.response != null) {
+          print('응답 데이터: ${e.response?.data}');
+        }
+
+        if (e is FormatException) {
+          print('FormatException: 응답 데이터가 잘못된 형식입니다.');
+        }
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('회원가입 중 오류가 발생했습니다.')),
           );
         }
-      } on DioException catch (e) {
-        print('Dio 에러: ${e.message}');
-        print('응답 데이터: ${e.response?.data}');
-        rethrow;
       }
     } catch (e) {
       print('회원가입 요청 중 오류 발생: $e');
@@ -145,6 +153,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
       }
     }
   }
+
   void _showAgePicker() {
     var signupState = ref.read(signupStateProvider);
     showCupertinoModalPopup<void>(
@@ -180,15 +189,6 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
 
   @override
   Widget build(BuildContext context) {
-    var authState = ref.watch(authProvider);
-    if (authState is AsyncData<AuthAuthenticated>) {
-      var nickname = authState.value.kakaoUser.kakaoAccount?.profile?.nickname;
-      if (nickname != null && _nicknameController.text.isEmpty) {
-        _nicknameController.text = nickname;
-        ref.read(signupStateProvider.notifier).updateNickname(nickname);
-      }
-    }
-
     var signupState = ref.watch(signupStateProvider);
 
     return CupertinoPageScaffold(
@@ -206,9 +206,9 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                       const Text(
                         '닉네임을 입력해주세요',
                         style: TextStyle(
-                            fontSize: 23,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xff463C33)
+                          fontSize: 23,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xff463C33),
                         ),
                       ),
                       const Gap(5),
@@ -296,9 +296,9 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                         child: Container(
                           padding: const EdgeInsets.all(15),
                           decoration: BoxDecoration(
-                              border: Border.all(color: CupertinoColors.systemGrey4),
-                              borderRadius: BorderRadius.circular(8),
-                              color: Colors.white
+                            border: Border.all(color: CupertinoColors.systemGrey4),
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -329,18 +329,15 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                   SizedBox(
                     width: double.infinity,
                     child: CupertinoTheme(
-                      data: const CupertinoThemeData(
-                          primaryColor: Color(0xFF669358)
-                      ),
+                      data: const CupertinoThemeData(primaryColor: Color(0xFF669358)),
                       child: CupertinoButton.filled(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         borderRadius: BorderRadius.zero,
                         onPressed: signupState.nickname.isEmpty
                             ? null
-                            : () async {  // async 추가
-                          await _submitAdditionalInfo();  // await로 결과 기다림
+                            : () async {
+                          await _submitAdditionalInfo();
                         },
-
                         disabledColor: const Color(0xFFD9D9D9),
                         child: Text(
                           '회원가입 완료',
