@@ -18,6 +18,7 @@ import com.gilin.route.global.client.openApi.dto.response.MetroPositionResponse.
 import com.gilin.route.global.client.openApi.dto.response.StationArrivalResponse;
 import com.gilin.route.global.client.openApi.dto.response.StationArrivalResponse.RealtimeArrival;
 import com.gilin.route.global.dto.Coordinate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -167,6 +168,13 @@ public class MetroServiceImpl implements MetroService {
         List<StationArrivalDto> retList = new ArrayList<>();
         StationArrivalResponse response = openApiClient.getRealTimeStationArrival(stationName);
         if (response.getRealtimeArrivalList() == null) {
+            retList.add(StationArrivalDto.builder()
+                                         .stationName("사당")
+                                         .line("2호선")
+                                         .trainNo("0306")
+                                         .trainLineNm("2호선")
+                                         .time(10)
+                                         .build());
             return retList;
         }
         for (RealtimeArrival realtimeArrival : response.getRealtimeArrivalList()) {
@@ -208,6 +216,18 @@ public class MetroServiceImpl implements MetroService {
     public MetroPositionDto getMetroPosition(String trainNo, String lineName) {
         MetroPositionResponse response = openApiClient.getRealTimePosition(lineName);
         if (response.getRealtimePositionList() == null) {
+            if (trainNo.equals("0306")) {
+                String[] dummyStations = {"사당", "방배", "교대", "강남", "역삼"};
+
+                return MetroPositionDto.builder()
+                                       .line("2호선")
+                                       .stationName(dummyStations[LocalDateTime.now()
+                                                                               .getSecond() % 5])
+                                       .trainNo("dino")
+                                       .trainLineNm("2호선")
+                                       .status("도착")
+                                       .build();
+            }
             return null;
         }
         for (RealtimePosition position : response.getRealtimePositionList()) {
