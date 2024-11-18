@@ -113,11 +113,12 @@ class TransitService {
       debugPrint('\n====== Metro Position API Request ======');
       debugPrint('Train No: $trainNo');
       debugPrint('Line Name: $lineName');
+      var formattedLineName = lineName.replaceAll(RegExp(r'^수도권\s+'), '');
 
       var response = await _dio.get('/metro/pos',
           queryParameters: {
             'trainNo': trainNo,
-            'lineName': lineName,
+            'lineName': formattedLineName,
           }
       );
 
