@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:gilin/state/user/location_state.dart';
 import 'package:go_router/go_router.dart';
 import '../../models/search/local_search_result.dart';
 import '../../state/route/route_state.dart';
+import '../../state/user/locations_state.dart';
 
 class SearchResultMapInfo extends ConsumerWidget {
   final LocalSearchResult searchResult;
@@ -85,13 +87,50 @@ class SearchResultMapInfo extends ConsumerWidget {
           // 오른쪽 (아이콘)
           GestureDetector(
             onTap: () {
-              var routeNotifier = ref.read(routeProvider.notifier);
-              routeNotifier.setLocation(
-                searchResult.title,
-                searchResult.x,
-                searchResult.y,
-              );
-              context.go('/route');
+              var currentScreen = ref.watch(routeProvider).currentScreen;
+
+              if (currentScreen == 'signup_step2') {
+                if (searchResult.roadAddress == '') {
+                  ref.read(locationsProvider.notifier).updateLocation(
+                    searchResult.title,
+                    searchResult.x,
+                    searchResult.y,
+                    searchResult.title,
+                  );
+                } else {
+                  ref.read(locationsProvider.notifier).updateLocation(
+                    searchResult.title,
+                    searchResult.x,
+                    searchResult.y,
+                    searchResult.roadAddress,
+                  );
+                }
+                context.push('/signup_step2');
+              } else if (currentScreen == 'add_myplace') {
+                if (searchResult.roadAddress == '') {
+                  ref.read(locationProvider.notifier).updateLocation(
+                    searchResult.title,
+                    searchResult.x,
+                    searchResult.y,
+                    searchResult.title,
+                  );
+                } else {
+                  ref.read(locationProvider.notifier).updateLocation(
+                    searchResult.title,
+                    searchResult.x,
+                    searchResult.y,
+                    searchResult.roadAddress,
+                  );
+                }
+                context.go('/add_myplace');
+              } else {
+                ref.read(routeProvider.notifier).setLocation(
+                  searchResult.title,
+                  searchResult.x,
+                  searchResult.y,
+                );
+                context.go('/route');
+              }
             },
             child: Container(
               width: 60,

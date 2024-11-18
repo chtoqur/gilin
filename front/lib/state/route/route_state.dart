@@ -14,6 +14,7 @@ class RouteLocation {
 
   RouteLocation copyWith({
     String? title,
+    String? address,
     double? x,
     double? y,
   }) {
@@ -31,6 +32,7 @@ class RouteState {
   final RouteInputMode? currentInputMode;
   final DateTime? arrivalTime;
   final List<String> selectedTransports;
+  final String? currentScreen;
 
   RouteState({
     RouteLocation? startPoint,
@@ -40,9 +42,12 @@ class RouteState {
     this.selectedTransports = const ['지하철', '버스', '도보'],
   }) :  startPoint = startPoint ?? const RouteLocation(),
         arrivalTime = arrivalTime ?? _initializeTime();
+    this.currentScreen,
+  }) : arrivalTime = arrivalTime ?? _initializeTime();
 
-  static DateTime _initializeTime() { // 현재 시간으로 초기화
+  static DateTime _initializeTime() {
     var now = DateTime.now();
+    now = now.add(const Duration(hours: 9));
     var roundedMinutes = (now.minute ~/ 5) * 5;
     return DateTime(
       now.year,
@@ -69,7 +74,7 @@ class RouteState {
     RouteInputMode? currentInputMode,
     DateTime? arrivalTime,
     List<String>? selectedTransports,
-
+    String? currentScreen,
   }) {
     return RouteState(
       startPoint: startPoint ?? this.startPoint,
@@ -77,6 +82,7 @@ class RouteState {
       currentInputMode: currentInputMode ?? this.currentInputMode,
       arrivalTime: arrivalTime ?? this.arrivalTime,
       selectedTransports: selectedTransports ?? this.selectedTransports,
+      currentScreen: currentScreen ?? this.currentScreen,
     );
   }
 }
@@ -102,11 +108,13 @@ class RouteNotifier extends StateNotifier<RouteState> {
       state = state.copyWith(
         startPoint: RouteLocation(title: title, x: x, y: y),
         currentInputMode: null,
+        currentScreen: null,
       );
     } else if (state.currentInputMode == RouteInputMode.end) {
       state = state.copyWith(
         endPoint: RouteLocation(title: title, x: x, y: y),
         currentInputMode: null,
+        currentScreen: null,
       );
     }
   }
@@ -124,6 +132,10 @@ class RouteNotifier extends StateNotifier<RouteState> {
       startPoint: state.endPoint,
       endPoint: state.startPoint,
     );
+  }
+
+  void setCurrentScreen(String screen) {
+    state = state.copyWith(currentScreen: screen);
   }
 }
 
