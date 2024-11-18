@@ -4,6 +4,7 @@
 
     <application
         android:label="gilin"
+        android:enableOnBackInvokedCallback="true"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

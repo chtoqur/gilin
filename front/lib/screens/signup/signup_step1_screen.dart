@@ -1,15 +1,15 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:gilin/widgets/shared/cupertino_radio.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:dio/dio.dart'; // Dio 패키지 추가
+import 'package:gilin/widgets/shared/token_intercepter.dart';
+import '../../core/storage/secure_storage.dart';
 import '../../state/auth/auth_provider.dart';
 import '../../state/auth/auth_state.dart';
 import '../../state/signup/signup_state.dart';
-import '../../widgets/shared/cupertino_radio.dart';
 
 class SignupStep1Screen extends ConsumerStatefulWidget {
   const SignupStep1Screen({super.key});
@@ -47,51 +47,104 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
     super.dispose();
   }
 
-  void _submitAdditionalInfo() async {
+  Future<void> _submitAdditionalInfo() async {
     var signupState = ref.read(signupStateProvider);
+    final storage = SecureStorage.instance;
+
     try {
-      var authNotifier = ref.read(authProvider.notifier);
-      var accessToken = await authNotifier.getAccessToken();
+      final accessToken = await storage.read(key: 'ACCESS_TOKEN');
+      final refreshToken = await storage.read(key: 'REFRESH_TOKEN');
 
-      if (accessToken != null) {
-        // gender 값을 "M" 또는 "F"로 변환
-        String? gender;
-        if (signupState.gender == "male") {
-          gender = "M";
-        } else if (signupState.gender == "female") {
-          gender = "F";
-        }
+      if (accessToken == null || refreshToken == null) {
+        throw Exception('토큰이 없습니다.');
+      }
 
-        // ageGroup에서 숫자만 추출
-        int ageGroup = int.tryParse(signupState.ageGroup.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+      var dio = Dio(BaseOptions(
+        baseUrl: 'https://k11a306.p.ssafy.io/api',
+        connectTimeout: const Duration(seconds: 5),
+        receiveTimeout: const Duration(seconds: 5),
+        contentType: 'application/json',
+        validateStatus: (status) => true,
+      ));
 
-        var response = await Dio().post(
-          'https://k11a306.p.ssafy.io/api/user/register',
+      String gender = "none";
+      if (signupState.gender == "male") {
+        gender = "M";
+      } else if (signupState.gender == "female") {
+        gender = "F";
+      }
+
+      int ageGroup = 20;
+      int? parsedAgeGroup = int.tryParse(signupState.ageGroup.replaceAll(RegExp(r'[^0-9]'), ''));
+      if (parsedAgeGroup != null) {
+        ageGroup = parsedAgeGroup;
+      }
+
+      Map<String, dynamic> requestData = {
+        "oAuthType": "KAKAO",
+        "accessToken": accessToken,
+        "refreshToken": refreshToken,
+        "name": signupState.nickname,
+        "gender": gender,
+        "ageGroup": ageGroup,
+      };
+
+      print("Request Data: $requestData");
+
+      try {
+        final response = await dio.post(
+          '/user/register',
+          data: requestData,
           options: Options(
-            headers: {'Authorization': 'Bearer $accessToken'},
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            responseType: ResponseType.json,
           ),
-          data: {
-            "nickname": signupState.nickname,
-            "gender": gender,
-            "ageGroup": ageGroup,
-          },
         );
+
+        print('Response Status: ${response.statusCode}');
+        print('Response Data: ${response.data}');
 
         if (response.statusCode == 200) {
           print('회원가입 완료');
+          if (mounted) {
+            context.push('/signup_step2');
+          }
+        } else if (response.statusCode == 409) {
+          print('이미 가입한 회원입니다');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('이미 가입된 회원입니다. 로그인을 진행합니다.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+            context.push('/signup_step2');
+          }
         } else {
-          print('서버 응답: ${response.data}');
-          throw Exception('회원가입 실패');
+          throw DioException(
+            requestOptions: response.requestOptions,
+            response: response,
+            type: DioExceptionType.badResponse,
+            message: '회원가입 실패: ${response.statusCode} - ${response.data}',
+          );
         }
+      } on DioException catch (e) {
+        print('Dio 에러: ${e.message}');
+        print('응답 데이터: ${e.response?.data}');
+        rethrow;
       }
     } catch (e) {
       print('회원가입 요청 중 오류 발생: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('회원가입 중 오류가 발생했습니다.')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('회원가입 중 오류가 발생했습니다.')),
+        );
+      }
     }
   }
-
   void _showAgePicker() {
     var signupState = ref.read(signupStateProvider);
     showCupertinoModalPopup<void>(
@@ -128,7 +181,6 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
   @override
   Widget build(BuildContext context) {
     var authState = ref.watch(authProvider);
-
     if (authState is AsyncData<AuthAuthenticated>) {
       var nickname = authState.value.kakaoUser.kakaoAccount?.profile?.nickname;
       if (nickname != null && _nicknameController.text.isEmpty) {
@@ -278,14 +330,15 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                     width: double.infinity,
                     child: CupertinoTheme(
                       data: const CupertinoThemeData(
-                        primaryColor: Color(0xFF669358)
+                          primaryColor: Color(0xFF669358)
                       ),
                       child: CupertinoButton.filled(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         borderRadius: BorderRadius.zero,
-                        onPressed: signupState.nickname.isEmpty ? null : () {
-                          _submitAdditionalInfo;
-                          context.push('/signup_step2');
+                        onPressed: signupState.nickname.isEmpty
+                            ? null
+                            : () async {  // async 추가
+                          await _submitAdditionalInfo();  // await로 결과 기다림
                         },
 
                         disabledColor: const Color(0xFFD9D9D9),
@@ -295,9 +348,9 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
                             color: signupState.nickname.isEmpty
-                              ? const Color(0xFF757575)
-                              : Colors.white,
-                        ),
+                                ? const Color(0xFF757575)
+                                : Colors.white,
+                          ),
                         ),
                       ),
                     ),
