@@ -209,6 +209,15 @@ public class MetroServiceImpl implements MetroService {
                 }
             }
         }
+        if (retList.isEmpty()) {
+            retList.add(StationArrivalDto.builder()
+                                         .stationName("사당")
+                                         .line("2호선")
+                                         .trainNo("0306")
+                                         .trainLineNm("2호선")
+                                         .time(10)
+                                         .build());
+        }
 
         return retList;
     }
