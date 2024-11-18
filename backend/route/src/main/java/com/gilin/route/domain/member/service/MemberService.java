@@ -16,4 +16,5 @@ public interface MemberService {
     LoginResponse testLogin(Long memberId);
     void updatePlace(Member member, MemberPlacePutRequest request);
     List<PlaceResponse> getPlace(Member member);
+    public String changeName(Member member, String newName);
 }

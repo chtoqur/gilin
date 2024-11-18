@@ -21,12 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -106,5 +101,18 @@ public class MemberController {
             throw new GilinException(HttpStatus.UNAUTHORIZED, "");
         }
         return ResponseEntity.ok(memberService.getPlace(member));
+    }
+
+    @PutMapping("/name")
+    @Operation(summary = "닉네임 바꾸기", description = "닉네임을 바꿉니다. JWT 토큰이 필요합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "닉네임 바꾸기 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(mediaType = "application/json"))
+    })
+    public ResponseEntity<String> changeName(@Authenticated Member member, @RequestParam String newName) {
+        if (Objects.isNull(member)){
+            throw new GilinException(HttpStatus.UNAUTHORIZED, "회원 정보 불러오기 실패");
+        }
+        return ResponseEntity.ok(memberService.changeName(member, newName));
     }
 }

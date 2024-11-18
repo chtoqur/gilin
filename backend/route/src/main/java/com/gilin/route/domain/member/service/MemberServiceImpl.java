@@ -131,4 +131,14 @@ public class MemberServiceImpl implements MemberService {
                 .map(PlaceResponse::of)
                 .toList();
     }
+
+    @Override
+    public String changeName(Member member, String newName) {
+        if (!memberRepository.existsById(member.getId())) {
+            throw new GilinException(HttpStatus.UNAUTHORIZED, "회원 정보 불러오기 실패");
+        }
+        member.changeName(newName);
+        return memberRepository.save(member).getName();
+    }
+
 }
