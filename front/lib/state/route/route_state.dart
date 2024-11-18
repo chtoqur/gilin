@@ -39,11 +39,10 @@ class RouteState {
     this.endPoint = const RouteLocation(),
     this.currentInputMode,
     DateTime? arrivalTime,
+    this.currentScreen,
     this.selectedTransports = const ['지하철', '버스', '도보'],
   }) :  startPoint = startPoint ?? const RouteLocation(),
         arrivalTime = arrivalTime ?? _initializeTime();
-    this.currentScreen,
-  }) : arrivalTime = arrivalTime ?? _initializeTime();
 
   static DateTime _initializeTime() {
     var now = DateTime.now();

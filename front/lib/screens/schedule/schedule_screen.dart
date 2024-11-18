@@ -68,6 +68,12 @@ class ScheduleScreen extends ConsumerWidget {
             },
             child: const Text('Go to Arrival Time Test Page'),
           ),
+          ElevatedButton(
+            onPressed: () => ref
+                .read(bottomNavProvider.notifier)
+                .navigateToPage(context, 1, '/login'),
+            child: const Text('Go to login Page'),
+          ),
         ],
       ),
     );

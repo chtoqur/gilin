@@ -19,6 +19,9 @@ import 'package:gilin/screens/main_screen.dart';
 import 'package:gilin/screens/guide/guide_main_screen.dart';
 import 'package:gilin/models/route/transit_route.dart';
 import 'package:gilin/state/route/route_state.dart';
+import '../../screens/login/login_screen.dart';
+import '../auth/auth_provider.dart';
+import '../auth/auth_state.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -71,6 +74,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/search',
             builder: (context, state) => const SearchScreen(),
+          ),
+          GoRoute(
+            path: '/login',  // 로그인 경로 추가
+            builder: (context, state) => const LoginScreenUI(),
           ),
           GoRoute(
             path: '/signup_step1',

@@ -5,7 +5,11 @@ import 'package:gap/gap.dart';
 import 'package:gilin/widgets/shared/cupertino_radio.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:dio/dio.dart'; // Dio 패키지 추가
+import '../../state/auth/auth_provider.dart';
+import '../../state/auth/auth_state.dart';
 import '../../state/signup/signup_state.dart';
+import '../../widgets/shared/cupertino_radio.dart';
 
 class SignupStep1Screen extends ConsumerStatefulWidget {
   const SignupStep1Screen({super.key});
@@ -43,6 +47,51 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
     super.dispose();
   }
 
+  void _submitAdditionalInfo() async {
+    var signupState = ref.read(signupStateProvider);
+    try {
+      var authNotifier = ref.read(authProvider.notifier);
+      var accessToken = await authNotifier.getAccessToken();
+
+      if (accessToken != null) {
+        // gender 값을 "M" 또는 "F"로 변환
+        String? gender;
+        if (signupState.gender == "male") {
+          gender = "M";
+        } else if (signupState.gender == "female") {
+          gender = "F";
+        }
+
+        // ageGroup에서 숫자만 추출
+        int ageGroup = int.tryParse(signupState.ageGroup.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+
+        var response = await Dio().post(
+          'https://k11a306.p.ssafy.io/api/user/register',
+          options: Options(
+            headers: {'Authorization': 'Bearer $accessToken'},
+          ),
+          data: {
+            "nickname": signupState.nickname,
+            "gender": gender,
+            "ageGroup": ageGroup,
+          },
+        );
+
+        if (response.statusCode == 200) {
+          print('회원가입 완료');
+        } else {
+          print('서버 응답: ${response.data}');
+          throw Exception('회원가입 실패');
+        }
+      }
+    } catch (e) {
+      print('회원가입 요청 중 오류 발생: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('회원가입 중 오류가 발생했습니다.')),
+      );
+    }
+  }
+
   void _showAgePicker() {
     var signupState = ref.read(signupStateProvider);
     showCupertinoModalPopup<void>(
@@ -78,6 +127,16 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
 
   @override
   Widget build(BuildContext context) {
+    var authState = ref.watch(authProvider);
+
+    if (authState is AsyncData<AuthAuthenticated>) {
+      var nickname = authState.value.kakaoUser.kakaoAccount?.profile?.nickname;
+      if (nickname != null && _nicknameController.text.isEmpty) {
+        _nicknameController.text = nickname;
+        ref.read(signupStateProvider.notifier).updateNickname(nickname);
+      }
+    }
+
     var signupState = ref.watch(signupStateProvider);
 
     return CupertinoPageScaffold(
@@ -224,12 +283,11 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                       child: CupertinoButton.filled(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         borderRadius: BorderRadius.zero,
-                        onPressed: signupState.nickname.isEmpty
-                            ? null
-                            : () {
-                          // 회원가입 완료 로직
+                        onPressed: signupState.nickname.isEmpty ? null : () {
+                          _submitAdditionalInfo;
                           context.push('/signup_step2');
                         },
+
                         disabledColor: const Color(0xFFD9D9D9),
                         child: Text(
                           '회원가입 완료',
