@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import '../../models/route/transit_route.dart';
-import '../../state/route/route_state.dart';
 
 class RouteService {
   final Dio _dio;
@@ -21,7 +20,7 @@ class RouteService {
       print('sx: $sx, sy: $sy, ex: $ex, ey: $ey');
       print('travelTypes: $travelTypes');
       print('arrivalTime:  $arrivalTime');
-      final response = await _dio.get(
+      var response = await _dio.get(
         '$baseUrl/',
         queryParameters: {
           'sx': sx,

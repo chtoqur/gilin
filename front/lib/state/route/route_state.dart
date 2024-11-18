@@ -38,7 +38,7 @@ class RouteState {
     this.currentInputMode,
     DateTime? arrivalTime,
     this.selectedTransports = const ['지하철', '버스', '도보'],
-  }) :  startPoint = startPoint ?? RouteLocation(),
+  }) :  startPoint = startPoint ?? const RouteLocation(),
         arrivalTime = arrivalTime ?? _initializeTime();
 
   static DateTime _initializeTime() { // 현재 시간으로 초기화
@@ -89,7 +89,7 @@ class RouteNotifier extends StateNotifier<RouteState> {
   }
 
   void _initializeStartPoint() async {
-    final currentLocation = await RouteState.getCurrentLocation();
+    var currentLocation = await RouteState.getCurrentLocation();
     state = state.copyWith(startPoint: currentLocation);
   }
 

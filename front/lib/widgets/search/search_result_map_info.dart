@@ -2,13 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import '../../models/route/transit_route.dart';
 import 'package:go_router/go_router.dart';
 import '../../models/search/local_search_result.dart';
-import '../../screens/guide/guide_preview_screen.dart';
-
-//테스트용
-import '../../utils/sample_data/route_samples.dart';  // 테스트 데이터 import
 import '../../state/route/route_state.dart';
 
 class SearchResultMapInfo extends ConsumerWidget {

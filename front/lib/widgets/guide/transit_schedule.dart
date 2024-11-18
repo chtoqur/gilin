@@ -49,7 +49,7 @@ class _TransitScheduleState extends ConsumerState<TransitSchedule> {
         errorMessage = null;
       });
 
-      final service = ref.read(transitServiceProvider);
+      var service = ref.read(transitServiceProvider);
       List<TransitArrivalInfo> result = [];
 
       if (widget.type == TransitType.METRO) {
@@ -65,7 +65,7 @@ class _TransitScheduleState extends ConsumerState<TransitSchedule> {
           nextStationName: nextStation,
         );
       } else if (widget.type == TransitType.BUS) {
-        final routeIds = widget.segment.lane.map((l) => l.busLocalBlID).toList();
+        var routeIds = widget.segment.lane.map((l) => l.busLocalBlID).toList();
 
         debugPrint('Fetching bus arrivals for station ${widget.segment.startLocalStationID}');
         debugPrint('Route IDs: $routeIds');
@@ -148,7 +148,7 @@ class _TransitScheduleState extends ConsumerState<TransitSchedule> {
   }
 
   Widget _buildArrivalInfo(TransitArrivalInfo info) {
-    final minutes = (info.arrivalTime / 60).ceil();
+    var minutes = (info.arrivalTime / 60).ceil();
 
     return Row(
       children: [

@@ -3,14 +3,14 @@ class TimeFormatter {
     if (minutes < 60) {
       return '$minutes분';
     }
-    final hours = minutes ~/ 60;
-    final remainingMinutes = minutes % 60;
-    return '$hours시간 ${remainingMinutes}분';
+    var hours = minutes ~/ 60;
+    var remainingMinutes = minutes % 60;
+    return '$hours시간 $remainingMinutes분';
   }
 
   static String formatArrivalTime(int totalMinutes) {
-    final now = DateTime.now();
-    final arrival = now.add(Duration(minutes: totalMinutes));
+    var now = DateTime.now();
+    var arrival = now.add(Duration(minutes: totalMinutes));
     return '${arrival.hour.toString().padLeft(2, '0')}:${arrival.minute.toString().padLeft(2, '0')} 도착 예정';
   }
 }

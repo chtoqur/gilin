@@ -23,7 +23,7 @@ class TransitService {
 
   TransitService(this._dio);
 
-  String _prettyPrintJson(dynamic json) {
+  String _prettyPrintJson(json) {
     var encoder = const JsonEncoder.withIndent('  ');
     return encoder.convert(json);
   }
@@ -38,7 +38,7 @@ class TransitService {
       debugPrint('Next Station: $nextStationName');
       debugPrint('Fetching metro arrival for $stationName to $nextStationName');
 
-      final response = await _dio.get('https://k11a306.p.ssafy.io/api/metro/station/arrival',
+      var response = await _dio.get('https://k11a306.p.ssafy.io/api/metro/station/arrival',
           queryParameters: {
             'stationName': stationName,
             'nextStationName': nextStationName,
@@ -52,14 +52,14 @@ class TransitService {
       debugPrint('================================\n');
 
       if (response.data is List) {
-        final dataList = response.data as List;
+        var dataList = response.data as List;
         return dataList.map((data) => TransitArrivalInfo(
           vehicleName: data['trainNo'] as String?,
           arrivalTime: (data['time'] as num).toInt(),
           destination: data['trainLineNm'] as String?,
         )).toList();
       } else if (response.data is Map) {
-        final data = response.data as Map<String, dynamic>;
+        var data = response.data as Map<String, dynamic>;
         return [
           TransitArrivalInfo(
             vehicleName: data['trainNo'] as String?,
@@ -90,7 +90,7 @@ class TransitService {
       debugPrint('ARS ID: $arsId');
       debugPrint('Route IDs: $routeIds');
 
-      final response = await _dio.get('https://k11a306.p.ssafy.io/api/arrivalTime',
+      var response = await _dio.get('https://k11a306.p.ssafy.io/api/arrivalTime',
           queryParameters: {
             'stationId': stationId,
             'arsId': arsId,
@@ -105,7 +105,7 @@ class TransitService {
       debugPrint('==============================\n');
 
       if (response.data is List) {
-        final dataList = response.data as List;
+        var dataList = response.data as List;
         return dataList.map((data) => TransitArrivalInfo(
           vehicleName: data['busName'] as String?,
           arrivalTime: (data['predictTimeSecond'] as num).toInt(),

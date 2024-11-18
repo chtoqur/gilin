@@ -4,9 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gilin/widgets/route/main/route_selector_widget.dart';
 import 'package:gilin/widgets/route/main/transport_selector_widget.dart';
 import 'package:gap/gap.dart';
-import 'package:dio/dio.dart';
-
-import '../../models/route/transit_route.dart';
 import '../../state/route/route_state.dart';
 import '../../state/route/service_providers.dart';
 import '../guide/guide_preview_screen.dart';
@@ -21,11 +18,11 @@ class RouteScreen extends ConsumerStatefulWidget {
 class _RouteScreenState extends ConsumerState<RouteScreen> {
   Future<void> _requestRoute() async {
     try {
-      final routeState = ref.read(routeProvider);
-      final routeService = ref.read(routeServiceProvider);
+      var routeState = ref.read(routeProvider);
+      var routeService = ref.read(routeServiceProvider);
 
       // 이동수단 매핑
-      final travelTypes = routeState.selectedTransports.map((transport) {
+      var travelTypes = routeState.selectedTransports.map((transport) {
         switch (transport) {
           case '지하철':
             return 'METRO';
@@ -42,7 +39,7 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
         }
       }).toList();
 
-      final transitRoute = await routeService.getRoute(
+      var transitRoute = await routeService.getRoute(
         sx: routeState.startPoint.x,
         sy: routeState.startPoint.y,
         ex: routeState.endPoint.x,
@@ -52,7 +49,7 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
       );
 
       if (mounted) {
-        Navigator.push(
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => GuidePreviewScreen(
