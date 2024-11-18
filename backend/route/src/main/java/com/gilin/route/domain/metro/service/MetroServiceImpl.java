@@ -166,6 +166,9 @@ public class MetroServiceImpl implements MetroService {
         nextStationName = topsisAPIUtil.convertStationName(nextStationName);
         List<StationArrivalDto> retList = new ArrayList<>();
         StationArrivalResponse response = openApiClient.getRealTimeStationArrival(stationName);
+        if (response.getRealtimeArrivalList() == null) {
+            return retList;
+        }
         for (RealtimeArrival realtimeArrival : response.getRealtimeArrivalList()) {
             if (realtimeArrival.getTrainLineNm()
                                .contains(nextStationName)) {
