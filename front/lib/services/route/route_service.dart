@@ -20,7 +20,7 @@ class RouteService {
       print('Request Parameters:');
       print('sx: $sx, sy: $sy, ex: $ex, ey: $ey');
       print('travelTypes: $travelTypes');
-      print('arrivalTime: $arrivalTime');
+      print('arrivalTime:  $arrivalTime');
       final response = await _dio.get(
         '$baseUrl/',
         queryParameters: {

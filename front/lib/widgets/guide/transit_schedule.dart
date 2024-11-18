@@ -32,6 +32,16 @@ class _TransitScheduleState extends ConsumerState<TransitSchedule> {
     _fetchArrivalInfo();
   }
 
+  // Add this method to handle segment updates
+  @override
+  void didUpdateWidget(TransitSchedule oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Fetch new arrival info if segment changes
+    if (oldWidget.segment != widget.segment) {
+      _fetchArrivalInfo();
+    }
+  }
+
   Future<void> _fetchArrivalInfo() async {
     try {
       setState(() {
