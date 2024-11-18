@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod 관련 패키지 추가
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../state/auth/auth_provider.dart'; // authProvider import
 import '../../widgets/mypage/place_card.dart';
 
-class MypageScreen extends ConsumerWidget { // ConsumerWidget으로 변경
+class MypageScreen extends StatelessWidget {
   MypageScreen({super.key});
 
   static const List<Map<String, String>> menuItems = [
-    {'title': '내 정보 변경', 'route': '/profile'},
-    {'title': '알림 설정', 'route': '/alert'},
-    {'title': '내 장소/경로 수정', 'route': '/route'},
-    {'title': '회원 탈퇴', 'route': '/support'},
+    {'title': '내 정보 수정', 'route': 'modify_user'},
+    {'title': '알림 설정', 'route': 'notification_setting'},
+    {'title': '내 장소/경로 수정', 'route': 'myplace'},
   ];
 
   // 추후 실제 데이터로 변경
@@ -23,7 +21,7 @@ class MypageScreen extends ConsumerWidget { // ConsumerWidget으로 변경
   ];
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) { // WidgetRef 추가
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF8F5F0),
       body: SafeArea(
@@ -135,8 +133,7 @@ class MypageScreen extends ConsumerWidget { // ConsumerWidget으로 변경
                 ],
               ),
             ),
-            const SizedBox(height: 30),
-
+            const Gap(30),
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -153,17 +150,22 @@ class MypageScreen extends ConsumerWidget { // ConsumerWidget으로 변경
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: menuItems.length,
-                              separatorBuilder: (context, index) => const Divider(height: 1),
+                              separatorBuilder: (context, index) =>
+                              const Divider(height: 1),
                               itemBuilder: (context, index) {
                                 return TextButton(
                                   onPressed: () {
-                                    Navigator.pushNamed(
-                                        context,
-                                        menuItems[index]['route']!
-                                    );
+                                    context.push('/${menuItems[index]['route']}');
+                                    // Navigator.pushNamed(
+                                    //     context,
+                                    //     menuItems[index]['route']!
+                                    // );
                                   },
                                   style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 25,
+                                        vertical: 20
+                                    ),
                                   ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -173,14 +175,13 @@ class MypageScreen extends ConsumerWidget { // ConsumerWidget으로 변경
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontSize: 16,
-                                          fontFamily: 'Pretendard',
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                       const Icon(
                                         Icons.arrow_forward_ios,
-                                        size: 20,
-                                        color: Colors.grey,
+                                        size: 15,
+                                        color: Color(0xFF989898),
                                       ),
                                     ],
                                   ),
@@ -191,18 +192,15 @@ class MypageScreen extends ConsumerWidget { // ConsumerWidget으로 변경
                         ),
                       ),
                     ),
-                    // 로그아웃 버튼은 항상 하단에 고정
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: TextButton(
-                        onPressed: () {
-                          ref.read(authProvider.notifier).signOut(); // 로그아웃 로직 연결
-                        },
+                        onPressed: () {},
                         child: const Text(
                           '로그아웃',
                           style: TextStyle(
                             color: Color(0xFF6E6E6E),
-                            fontSize: 16,
+                            fontSize: 14,
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w500,
                           ),
@@ -219,4 +217,3 @@ class MypageScreen extends ConsumerWidget { // ConsumerWidget으로 변경
     );
   }
 }
-

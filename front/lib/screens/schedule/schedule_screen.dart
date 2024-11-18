@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gilin/state/navigation/navigation_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class ScheduleScreen extends ConsumerWidget {
   const ScheduleScreen({Key? key}) : super(key: key);
@@ -35,10 +36,37 @@ class ScheduleScreen extends ConsumerWidget {
             child: const Text('Go to My Route Screen'),
           ),
           ElevatedButton(
-            onPressed: () => ref
-                .read(bottomNavProvider.notifier)
-                .navigateToPage(context, 1, '/signup_step1'),
+            onPressed: () {
+              ref.read(bottomNavProvider.notifier).updateIndex(3);
+              context.push('/signup_step1');
+            },
             child: const Text('Go to SignUp Page'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              ref.read(bottomNavProvider.notifier).updateIndex(3);
+              context.push('/success');
+            },
+            child: const Text('Go to Success Page'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              ref.read(bottomNavProvider.notifier).updateIndex(3);
+              context.push('/failure');
+            },
+            child: const Text('Go to Failure Page'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // // ref.read(bottomNavProvider.notifier).updateIndex(3);
+              // // ref.read(arrivalTimeProvider.notifier).setArrivalTime(
+              // //     DateTime.now().add(const Duration(minutes: 10))
+              // // );
+              // print("arrival time");
+              // print(ref.read(arrivalTimeProvider).arrivalTime);
+              context.push('/test');
+            },
+            child: const Text('Go to Arrival Time Test Page'),
           ),
           ElevatedButton(
             onPressed: () => ref

@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:dio/dio.dart';
+import 'package:gilin/widgets/shared/cupertino_radio.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+
+import 'package:dio/dio.dart'; // Dio 패키지 추가
 import '../../state/auth/auth_provider.dart';
 import '../../state/auth/auth_state.dart';
 import '../../state/signup/signup_state.dart';
@@ -32,22 +33,18 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _nicknameController.text = "길싸피";
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(signupStateProvider.notifier).updateNickname(_nicknameController.text);
+    });
+  }
+
+  @override
   void dispose() {
     _nicknameController.dispose();
     super.dispose();
-  }
-
-  Future<bool> _isTokenExpired(String accessToken) async {
-    try {
-      var tokenInfo = await UserApi.instance.accessTokenInfo();
-      var expirationTime =
-          DateTime.now().millisecondsSinceEpoch + (tokenInfo.expiresIn * 1000);
-      return DateTime.now().millisecondsSinceEpoch >= expirationTime;
-          return true;
-    } catch (e) {
-      print('토큰 만료 확인 중 오류 발생: $e');
-      return true;
-    }
   }
 
   void _submitAdditionalInfo() async {
@@ -56,16 +53,8 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
       var authNotifier = ref.read(authProvider.notifier);
       var accessToken = await authNotifier.getAccessToken();
 
-      // 토큰 만료 여부 확인 및 갱신
       if (accessToken != null) {
-        bool isTokenExpired = await _isTokenExpired(accessToken);
-        if (isTokenExpired) {
-          await authNotifier.refreshToken();
-          accessToken = await authNotifier.getAccessToken();
-        }
-      }
-
-      if (accessToken != null) {
+        // gender 값을 "M" 또는 "F"로 변환
         String? gender;
         if (signupState.gender == "male") {
           gender = "M";
@@ -73,25 +62,15 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
           gender = "F";
         }
 
-        int ageGroup = int.tryParse(
-            signupState.ageGroup.replaceAll(RegExp(r'[^0-9]'), '')) ??
-            0;
-
-        print("보낼 데이터:");
-        print("닉네임: ${signupState.nickname}");
-        print("성별: $gender");
-        print("연령대: $ageGroup");
-        print("Authorization 헤더: Bearer $accessToken");
+        // ageGroup에서 숫자만 추출
+        int ageGroup = int.tryParse(signupState.ageGroup.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
 
         var response = await Dio().post(
           'https://k11a306.p.ssafy.io/api/user/register',
           options: Options(
             headers: {'Authorization': 'Bearer $accessToken'},
-            validateStatus: (status) => status! < 500, // 409 상태 코드를 허용
           ),
           data: {
-            "oAuthType": "KAKAO",
-            "accessToken": accessToken,
             "nickname": signupState.nickname,
             "gender": gender,
             "ageGroup": ageGroup,
@@ -100,20 +79,10 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
 
         if (response.statusCode == 200) {
           print('회원가입 완료');
-          if (context.mounted) {
-            context.go('/signup_step2'); // GoRouter 사용
-          }
-        } else if (response.statusCode == 409) {
-          print('이미 가입한 회원');
-          if (context.mounted) {
-            context.go('/signup_step2'); // GoRouter 사용
-          }
         } else {
           print('서버 응답: ${response.data}');
           throw Exception('회원가입 실패');
         }
-      } else {
-        throw Exception('유효한 토큰이 없습니다.');
       }
     } catch (e) {
       print('회원가입 요청 중 오류 발생: $e');
@@ -129,18 +98,28 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
       context: context,
       builder: (BuildContext context) => Container(
         height: 216,
+        padding: const EdgeInsets.only(top: 6.0),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
         color: CupertinoColors.systemBackground.resolveFrom(context),
-        child: CupertinoPicker(
-          itemExtent: 32.0,
-          scrollController: FixedExtentScrollController(
-            initialItem: ageGroups.indexOf(signupState.ageGroup),
+        child: SafeArea(
+          top: false,
+          child: CupertinoPicker(
+            magnification: 1.22,
+            squeeze: 1.2,
+            useMagnifier: true,
+            itemExtent: 32.0,
+            scrollController: FixedExtentScrollController(
+              initialItem: ageGroups.indexOf(signupState.ageGroup),
+            ),
+            onSelectedItemChanged: (int selectedItem) {
+              ref.read(signupStateProvider.notifier).updateAgeGroup(ageGroups[selectedItem]);
+            },
+            children: List<Widget>.generate(ageGroups.length, (int index) {
+              return Center(child: Text(ageGroups[index]));
+            }),
           ),
-          onSelectedItemChanged: (int selectedItem) {
-            ref
-                .read(signupStateProvider.notifier)
-                .updateAgeGroup(ageGroups[selectedItem]);
-          },
-          children: ageGroups.map((age) => Center(child: Text(age))).toList(),
         ),
       ),
     );
@@ -168,25 +147,26 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding:
-                  const EdgeInsets.symmetric(vertical: 45, horizontal: 35),
+                  padding: const EdgeInsets.symmetric(vertical: 45, horizontal: 35),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        '닉네임을 입력해주세요.',
+                        '닉네임을 입력해주세요',
                         style: TextStyle(
                             fontSize: 23,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xff463C33)),
+                            color: Color(0xff463C33)
+                        ),
                       ),
                       const Gap(5),
                       const Text(
                         '마이페이지에서 수정할 수 있어요',
                         style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xff463C33)),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xff463C33),
+                        ),
                       ),
                       const Gap(20),
                       CupertinoTextField(
@@ -195,30 +175,31 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                         style: const TextStyle(fontSize: 16),
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
-                          border:
-                          Border.all(color: CupertinoColors.systemGrey4),
+                          border: Border.all(color: CupertinoColors.systemGrey4),
                           borderRadius: BorderRadius.circular(8),
                           color: CupertinoColors.white,
                         ),
-                        onChanged: (value) => ref
-                            .read(signupStateProvider.notifier)
-                            .updateNickname(value),
+                        onChanged: (value) {
+                          ref.read(signupStateProvider.notifier).updateNickname(value);
+                        },
                       ),
                       const Gap(40),
                       const Text(
-                        '성별/연령대를 선택해주세요.',
+                        '성별/연령대를 선택해주세요',
                         style: TextStyle(
-                            fontSize: 23,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xff463C33)),
+                          fontSize: 23,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xff463C33),
+                        ),
                       ),
                       const Gap(8),
                       const Text(
-                        '입력한 정보는 맞춤형 서비스를 위해 사용되며\n외부에 공개되지 않습니다.',
+                        '입력한 정보는 맞춤형 서비스를 위해 사용되며\n외부에 공개되지 않습니다',
                         style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xff463C33)),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xff463C33),
+                        ),
                       ),
                       const Gap(20),
                       Row(
@@ -226,27 +207,33 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                           CupertinoRadioItem<String>(
                             value: 'male',
                             groupValue: signupState.gender,
-                            onChanged: (value) => ref
-                                .read(signupStateProvider.notifier)
-                                .updateGender(value!),
+                            onChanged: (value) {
+                              if (value != null) {
+                                ref.read(signupStateProvider.notifier).updateGender(value);
+                              }
+                            },
                             label: '남성',
                           ),
                           const Gap(30),
                           CupertinoRadioItem<String>(
                             value: 'female',
                             groupValue: signupState.gender,
-                            onChanged: (value) => ref
-                                .read(signupStateProvider.notifier)
-                                .updateGender(value!),
+                            onChanged: (value) {
+                              if (value != null) {
+                                ref.read(signupStateProvider.notifier).updateGender(value);
+                              }
+                            },
                             label: '여성',
                           ),
                           const Gap(30),
                           CupertinoRadioItem<String>(
                             value: 'none',
                             groupValue: signupState.gender,
-                            onChanged: (value) => ref
-                                .read(signupStateProvider.notifier)
-                                .updateGender(value!),
+                            onChanged: (value) {
+                              if (value != null) {
+                                ref.read(signupStateProvider.notifier).updateGender(value);
+                              }
+                            },
                             label: '선택 안 함',
                           ),
                         ],
@@ -257,18 +244,21 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                         child: Container(
                           padding: const EdgeInsets.all(15),
                           decoration: BoxDecoration(
-                            border:
-                            Border.all(color: CupertinoColors.systemGrey4),
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white,
+                              border: Border.all(color: CupertinoColors.systemGrey4),
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.white
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(signupState.ageGroup,
-                                  style: const TextStyle(fontSize: 16)),
-                              const Icon(CupertinoIcons.chevron_down,
-                                  color: CupertinoColors.systemGrey),
+                              Text(
+                                signupState.ageGroup,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              const Icon(
+                                CupertinoIcons.chevron_down,
+                                color: CupertinoColors.systemGrey,
+                              ),
                             ],
                           ),
                         ),
@@ -279,23 +269,40 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
               ),
             ),
             Container(
-              width: double.infinity,
-              color: const Color(0xff669358),
-              child: CupertinoButton(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                borderRadius: BorderRadius.zero,
-                onPressed: signupState.nickname.isEmpty ? null : _submitAdditionalInfo,
-                color: const Color(0xff669358),
-                disabledColor: const Color(0xFFD9D9D9),
-                child: Text(
-                  '다음 단계로',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color:
-                    signupState.nickname.isEmpty ? const Color(0xFF757575) : Colors.white,
+              decoration: const BoxDecoration(
+                color: Color(0xffF8F5F0),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: CupertinoTheme(
+                      data: const CupertinoThemeData(
+                        primaryColor: Color(0xFF669358)
+                      ),
+                      child: CupertinoButton.filled(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        borderRadius: BorderRadius.zero,
+                        onPressed: signupState.nickname.isEmpty ? null : () {
+                          _submitAdditionalInfo;
+                          context.push('/signup_step2');
+                        },
+
+                        disabledColor: const Color(0xFFD9D9D9),
+                        child: Text(
+                          '회원가입 완료',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: signupState.nickname.isEmpty
+                              ? const Color(0xFF757575)
+                              : Colors.white,
+                        ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ],

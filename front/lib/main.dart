@@ -1,5 +1,5 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
@@ -7,7 +7,6 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:gilin/state/auth/auth_provider.dart';
 import 'package:gilin/state/auth/auth_state.dart';
 import 'package:gilin/state/router/router_provider.dart';
-import 'package:gilin/themes/color.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,7 +57,6 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.white,
-        scaffoldBackgroundColor: beige,
       ),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,

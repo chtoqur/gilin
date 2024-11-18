@@ -54,6 +54,11 @@ dependencies:
   dotted_border: ^2.1.0
   flutter_localizations:
     sdk: flutter
+  url_launcher: ^6.1.14
+  lottie: ^3.1.3
+
+  geolocator: ^10.0.1
+  geocoding: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -98,9 +103,9 @@ flutter:
     - assets/images/
     - assets/images/streamline/
     - assets/images/icons/
+    - assets/lottie/
     - assets/images/buttons/
 #    - assets/font/pdf/
-#    - assets/lottie/
 
   #   - images/a_dot_ham.jpeg
 
