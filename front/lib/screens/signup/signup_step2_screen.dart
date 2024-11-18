@@ -21,7 +21,7 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
   TimeOfDay? arrivalTime;
 
   final TextEditingController _searchController = TextEditingController();
-  final LocalSearchService _searchService = LocalSearchService(apiKey: 'YOUR_NAVER_API_KEY');
+  final LocalSearchService _searchService = LocalSearchService(apiKey: '4611747a9ec4e2703671ba7df3cb5ca9');
 
   List<LocalSearchResult> _searchResults = [];
   bool _isLoading = false;
