@@ -10,9 +10,10 @@ public record PlaceResponse(
     Double x,
     Double y,
     String address,
-    LocalTime arrivalTime
+    LocalTime arrivalTime,
+    String name
 ) {
     public static PlaceResponse of(MemberPlace mp) {
-        return new PlaceResponse(mp.getType(), mp.getX(), mp.getY(), mp.getAddress(), mp.getArrivalTime());
+        return new PlaceResponse(mp.getType(), mp.getX(), mp.getY(), mp.getAddress(), mp.getArrivalTime(), mp.getPlaceName());
     }
 }

@@ -11,6 +11,8 @@ public record MemberPlacePutRequest(
         Double y,
         @Schema(description = "장소의 주소", example = "서울특별시 중구 세종대로 110")
         String address,
-        LocalTime arrivalTime
+        LocalTime arrivalTime,
+        @Schema(description = "장소의 이름. 기타에만 사용", example = "친구집")
+        String placeName
 ) {
 }

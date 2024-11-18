@@ -14,7 +14,7 @@ public interface MemberService {
     LoginResponse reissue(String refreshToken);
     LoginResponse register(OAuthRegisterRequest oAuthRegisterRequest);
     LoginResponse testLogin(Long memberId);
-    void updatePlace(Member member, MemberPlacePutRequest request);
+    PlaceResponse updatePlace(Member member, MemberPlacePutRequest request);
     List<PlaceResponse> getPlace(Member member);
-    public String changeName(Member member, String newName);
+    String changeName(Member member, String newName);
 }

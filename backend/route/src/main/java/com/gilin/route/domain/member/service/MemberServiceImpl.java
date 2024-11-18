@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -107,16 +108,17 @@ public class MemberServiceImpl implements MemberService {
                 .build();
     }
 
+    @Transactional
     @Override
-    public void updatePlace(Member member, MemberPlacePutRequest request) {
-        memberPlaceRepository.deleteByMemberAndType(member, request.type());
-        MemberPlace memberPlace = MemberPlace.builder()
-                .x(request.x())
-                .y(request.y())
-                .address(request.address())
-                .member(member)
-                .arrivalTime(request.arrivalTime()).build();
-        memberPlaceRepository.save(memberPlace);
+    public PlaceResponse updatePlace(Member member, MemberPlacePutRequest request) {
+        MemberPlace memberPlace = memberPlaceRepository.findByMemberAndType(member, request.type())
+                .orElseGet(() -> MemberPlace.builder()
+                        .member(member)
+                        .type(request.type())
+                        .build());
+        memberPlace.changePlace(request.address(), request.x(), request.y(), request.arrivalTime(), request.placeName());
+
+        return PlaceResponse.of(memberPlaceRepository.save(memberPlace));
     }
 
     @Override
@@ -126,7 +128,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public List<PlaceResponse> getPlace(Member member) {
-        return memberPlaceRepository.findByMember(member)
+        return memberPlaceRepository.findByMemberOrderByTypeAsc(member)
                 .stream()
                 .map(PlaceResponse::of)
                 .toList();
@@ -140,5 +142,4 @@ public class MemberServiceImpl implements MemberService {
         member.changeName(newName);
         return memberRepository.save(member).getName();
     }
-
 }

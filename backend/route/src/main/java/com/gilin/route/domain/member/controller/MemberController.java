@@ -80,8 +80,7 @@ public class MemberController {
         if (Objects.isNull(member)) {
             throw new GilinException(HttpStatus.UNAUTHORIZED, "");
         }
-        memberService.updatePlace(member, request);
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(memberService.updatePlace(member, request));
     }
 
     @PostMapping("/test")
