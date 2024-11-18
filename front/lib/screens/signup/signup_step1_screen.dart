@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,7 +6,6 @@ import 'package:gap/gap.dart';
 import 'package:gilin/widgets/shared/cupertino_radio.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/storage/secure_storage.dart';
-import '../../state/auth/auth_provider.dart';
 import '../../state/signup/signup_state.dart';
 
 class SignupStep1Screen extends ConsumerStatefulWidget {
@@ -49,11 +46,11 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
 
   Future<void> _submitAdditionalInfo() async {
     var signupState = ref.read(signupStateProvider);
-    final storage = SecureStorage.instance;
+    var storage = SecureStorage.instance;
 
     try {
-      final accessToken = await storage.read(key: 'ACCESS_TOKEN');
-      final refreshToken = await storage.read(key: 'REFRESH_TOKEN');
+      var accessToken = await storage.read(key: 'ACCESS_TOKEN');
+      var refreshToken = await storage.read(key: 'REFRESH_TOKEN');
 
       if (accessToken == null || refreshToken == null) {
         throw Exception('토큰이 없습니다.');
@@ -92,7 +89,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
       print("Request Data: $requestData");
 
       try {
-        final response = await dio.post(
+        var response = await dio.post(
           '/user/register',
           data: requestData,
           options: Options(
@@ -100,7 +97,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
             },
-            responseType: ResponseType.plain, // JSON이 아닌 경우에 대비하여 plain으로 설정
+            responseType: ResponseType.plain,
           ),
         );
 
@@ -110,7 +107,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
         if (response.statusCode == 200) {
           print('회원가입 완료');
           if (mounted) {
-            context.push('/signup_step2');
+            await context.push('/signup_step2');
           }
         } else if (response.statusCode == 409) {
           print('이미 가입한 회원입니다.');
@@ -121,7 +118,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                 duration: Duration(seconds: 2),
               ),
             );
-            context.push('/signup_step2');
+            await context.push('/signup_step2');
           }
         } else {
           print('회원가입 실패: ${response.statusCode}');
