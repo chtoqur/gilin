@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import '../../core/storage/secure_storage.dart';
@@ -20,42 +19,46 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
     try {
       await UserApi.instance.loginWithKakaoAccount();
       var kakaoUser = await UserApi.instance.me();
-
-      // 카카오에서 발급받은 토큰 정보 가져오기
       var token = await TokenManagerProvider.instance.manager.getToken();
-      if (token != null) {
-        await _secureStorage.write(key: 'ACCESS_TOKEN', value: token.accessToken ?? '');
-        await _secureStorage.write(key: 'REFRESH_TOKEN', value: token.refreshToken ?? '');
 
-        print("AccessToken 저장됨: ${token.accessToken}");
-        print("RefreshToken 저장됨: ${token.refreshToken}");
+      var accessToken = token?.accessToken;
+      if (accessToken?.isNotEmpty == true) {
+        await _secureStorage.write(key: 'ACCESS_TOKEN', value: accessToken!);
+        print("AccessToken 저장됨: $accessToken");
       }
 
-      // authDio 인터셉터 호출
+      var refreshToken = token?.refreshToken;
+      if (refreshToken?.isNotEmpty == true) {
+        await _secureStorage.write(key: 'REFRESH_TOKEN', value: refreshToken!);
+        print("RefreshToken 저장됨: $refreshToken");
+      }
+
       var dio = await kakaoAuthDio();
 
-      // 저장된 토큰 값 불러오기
-      final accessToken = await _secureStorage.read(key: 'ACCESS_TOKEN') ?? '';
-      final refreshToken = await _secureStorage.read(key: 'REFRESH_TOKEN') ?? '';
+      var storedAccessToken = await _secureStorage.read(key: 'ACCESS_TOKEN');
+      var storedRefreshToken = await _secureStorage.read(key: 'REFRESH_TOKEN');
 
-      // 디버깅: 불러온 토큰 값 출력
-      print("AccessToken: $accessToken");
-      print("RefreshToken: $refreshToken");
+      if (storedAccessToken == null || storedRefreshToken == null ||
+          storedAccessToken.isEmpty || storedRefreshToken.isEmpty) {
+        throw Exception('필수 토큰이 없습니다');
+      }
 
-      // 예제 API 요청 - 필요에 맞게 URL 변경
+      print("AccessToken: $storedAccessToken");
+      print("RefreshToken: $storedRefreshToken");
+
       var response = await dio.post(
         'https://k11a306.p.ssafy.io/api/user/login',
         data: {
           "oAuthType": "KAKAO",
-          "accessToken": accessToken,
-          "refreshToken": refreshToken,
+          "accessToken": storedAccessToken,
+          "refreshToken": storedRefreshToken,
         },
       );
 
       if (response.statusCode == 200) {
         state = AsyncValue.data(AuthAuthenticated(kakaoUser));
       } else {
-        throw Exception('API 요청 실패');
+        throw Exception('API 요청이 실패했습니다');
       }
     } catch (error, stackTrace) {
       print('카카오 로그인 실패: $error');
@@ -67,7 +70,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
     try {
       state = const AsyncValue.loading();
       await UserApi.instance.logout();
-      await _secureStorage.deleteAll(); // 모든 토큰 정보 삭제
+      await _secureStorage.deleteAll();
       state = AsyncValue.data(AuthUnauthenticated());
     } catch (e, stackTrace) {
       print('로그아웃 실패: $e');
@@ -78,8 +81,8 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
   Future<void> _checkStoredToken() async {
     try {
       var token = await _secureStorage.read(key: 'ACCESS_TOKEN');
-      if (token != null) {
-        var tokenInfo = await UserApi.instance.accessTokenInfo();
+      if (token?.isNotEmpty == true) {
+        await UserApi.instance.accessTokenInfo();
         var kakaoUser = await UserApi.instance.me();
         state = AsyncValue.data(AuthAuthenticated(kakaoUser));
       } else {
@@ -91,23 +94,24 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
     }
   }
 
-  // accessToken 가져오기 메서드
   Future<String?> getAccessToken() async {
-    return await _secureStorage.read(key: 'ACCESS_TOKEN');
+    return _secureStorage.read(key: 'ACCESS_TOKEN');
   }
 
-  // 토큰 갱신 메서드
   Future<void> refreshToken() async {
     try {
       var token = await TokenManagerProvider.instance.manager.getToken();
-      if (token != null) {
-        // 새로 갱신된 토큰을 SecureStorage에 저장
-        print("New AccessToken: ${token.accessToken}"); // 디버깅
-        await _secureStorage.write(key: 'ACCESS_TOKEN', value: token.accessToken ?? '');
+      var accessToken = token?.accessToken;
+
+      if (accessToken?.isNotEmpty == true) {
+        print("새로운 AccessToken: $accessToken");
+        await _secureStorage.write(key: 'ACCESS_TOKEN', value: accessToken!);
+      } else {
+        throw Exception('새로운 액세스 토큰이 없습니다');
       }
     } catch (e) {
       print('토큰 갱신 실패: $e');
-      throw Exception('토큰 갱신에 실패했습니다.');
+      throw Exception('토큰 갱신에 실패했습니다');
     }
   }
 }
