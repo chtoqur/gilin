@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
+import '../../../models/route/transit_route.dart';
+import '../../../screens/guide/guide_main_screen.dart';
+import '../../../state/guide/guid_state.dart';
 import '../../../state/guide/metro_provider.dart';
 import '../../../services/guide/transit_service.dart';
 import '../transit_schedule.dart';
@@ -75,12 +78,28 @@ class _CheckingMetroModalState extends ConsumerState<CheckingMetroModal> {
 
   void _onConfirm() {
     if (_selectedArrival != null) {
-      ref.read(metroProvider.notifier).updateTrainInfo(
-        trainNo: _selectedArrival!.vehicleName ?? '',
-        lineName: _selectedArrival!.destination ?? '',
+      // 현재 metroSegment 찾기
+      final guideMainScreen = context.findAncestorWidgetOfExactType<GuideMainScreen>();
+      final metroSegment = guideMainScreen?.routeData.subPath.firstWhere(
+            (segment) => segment.travelType == TransitType.METRO,
       );
 
-      Navigator.pushReplacementNamed(context, '/guide/metro');
+      if (metroSegment != null) {
+        // guideState 업데이트
+        ref.read(guideStateProvider.notifier).setMetroGuideMode(
+          isMetroGuide: true,
+          metroSegment: metroSegment,
+          selectedTrainNo: _selectedArrival!.vehicleName ?? '',
+        );
+
+        // 디버깅용 출력
+        print('Updating GuideState:');
+        print('trainNo: ${_selectedArrival!.vehicleName}');
+        print('isMetroGuide: true');
+
+        // 모달 닫기
+        Navigator.pop(context);
+      }
     }
   }
 

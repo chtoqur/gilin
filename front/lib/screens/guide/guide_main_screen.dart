@@ -4,12 +4,14 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../models/route/transit_route.dart';
+import '../../state/guide/guid_state.dart';
 import '../../state/route/route_state.dart';
 import '../../widgets/guide/route_info_box.dart';
 import '../../widgets/guide/sidebar.dart';
 import '../../utils/guide/path_style_utils.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../widgets/guide/modals/checking_metro.dart';
+import 'metro_guide_view.dart';
 
 class GuideMainScreen extends ConsumerStatefulWidget {
   final TransitRoute routeData;
@@ -174,6 +176,8 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var guideState = ref.watch(guideStateProvider);
+    print('날봐날봐날봐날봐날봐날봐GuideState: isMetroGuide=${guideState.isMetroGuide}, trainNo=${guideState.selectedTrainNo}');
     return Scaffold(
       body: Stack(
         children: [
@@ -195,7 +199,8 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
                 });
               }
             },
-          ),          ValueListenableBuilder<bool>(
+          ),
+          ValueListenableBuilder<bool>(
             valueListenable: _isSidebarVisible,
             builder: (context, isVisible, child) {
               return Stack(
@@ -297,6 +302,16 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
             },
           ),
           // 현재 위치 추적 모드 토글 버튼
+          if (guideState.isMetroGuide && guideState.metroSegment != null)
+            Positioned.fill(
+              child: Container(
+                color: Colors.white,
+                child: MetroGuideView(
+                  metroSegment: guideState.metroSegment!,
+                  selectedTrainNo: guideState.selectedTrainNo ?? '',
+                ),
+              ),
+            ),
         ],
       ),
     );
