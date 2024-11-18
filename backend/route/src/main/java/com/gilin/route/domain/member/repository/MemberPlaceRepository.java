@@ -5,8 +5,9 @@ import com.gilin.route.domain.member.entity.MemberPlace;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberPlaceRepository extends JpaRepository<MemberPlace, Long> {
-    void deleteByMemberAndType(Member member, Integer type);
-    List<MemberPlace> findByMember(Member member);
+    Optional<MemberPlace> findByMemberAndType(Member member, Integer type);
+    List<MemberPlace> findByMemberOrderByTypeAsc(Member member);
 }
