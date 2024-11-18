@@ -4,7 +4,8 @@ import '../../core/storage/secure_storage.dart';
 import 'auth_state.dart';
 import 'package:gilin/widgets/shared/token_intercepter.dart';
 
-final authProvider = StateNotifierProvider<AuthNotifier, AsyncValue<AuthState>>((ref) {
+final authProvider =
+    StateNotifierProvider<AuthNotifier, AsyncValue<AuthState>>((ref) {
   return AuthNotifier();
 });
 
@@ -38,8 +39,10 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
       var storedAccessToken = await _secureStorage.read(key: 'ACCESS_TOKEN');
       var storedRefreshToken = await _secureStorage.read(key: 'REFRESH_TOKEN');
 
-      if (storedAccessToken == null || storedRefreshToken == null ||
-          storedAccessToken.isEmpty || storedRefreshToken.isEmpty) {
+      if (storedAccessToken == null ||
+          storedRefreshToken == null ||
+          storedAccessToken.isEmpty ||
+          storedRefreshToken.isEmpty) {
         throw Exception('필수 토큰이 없습니다');
       }
 
