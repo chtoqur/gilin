@@ -9,6 +9,7 @@ import '../../widgets/guide/route_info_box.dart';
 import '../../widgets/guide/sidebar.dart';
 import '../../utils/guide/path_style_utils.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../widgets/guide/modals/checking_metro.dart';
 
 class GuideMainScreen extends ConsumerStatefulWidget {
   final TransitRoute routeData;
@@ -39,6 +40,25 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
   void initState() {
     super.initState();
     _setupLocationTracking();
+
+    final metroSegment = widget.routeData.subPath.firstWhere(
+          (segment) => segment.travelType == TransitType.METRO,
+
+    );
+
+    if (metroSegment != null && metroSegment.passStopList.stations.length > 1) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) => CheckingMetroModal(
+              stationName: metroSegment.startName,
+              nextStationName: metroSegment.passStopList.stations[1].stationName,
+            ),
+          );
+        }
+      });
+    }
   }
 
   Future<void> _setupLocationTracking() async {
