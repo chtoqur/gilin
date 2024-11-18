@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gilin/themes/color.dart';
 
 import '../../state/auth/auth_provider.dart';
 import '../../state/auth/auth_state.dart';
+import '../../themes/color.dart';
+
+const Color primaryColor = Color(0xFF463C33);
 
 class LoginScreenUI extends ConsumerStatefulWidget {
   const LoginScreenUI({Key? key}) : super(key: key);
@@ -81,20 +83,21 @@ class _LoginScreenUIState extends ConsumerState<LoginScreenUI>
                           'GilIn',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 32,
+                            fontSize: 36,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
-                            letterSpacing: 1.5,
+                            fontFamily: 'RobotoSlab',
+                            letterSpacing: 1.8,
                           ),
                         ),
                         SizedBox(height: 12),
                         Text(
-                          '당신의 여행 길잡이',
+                          '길 잃지 않는 여정을 위해,\n당신의 시간을 지켜드립니다',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.black54,
-                            letterSpacing: 0.5,
+                            letterSpacing: 0.6,
                           ),
                         ),
                       ],
@@ -107,30 +110,70 @@ class _LoginScreenUIState extends ConsumerState<LoginScreenUI>
                         return Column(
                           children: [
                             Text(
-                                '환영합니다, ${state.kakaoUser.kakaoAccount?.profile?.nickname}님'),
+                              '환영합니다, ${state.kakaoUser.kakaoAccount?.profile?.nickname}님',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
                             ElevatedButton(
                               onPressed: () =>
                                   ref.read(authProvider.notifier).signOut(),
-                              child: const Text('로그아웃'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor, // primaryColor 수정
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 24),
+                              ),
+                              child: const Text(
+                                '로그아웃',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                           ],
                         );
                       }
-                      return FadeTransition(
-                        opacity: _fadeAnimation,
-                        child: GestureDetector(
-                          onTap: () =>
-                              ref.read(authProvider.notifier).signInWithKakao(),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Image.asset(
-                              'assets/images/buttons/kakao_login_medium_wide.png',
-                              height: 45,
+                      return Column(
+                        children: [
+                          FadeTransition(
+                            opacity: _fadeAnimation,
+                            child: GestureDetector(
+                              onTap: () => ref
+                                  .read(authProvider.notifier)
+                                  .signInWithKakao(),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Image.asset(
+                                  'assets/images/buttons/kakao_login_medium_wide.png',
+                                  height: 45,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          const SizedBox(height: 16),
+                          FadeTransition(
+                            opacity: _fadeAnimation,
+                            child: const Text(
+                              '시작하기 버튼을 누르면\n이용약관과 개인정보 처리방침에 동의하게 됩니다.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.black45,
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        ],
                       );
                     },
                     loading: () => const Center(
@@ -139,18 +182,6 @@ class _LoginScreenUIState extends ConsumerState<LoginScreenUI>
                       ),
                     ),
                     error: (error, stack) => Text('에러: $error'),
-                  ),
-                  const SizedBox(height: 16),
-                  FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: const Text(
-                      '시작하기 버튼을 누르면 이용약관과 개인정보 처리방침에 동의하게 됩니다.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black45,
-                      ),
-                    ),
                   ),
                   const Spacer(flex: 1),
                 ],
@@ -168,3 +199,5 @@ class _LoginScreenUIState extends ConsumerState<LoginScreenUI>
     super.dispose();
   }
 }
+
+
