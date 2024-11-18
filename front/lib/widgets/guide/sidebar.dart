@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:go_router/go_router.dart';
 import '../../models/route/transit_route.dart';
+import '../../state/route/route_state.dart';
 
 class GuideSidebar extends StatefulWidget {
   final TransitRoute routeData;
   final Function(TransitSegment) onSegmentTap;
   final VoidCallback? onClose;
+  final bool isGuideMode; // 추가: 안내 모드 여부
+  final VoidCallback? onGuideEnd; // 추가: 안내 종료 콜백
+  final RouteState? routeState;
 
   const GuideSidebar({
     Key? key,
     required this.routeData,
     required this.onSegmentTap,
     this.onClose,
+    this.isGuideMode = false, // 기본값 false
+    this.onGuideEnd,
+    this.routeState
   }) : super(key: key);
 
   @override
@@ -77,7 +84,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
     if (segment.travelType == TransitType.TRANSFER) {
       return const SizedBox.shrink();
     }
-    final bool isSelected = widget.routeData.subPath.indexOf(segment) == _selectedSegmentIndex;
+    bool isSelected = widget.routeData.subPath.indexOf(segment) == _selectedSegmentIndex;
 
     return Column(
       children: [
@@ -114,7 +121,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                       ),
                     ),
                     if (!isLast)
-                      Container(
+                      SizedBox(
                         width: 2,
                         height: 40,
                         child: CustomPaint(
@@ -139,9 +146,9 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
     return AnimatedBuilder(
       animation: _slideAnimation,
       builder: (context, child) {
-        final slideValue = _slideAnimation.value;
-        final screenWidth = MediaQuery.of(context).size.width;
-        final sidebarWidth = screenWidth * 0.25; // 화면 너비의 25%
+        var slideValue = _slideAnimation.value;
+        var screenWidth = MediaQuery.of(context).size.width;
+        var sidebarWidth = screenWidth * 0.25; // 화면 너비의 25%
 
         return Stack(
           children: [
@@ -195,8 +202,16 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                       child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            // 안내 시작 로직
+                          onPressed: widget.isGuideMode
+                              ? widget.onGuideEnd
+                              : () {
+                            // Preview 모드일 때: 안내 시작
+                            if (widget.routeState != null) {
+                              context.push('/guide/main', extra: {
+                                'routeData': widget.routeData,
+                                'routeState': widget.routeState,
+                              });
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFF8F5F0),
@@ -206,9 +221,9 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text(
-                            '안내 시작',
-                            style: TextStyle(
+                          child:  Text(
+                            widget.isGuideMode ? '안내 종료' : '안내 시작',
+                            style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
@@ -270,7 +285,7 @@ class DashedLinePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    var paint = Paint()
       ..color = color
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
