@@ -207,6 +207,9 @@ public class MetroServiceImpl implements MetroService {
     @Override
     public MetroPositionDto getMetroPosition(String trainNo, String lineName) {
         MetroPositionResponse response = openApiClient.getRealTimePosition(lineName);
+        if (response.getRealtimePositionList() == null) {
+            return null;
+        }
         for (RealtimePosition position : response.getRealtimePositionList()) {
             if (position.getTrainNo()
                         .equals(trainNo)) {
