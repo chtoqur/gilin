@@ -2,13 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gilin/state/guide/tracking_provider.dart';
+import 'package:gilin/widgets/shared/popup/confirm_boarding.dart';
 import 'package:go_router/go_router.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../models/route/transit_route.dart';
 import '../../state/route/route_state.dart';
 import '../../widgets/guide/route_info_box.dart';
 import '../../widgets/guide/sidebar.dart';
 import '../../utils/guide/path_style_utils.dart';
-import 'package:geolocator/geolocator.dart';
 
 class GuideMainScreen extends ConsumerStatefulWidget {
   final TransitRoute routeData;
@@ -33,18 +35,29 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
   Timer? _debounceTimer;
   StreamSubscription<Position>? _positionStreamSubscription;
   bool _isTrackingMode = true;
-  // double _lastZoomLevel = 0; // 추가
+  bool _isInitialized = false;
+  OverlayEntry? _overlayEntry;
 
   @override
   void initState() {
     super.initState();
     _setupLocationTracking();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_isInitialized) {
+        ref.read(guideTrackingProvider.notifier).initializeTracking(widget.routeData);
+        _isInitialized = true;
+      }
+    });
   }
 
   Future<void> _setupLocationTracking() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // 위치 서비스가 비활성화된 경우 처리
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('위치 서비스를 활성화해주세요.')),
+        );
+      }
       return;
     }
 
@@ -52,6 +65,11 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('위치 권한이 거부되었습니다.')),
+          );
+        }
         return;
       }
     }
@@ -70,7 +88,11 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
     var userLocation = NLatLng(position.latitude, position.longitude);
     var userBearing = position.heading;
 
-    if (_isSidebarVisible.value) return; // 사이드바가 열려있으면 카메라 업데이트 하지 않음
+    if (_isSidebarVisible.value) {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+      return;
+    }
 
     await mapController!.updateCamera(
       NCameraUpdate.withParams(
@@ -79,7 +101,27 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
         bearing: userBearing,
       ),
     );
+
+    if (mounted) {
+      Future.microtask(() {
+        if (!mounted) return;
+
+        // 1. 위치 근접 여부 확인
+        ref.read(guideTrackingProvider.notifier).checkProximity(
+          position.latitude,
+          position.longitude,
+        );
+
+        // 2. 상태 기반 팝업 띄우기
+        final trackingState = ref.read(guideTrackingProvider);
+        if (trackingState.showAlert && _overlayEntry == null) {
+          // 현재 추적 중인 세그먼트 정보를 팝업에 전달
+          // _showBoardingAlert(trackingState.segments[trackingState.currentIndex]);
+        }
+      });
+    }
   }
+
 
   Future<void> _safeAddOverlay(NPathOverlay overlay) async {
     try {
@@ -89,7 +131,6 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
       print('Failed to add overlay ${overlay.info.id}: $e');
     }
   }
-
 
   Future<void> _initializeMapAndPath(NaverMapController controller) async {
     try {
@@ -101,7 +142,7 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
           id: 'path_overlay_${widget.routeData.subPath.indexOf(segment)}',
           coords: segment.pathGraph,
           segment: segment,
-          zoomLevel: 17, // 기본 줌 레벨 사용
+          zoomLevel: 17,
         );
 
         for (var overlay in overlays) {
@@ -109,7 +150,7 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
         }
       }
 
-      // 나머지 마커 및 카메라 설정 코드...
+      // 시작점과 도착점 마커 설정
       var startPoint = NLatLng(widget.routeState.startPoint.y, widget.routeState.startPoint.x);
       var endPoint = NLatLng(widget.routeState.endPoint.y, widget.routeState.endPoint.x);
 
@@ -152,6 +193,45 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
     }
   }
 
+  void _showBoardingAlert(TransitSegment segment) {
+    _overlayEntry?.remove();
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        bottom: 100,
+        left: 0,
+        right: 0,
+        child: ConfirmBoardingPopup(
+          transitType: segment.travelType.name,
+          stationName: segment.startName,
+          routeName: segment.travelType == TransitType.METRO
+              ? segment.lane.first.name
+              : segment.lane.first.busNo,
+          onConfirm: () {
+            _overlayEntry?.remove();
+            _overlayEntry = null;
+            Future.microtask(() {
+              ref.read(guideTrackingProvider.notifier).moveToNext();
+
+              var trackingState = ref.read(guideTrackingProvider);
+              if (trackingState.isTrackingEnd) {
+                context.push('/route');
+              }
+            });
+          },
+          onCancel: () {
+            _overlayEntry?.remove();
+            _overlayEntry = null;
+            Future.microtask(() {
+              ref.read(guideTrackingProvider.notifier).hideAlert();
+            });
+          },
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -167,7 +247,6 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
               mapController = controller;
               _initializeMapAndPath(controller);
             },
-            // GuideMainScreen의 경우 tracking mode를 위해서만 사용
             onCameraChange: (reason, animated) {
               if (reason == NCameraUpdateReason.gesture) {
                 setState(() {
@@ -175,12 +254,12 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
                 });
               }
             },
-          ),          ValueListenableBuilder<bool>(
+          ),
+          ValueListenableBuilder<bool>(
             valueListenable: _isSidebarVisible,
             builder: (context, isVisible, child) {
               return Stack(
                 children: [
-                  // RouteInfoBox - 사이드바가 열려있을 때만 표시
                   if (isVisible)
                     Positioned(
                       left: 16,
@@ -196,7 +275,6 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
                         },
                       ),
                     ),
-                  // 사이드바
                   Positioned(
                     right: isVisible ? 0 : -(MediaQuery.of(context).size.width * 0.25),
                     top: 0,
@@ -222,7 +300,6 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
                           setState(() {
                             _isTrackingMode = true;
                           });
-                          // 현재 위치로 이동
                           var position = await Geolocator.getCurrentPosition();
                           await mapController?.updateCamera(
                             NCameraUpdate.withParams(
@@ -237,7 +314,6 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
                       ),
                     ),
                   ),
-                  // 토글 버튼
                   if (!isVisible)
                     Positioned(
                       right: 0,
@@ -276,7 +352,6 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
               );
             },
           ),
-          // 현재 위치 추적 모드 토글 버튼
         ],
       ),
     );
@@ -286,6 +361,7 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
   void dispose() {
     _debounceTimer?.cancel();
     _positionStreamSubscription?.cancel();
+    _overlayEntry?.remove();
     for (var overlay in _activeOverlays.values) {
       try {
         mapController?.deleteOverlay(overlay.info);

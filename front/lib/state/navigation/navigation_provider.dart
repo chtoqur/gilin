@@ -5,9 +5,9 @@ import 'package:go_router/go_router.dart';
 class BottomNavState extends StateNotifier<int> {
   BottomNavState() : super(0);
 
-  void navigateToPage(BuildContext context, int index, String route) {
+  void navigateToPage(BuildContext context, int index, String route, {Object? extra}) {
     state = index;
-    context.go(route);
+    context.go(route, extra: extra); // extra 전달
   }
 
   void updateIndex(int index) {

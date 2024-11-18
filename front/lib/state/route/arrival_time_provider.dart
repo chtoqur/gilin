@@ -1,68 +1,37 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:async';
 
-final arrivalTimerProvider = StateNotifierProvider<ArrivalTimerNotifier, TimerState>((ref) {
-  return ArrivalTimerNotifier();
-});
+final arrivalTimeProvider = StateProvider<ArrivalTime?>((ref) => null);
 
-class TimerState {
-  final double progress;
-  final DateTime? endTime;
+class ArrivalTime {
+  final DateTime targetTime;
+  final DateTime startTime;
 
-  TimerState({
-    this.progress = 0.0,
-    this.endTime,
+  const ArrivalTime({
+    required this.targetTime,
+    required this.startTime,
   });
 
-  TimerState copyWith({
-    double? progress,
-    DateTime? endTime,
-  }) {
-    return TimerState(
-      progress: progress ?? this.progress,
-      endTime: endTime ?? this.endTime,
+  // 편의를 위한 팩토리 메서드 추가
+  factory ArrivalTime.fromMinutes(int minutes) {
+    return ArrivalTime(
+      targetTime: DateTime.now().add(Duration(minutes: minutes)),
+      startTime: DateTime.now(),
     );
   }
-}
 
-class ArrivalTimerNotifier extends StateNotifier<TimerState> {
-  Timer? _timer;
-
-  ArrivalTimerNotifier() : super(TimerState());
-
-  void startTimer(DateTime endTime) {
-    _timer?.cancel();
-    var startTime = DateTime.now();
-
-    state = TimerState(
-      progress: 0.0,
-      endTime: endTime,
-    );
-
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      var now = DateTime.now();
-      var totalDuration = endTime.difference(startTime).inSeconds;
-      var elapsedDuration = now.difference(startTime).inSeconds;
-
-      if (elapsedDuration >= totalDuration) {
-        state = state.copyWith(progress: 1.0);
-        _timer?.cancel();
-        return;
-      }
-
-      var progress = elapsedDuration / totalDuration;
-      state = state.copyWith(progress: progress.clamp(0.0, 1.0));
-    });
+  // 남은 시간 계산을 위한 유틸리티 메서드
+  Duration get remainingTime {
+    final now = DateTime.now();
+    return targetTime.difference(now);
   }
 
-  void stopTimer() {
-    _timer?.cancel();
-    state = TimerState();
-  }
+  // 진행률 계산을 위한 유틸리티 메서드
+  double get progress {
+    final now = DateTime.now();
+    final totalDuration = targetTime.difference(startTime).inSeconds;
+    final elapsedDuration = now.difference(startTime).inSeconds;
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+    if (totalDuration <= 0) return 1.0;
+    return (elapsedDuration / totalDuration).clamp(0.0, 1.0);
   }
 }

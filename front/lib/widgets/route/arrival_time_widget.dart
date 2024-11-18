@@ -1,68 +1,125 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gilin/state/route/arrival_time_provider.dart';
 
-class ArrivalTimeWidget extends StatelessWidget {
-  final double progress;
+class ArrivalTimeWidget extends ConsumerStatefulWidget {
   final double size;
-  final DateTime endTime;
 
   const ArrivalTimeWidget({
     Key? key,
-    required this.progress,
-    this.size = 100,
-    required this.endTime,
+    this.size = 140,
   }) : super(key: key);
 
-  Color _getProgressColor(double progress) {
-    if (progress <= 0.4) return Colors.green;
-    if (progress <= 0.7) return Colors.yellow;
-    return Colors.red;
+  @override
+  ConsumerState<ArrivalTimeWidget> createState() => _ArrivalTimeWidgetState();
+}
+
+class _ArrivalTimeWidgetState extends ConsumerState<ArrivalTimeWidget> {
+  Timer? _timer;
+  double _progress = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    // 초기 타이머 설정
+    _initializeTimer();
   }
 
-  String _getRemainingTime() {
-    var now = DateTime.now();
-    var remaining = endTime.difference(now);
-
-    // 남은 시간이 음수면 '00:00'을 반환
-    if (remaining.isNegative) {
-      return '00:00';
+  void _initializeTimer() {
+    final arrivalTime = ref.read(arrivalTimeProvider);
+    if (arrivalTime != null) {
+      _startTimer(arrivalTime);
     }
+  }
 
-    var minutes = remaining.inMinutes;
-    var seconds = remaining.inSeconds % 60;
+  // Provider 변경을 감지하고 타이머 재시작
+  void _restartTimer() {
+    final arrivalTime = ref.read(arrivalTimeProvider);
+    if (arrivalTime != null) {
+      setState(() {
+        _progress = 0.0;  // 진행률 초기화
+      });
+      _startTimer(arrivalTime);
+    }
+  }
+
+  void _startTimer(ArrivalTime arrivalTime) {
+    _timer?.cancel();
+
+    final totalDuration = arrivalTime.targetTime.difference(arrivalTime.startTime).inSeconds;
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+
+      final now = DateTime.now();
+      final elapsedDuration = now.difference(arrivalTime.startTime).inSeconds;
+
+      setState(() {
+        _progress = (elapsedDuration / totalDuration).clamp(0.0, 1.0);
+      });
+    });
+  }
+
+  String _getRemainingTime(DateTime targetTime) {
+    final now = DateTime.now();
+    final remaining = targetTime.difference(now);
+
+    if (remaining.isNegative) return '00:00';
+
+    final minutes = remaining.inMinutes;
+    final seconds = remaining.inSeconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  Color _getProgressColor(double progress) {
+    if (progress <= 0.4) return const Color(0xFFACC270);
+    if (progress <= 0.7) return const Color(0xFFFFC65D);
+    return const Color(0xFFFDA868);
   }
 
   @override
   Widget build(BuildContext context) {
+    final arrivalTime = ref.watch(arrivalTimeProvider);
+
+    // Provider 변경 감지 시 타이머 재시작
+    ref.listen<ArrivalTime?>(arrivalTimeProvider, (previous, next) {
+      if (next != null) {
+        _restartTimer();
+      }
+    });
+
+    if (arrivalTime == null) {
+      return const SizedBox();
+    }
+
     return SizedBox(
-      width: size,
-      height: size,
+      width: widget.size,
+      height: widget.size,
       child: Stack(
         children: [
           CustomPaint(
-            size: Size(size, size),
+            size: Size(widget.size, widget.size),
             painter: CircleTimerPainter(
-              progress: progress,
-              progressColor: _getProgressColor(progress),
+              progress: _progress,
+              progressColor: _getProgressColor(_progress),
             ),
           ),
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // 시간 표시
                 Text(
-                  _getRemainingTime(),
+                  _getRemainingTime(arrivalTime.targetTime),
                   style: TextStyle(
-                    fontSize: size * 0.2,
+                    fontSize: widget.size * 0.2,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                // 도착 예정 시간 표시
                 Text(
-                  '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}',
+                  '${arrivalTime.targetTime.hour.toString().padLeft(2, '0')}:${arrivalTime.targetTime.minute.toString().padLeft(2, '0')}',
                   style: TextStyle(
-                    fontSize: size * 0.16,
+                    fontSize: widget.size * 0.16,
                     color: Colors.grey,
                   ),
                 ),
@@ -73,8 +130,15 @@ class ArrivalTimeWidget extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 }
 
+// CircleTimerPainter 수정
 class CircleTimerPainter extends CustomPainter {
   final double progress;
   final Color progressColor;
@@ -86,22 +150,44 @@ class CircleTimerPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var center = Offset(size.width / 2, size.height / 2);
-    var radius = size.width / 2;
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    // 내부 보더 원
+    final innerBorderPaint = Paint()
+      ..color = const Color(0xFFF8F5F0)  // 베이지색 보더
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;  // 얇은 보더
+
+    canvas.drawCircle(center, radius - 6.0, innerBorderPaint);  // 프로그레스 바 안쪽에 그리기
 
     // 배경 원
-    var bgPaint = Paint()
-      ..color = Colors.grey.withOpacity(0.2)
+    final bgPaint = Paint()
+      ..color = const Color(0xFFACC270)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 4.0;
+      ..strokeWidth = 12.0;
 
     canvas.drawCircle(center, radius, bgPaint);
 
-    // 진행 원
-    var progressPaint = Paint()
+    // 남은 진행 부분
+    final remainingPaint = Paint()
+      ..color = const Color(0xFFF8F5F0)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10.0;
+
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -90 * (3.141592 / 180),
+      360 * (1 - progress) * (3.141592 / 180),
+      false,
+      remainingPaint,
+    );
+
+    // 진행된 부분 (컬러)
+    final progressPaint = Paint()
       ..color = progressColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 4.0;
+      ..strokeWidth = 12.0;
 
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
@@ -110,6 +196,14 @@ class CircleTimerPainter extends CustomPainter {
       false,
       progressPaint,
     );
+
+    // 외부 보더 원 (선택사항)
+    final outerBorderPaint = Paint()
+      ..color = const Color(0xFFF8F5F0)  // 베이지색 보더
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;  // 얇은 보더
+
+    canvas.drawCircle(center, radius + 6.0, outerBorderPaint);  // 프로그레스 바 바깥쪽에 그리기
   }
 
   @override

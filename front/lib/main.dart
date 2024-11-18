@@ -55,9 +55,6 @@ class MyApp extends ConsumerWidget {
       routerConfig: router,
       title: 'GilIn',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: Colors.white,
-      ),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,

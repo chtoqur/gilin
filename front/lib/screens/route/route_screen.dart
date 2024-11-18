@@ -173,9 +173,7 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
           child: GestureDetector(
             onTap: () {
               // 팝업 표시
-              ref.read(taxiPopupVisibilityProvider.notifier).state = true;
-
-              var routeState = ref.read(routeProvider);
+              // ref.read(taxiPopupVisibilityProvider.notifier).state = true;
               _requestRoute();
             },
             child: const SizedBox(

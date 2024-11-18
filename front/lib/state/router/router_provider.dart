@@ -3,6 +3,7 @@ import 'package:gilin/screens/mypage/add_myplace_screen.dart';
 import 'package:gilin/screens/mypage/modify_user_info_screen.dart';
 import 'package:gilin/screens/mypage/myplace_screen.dart';
 import 'package:gilin/screens/mypage/notification_setting_screen.dart';
+import 'package:gilin/screens/mypage/test_location_screen.dart';
 import 'package:gilin/screens/route/failure_screen.dart';
 import 'package:gilin/screens/route/my_route_screen.dart';
 import 'package:gilin/screens/route/success_screen.dart';
@@ -110,6 +111,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/add_myplace',
             builder: (context, state) => const AddMyPlaceScreen(),
+          ),
+          GoRoute(
+            path: '/test_location',
+            builder: (context, state) => const TestLocationScreen(),
           ),
         ],
       ),
