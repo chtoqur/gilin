@@ -26,9 +26,9 @@ class RouteInfoBox extends StatelessWidget {
           segment.startName,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Text(
+        const Text(
           '정류장 승차',
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
         ),
         TransitSchedule(
           segment: segment,
@@ -65,18 +65,18 @@ class RouteInfoBox extends StatelessWidget {
           segment.endName,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Text(
+        const Text(
           '정류장 하차',
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
         ),
       ],
     );
   }
 
   Widget _buildSubwaySegment(TransitSegment segment) {
-    final currentIndex = transitRoute.subPath.indexOf(segment);
-    final prevSegment = currentIndex > 0 ? transitRoute.subPath[currentIndex - 1] : null;
-    final isTransfer = prevSegment?.travelType == TransitType.TRANSFER;
+    var currentIndex = transitRoute.subPath.indexOf(segment);
+    var prevSegment = currentIndex > 0 ? transitRoute.subPath[currentIndex - 1] : null;
+    var isTransfer = prevSegment?.travelType == TransitType.TRANSFER;
 
     String getSubwayDisplay(int code) {
       switch (code) {
@@ -161,11 +161,11 @@ class RouteInfoBox extends StatelessWidget {
   Widget _buildWalkSegment(TransitSegment segment) {
     if (selectedSegment == null) return const SizedBox.shrink();
 
-    final currentIndex = transitRoute.subPath.indexOf(segment);
-    final nextSegment = currentIndex < transitRoute.subPath.length - 1
+    var currentIndex = transitRoute.subPath.indexOf(segment);
+    var nextSegment = currentIndex < transitRoute.subPath.length - 1
         ? transitRoute.subPath[currentIndex + 1]
         : null;
-    final prevSegment = currentIndex > 0
+    var prevSegment = currentIndex > 0
         ? transitRoute.subPath[currentIndex - 1]
         : null;
 
@@ -190,9 +190,9 @@ class RouteInfoBox extends StatelessWidget {
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             )
           else if (nextSegment == null)
-              Text(
+              const Text(
                 '목적지까지',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
         const Gap(8),
         Text(
@@ -223,9 +223,9 @@ class RouteInfoBox extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
+        const Text(
           '자전거 이동',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const Gap(8),
         Text(

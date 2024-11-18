@@ -31,18 +31,7 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
   final ValueNotifier<TransitSegment?> _selectedSegmentNotifier = ValueNotifier(null);
   final ValueNotifier<bool> _isSidebarVisible = ValueNotifier(true);
   Timer? _debounceTimer;
-
-  Future<void> _safeDeleteOverlay(String id) async {
-    try {
-      final overlay = _activeOverlays[id];
-      if (overlay != null) {
-        await mapController?.deleteOverlay(overlay.info);
-        _activeOverlays.remove(id);
-      }
-    } catch (e) {
-      print('Failed to delete overlay $id: $e');
-    }
-  }
+  // double _lastZoomLevel = 0; // 추가
 
   // 새로운 메서드: 오버레이 추가를 위한 안전한 방법
   Future<void> _safeAddOverlay(NPathOverlay overlay) async {
@@ -52,45 +41,6 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
     } catch (e) {
       print('Failed to add overlay ${overlay.info.id}: $e');
     }
-  }
-
-  Future<void> _refreshPathOverlays(double zoomLevel) async {
-    // 기존 오버레이 제거
-    final overlayIds = [..._activeOverlays.keys];
-    for (var id in overlayIds) {
-      await _safeDeleteOverlay(id);
-    }
-
-    // 새 오버레이 생성 및 추가
-    for (var segment in widget.routeData.subPath) {
-      final overlays = PathStyleUtils.createPathOverlay(
-        id: 'path_overlay_${widget.routeData.subPath.indexOf(segment)}',
-        coords: segment.pathGraph,
-        segment: segment,
-        zoomLevel: zoomLevel,
-      );
-
-      for (var overlay in overlays) {
-        await _safeAddOverlay(overlay);
-      }
-    }
-  }
-
-  void _onMapZoomChanged() {
-    // 이전 타이머 취소
-    _debounceTimer?.cancel();
-
-    // 새로운 타이머 시작 (300ms 딜레이)
-    _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
-      if (mapController == null) return;
-
-      try {
-        final cameraPosition = await mapController!.getCameraPosition();
-        await _refreshPathOverlays(cameraPosition.zoom);
-      } catch (e) {
-        print('Error updating overlays: $e');
-      }
-    });
   }
 
   @override
@@ -113,34 +63,41 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
     try {
       List<NLatLng> allCoordinates = [];
 
-      // 현재 줌 레벨 가져오기
-      final cameraPosition = await controller.getCameraPosition();
-      final zoomLevel = cameraPosition.zoom;
+      // 경로 오버레이를 한 번만 생성
+      for (var segment in widget.routeData.subPath) {
+        var overlays = PathStyleUtils.createPathOverlay(
+          id: 'path_overlay_${widget.routeData.subPath.indexOf(segment)}',
+          coords: segment.pathGraph,
+          segment: segment,
+          zoomLevel: 17, // 기본 줌 레벨 사용
+        );
 
-      // 경로 오버레이 생성
-      await _refreshPathOverlays(zoomLevel);
+        for (var overlay in overlays) {
+          await _safeAddOverlay(overlay);
+        }
+      }
 
-      final startPoint = NLatLng(widget.routeState.startPoint.y, widget.routeState.startPoint.x);
-      final endPoint = NLatLng(widget.routeState.endPoint.y, widget.routeState.endPoint.x);
-
-      final startMarker = NMarker(
+      // 나머지 마커 및 카메라 설정 코드...
+      var startPoint = NLatLng(widget.routeState.startPoint.y, widget.routeState.startPoint.x);
+      var endPoint = NLatLng(widget.routeState.endPoint.y, widget.routeState.endPoint.x);
+      var startMarker = NMarker(
         id: 'start_marker',
         position: startPoint,
-        icon: NOverlayImage.fromAssetImage('assets/images/start_marker.png'),
+        icon: const NOverlayImage.fromAssetImage('assets/images/start_marker.png'),
       );
 
-      final endMarker = NMarker(
+      var endMarker = NMarker(
         id: 'end_marker',
         position: endPoint,
-        icon: NOverlayImage.fromAssetImage('assets/images/end_marker.png'),
+        icon: const NOverlayImage.fromAssetImage('assets/images/end_marker.png'),
       );
 
-      final startInfoWindow = NInfoWindow.onMarker(
+      var startInfoWindow = NInfoWindow.onMarker(
         id: 'start_info',
         text: widget.routeState.startPoint.title,
       );
 
-      final endInfoWindow = NInfoWindow.onMarker(
+      var endInfoWindow = NInfoWindow.onMarker(
         id: 'end_info',
         text: widget.routeState.endPoint.title,
       );
@@ -157,7 +114,7 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
         allCoordinates.addAll(segment.pathGraph);
       }
 
-      final bounds = NLatLngBounds(
+      var bounds = NLatLngBounds(
         southWest: NLatLng(
           allCoordinates
               .map((coord) => coord.latitude)
@@ -179,7 +136,7 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
       await controller.updateCamera(
         NCameraUpdate.fitBounds(
           bounds,
-          padding: EdgeInsets.all(48),
+          padding: const EdgeInsets.all(48),
         ),
       );
     } catch (e) {
@@ -212,11 +169,6 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
               mapController = controller;
               _initializeMapAndPath(controller);
             },
-            onCameraChange: (reason, animated) {
-              if (reason == NCameraUpdateReason.gesture) {
-                _onMapZoomChanged();
-              }
-            },
           ),
           // 인포박스
           Positioned(
@@ -233,32 +185,90 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
               },
             ),
           ),          // 사이드바와 시작 버튼
+          // GuidePreviewScreen의 build 메서드 내 Stack children에서 sidebar 부분만 수정
           ValueListenableBuilder<bool>(
             valueListenable: _isSidebarVisible,
             builder: (context, isVisible, child) {
-              return Positioned(
-                right: isVisible ? 0 : -(MediaQuery.of(context).size.width * 0.25),
-                top: 0,
-                bottom: 0,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.25,
-                  child: GuideSidebar(
-                    routeData: widget.routeData,
-                    onSegmentTap: (segment) {
-                      _selectedSegmentNotifier.value = segment;
-                      mapController?.updateCamera(
-                        NCameraUpdate.withParams(
-                          target: segment.pathGraph.first,
-                          zoom: 17,
-                        ),
-                      );
-                    },
+              return Stack(
+                children: [
+                  // RouteInfoBox - 사이드바 상태에 따라 표시/숨김
+                  if (isVisible)
+                    Positioned(
+                      left: 16,
+                      top: 16,
+                      child: ValueListenableBuilder<TransitSegment?>(
+                        valueListenable: _selectedSegmentNotifier,
+                        builder: (context, selectedSegment, child) {
+                          return RouteInfoBox(
+                            selectedSegment: selectedSegment,
+                            routeInfo: widget.routeData.info,
+                            transitRoute: widget.routeData,
+                          );
+                        },
+                      ),
+                    ),
+                  // 사이드바
+                  Positioned(
+                    right: isVisible ? 0 : -(MediaQuery.of(context).size.width * 0.25),
+                    top: 0,
+                    bottom: 0,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.25,
+                      child: GuideSidebar(
+                        routeData: widget.routeData,
+                        routeState: widget.routeState,
+                        onSegmentTap: (segment) {
+                          _selectedSegmentNotifier.value = segment;
+                          mapController?.updateCamera(
+                            NCameraUpdate.withParams(
+                              target: segment.pathGraph.first,
+                              zoom: 17,
+                            ),
+                          );
+                        },
+                        onClose: () {
+                          _isSidebarVisible.value = false;
+                        },
+                        isGuideMode: false,
+                      ),
+                    ),
                   ),
-                ),
+                  // 토글 버튼
+                  if (!isVisible)
+                    Positioned(
+                      right: 0,
+                      top: MediaQuery.of(context).size.height * 0.4,
+                      child: GestureDetector(
+                        onTap: () {
+                          _isSidebarVisible.value = true;
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF8DA05D),
+                            borderRadius: const BorderRadius.horizontal(
+                              left: Radius.circular(12),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 4,
+                                offset: const Offset(-2, 0),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.chevron_left,
+                            color: Colors.white.withOpacity(0.9),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               );
             },
-          ),
-        ],
+          ),        ],
       ),
     );
   }
