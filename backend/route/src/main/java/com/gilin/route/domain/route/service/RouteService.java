@@ -120,7 +120,6 @@ public class RouteService {
             boolean useBike,
             Member member
     ) {
-        log.debug(">>> handleSubPath");
         List<RouteResponse.SubPathh> walkSubPathhList = new ArrayList<>();
         List<RouteResponse.SubPathh> subPathhList = new ArrayList<>();
         RouteResponse.SubPathh walkSubPathh = walkService.convertToSubPathh(prevSubPath, nextSubPath, start, end, member);
@@ -129,9 +128,7 @@ public class RouteService {
             return walkSubPathhList;
         }
 
-        log.debug(start.x() + " " + start.y() + " " + end.x() + " " + end.y());
         RouteResponse.SubPathh bikeSubPathh = bikeService.getBikeSubPathh(start, end);
-        log.debug(">>> bikeSubPathh {}", bikeSubPathh);
         if (bikeSubPathh == null) {
             return walkSubPathhList;
         }
@@ -142,7 +139,6 @@ public class RouteService {
         for (RouteResponse.SubPathh subPathh : subPathhList) {
             bikeSubPathhTime += subPathh.getSectionTime();
         }
-        log.debug(">>> BIKECHECK: " + bikeSubPathhTime + " " + walkSubPathh.getSectionTime());
         return (bikeSubPathhTime + 5 < walkSubPathh.getSectionTime()) ? subPathhList : walkSubPathhList;
     }
 

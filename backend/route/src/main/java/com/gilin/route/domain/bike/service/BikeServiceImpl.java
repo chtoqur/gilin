@@ -89,9 +89,7 @@ public class BikeServiceImpl implements BikeService {
      */
     @Override
     public List<BikeStationStatus> searchNearbyBikeStations(Coordinate point) {
-        log.debug(point.x() + " " + point.y());
         GeoResults<RedisGeoCommands.GeoLocation<String>> geoResults = queryGeoLocations(point, SEARCH_RADIUS, null);
-        log.debug(">>>hello" + geoResults.getContent().get(0).getContent().getName());
         if (geoResults.getContent().isEmpty() || geoResults.getContent().isEmpty()) {
             return List.of();
         }
@@ -132,7 +130,6 @@ public class BikeServiceImpl implements BikeService {
      * @return
      */
     private GeoResults<RedisGeoCommands.GeoLocation<String>> queryGeoLocations(Coordinate point, Distance radius, Integer limit) {
-        log.debug(point.x() + " " + point.y());
         RedisGeoCommands.GeoRadiusCommandArgs args = RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs()
                 .includeDistance()
                 .sortAscending();
@@ -154,8 +151,6 @@ public class BikeServiceImpl implements BikeService {
      */
     public Optional<BikeStationStatus> getStationStatus(String stationId) {
         String stationData = redisTemplate.opsForValue().get(stationId);
-
-        log.debug(stationData);
 
         return Optional.ofNullable(stationData) // stationData가 null인지 체크
                 .filter(data -> !data.isEmpty()) // 비어있는 데이터 필터링
