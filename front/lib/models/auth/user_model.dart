@@ -1,4 +1,3 @@
-// AppUser로 이름 변경
 class AppUser {
   final String? name;
   final String? gender;
