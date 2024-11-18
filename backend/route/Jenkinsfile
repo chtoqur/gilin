@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SERVER_ID = 'ubuntu'
-        SERVER_DOMAIN = 'k11a306.p.ssafy.io'
+        SERVER_DOMAIN = 'seungki-cho.lol' // 변경된 서버 도메인
         DOCKER_HUB_REPO = 'seungkicho/gilin'
         DOCKER_CREDENTIALS_ID = 'dockerhub_csk'
         GITLAB_CREDENTIALS_ID = 'gitlab-csk'
@@ -15,7 +15,7 @@ pipeline {
         stage('Clone') {
             steps {
                 script {
-                    git branch: 'be/dev', url: 'https://lab.ssafy.com/s11-final/S11P31A306', credentialsId: GITLAB_CREDENTIALS_ID
+                    git branch: 'be/dev-test', url: 'https://lab.ssafy.com/s11-final/S11P31A306', credentialsId: GITLAB_CREDENTIALS_ID
                 }
             }
         }
@@ -75,7 +75,7 @@ pipeline {
 
         stage('EC2 Pull') {
             steps {
-                sshagent (credentials: ['ec2_ssh']) {
+                sshagent (credentials: ['ec2_ssh_test']) { // SSH credentials 변경
                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD'), file(credentialsId: ENV_CREDENTIALS_ID, variable: 'ENV_FILE')]) {
                        sh """
                            # .env 파일을 임시 디렉토리에 복사한 후 이동
@@ -96,12 +96,12 @@ EOF
 
         stage('Deploy') {
             steps {
-                sshagent(credentials: ['ec2_ssh']) {
+                sshagent(credentials: ['ec2_ssh_test']) { // SSH credentials 변경
                     sh """
                         ssh -o StrictHostKeyChecking=no $SERVER_ID@$SERVER_DOMAIN <<EOF
                         docker stop route-backend || true
                         docker rm route-backend || true
-                        docker run -d --name route-backend --network npm_gilin --env-file /home/ubuntu/.env ${DOCKER_HUB_REPO}:latest
+                        docker run -d --name route-backend -p 8081:8080 --env-file /home/ubuntu/.env ${DOCKER_HUB_REPO}:latest
 EOF
                     """
                 }
