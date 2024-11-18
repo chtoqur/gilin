@@ -105,7 +105,11 @@ flutter:
     - assets/images/icons/
     - assets/lottie/
     - assets/images/buttons/
-#    - assets/font/pdf/
+    - assets/images/guide/
+    - assets/images/guide/gilin_in_metro.png
+
+
+  #    - assets/font/pdf/
 
   #   - images/a_dot_ham.jpeg
 

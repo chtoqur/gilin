@@ -158,16 +158,6 @@ class _TransitScheduleState extends ConsumerState<TransitSchedule> {
           color: Colors.grey[600],
         ),
         const SizedBox(width: 8),
-        // if (info.vehicleName != null) ...[
-        //   Text(
-        //     info.vehicleName!,
-        //     style: TextStyle(
-        //       fontSize: 13,
-        //       color: Colors.grey[800],
-        //     ),
-        //   ),
-        //   const SizedBox(width: 8),
-        // ],
         Text(
           '$minutes분',
           style: TextStyle(
