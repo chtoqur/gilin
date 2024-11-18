@@ -124,14 +124,6 @@ class _LoginScreenUIState extends ConsumerState<LoginScreenUI>
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  spreadRadius: 1,
-                                  blurRadius: 3,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
                             ),
                             child: Image.asset(
                               'assets/images/buttons/kakao_login_medium_wide.png',
