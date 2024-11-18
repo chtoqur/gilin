@@ -45,6 +45,10 @@ public class Member {
         this.age = age;
         this.gender = gender;
     }
+
+    public void changeName(String newName) {
+        name = newName;
+    }
 }
 
 
