@@ -3,10 +3,12 @@ package com.gilin.route.global.client.tmap;
 import com.gilin.route.global.client.tmap.config.TmapClientConfig;
 import com.gilin.route.global.client.tmap.request.PedestrianPathRequest;
 import com.gilin.route.global.client.tmap.response.PedestrianPathResponse;
+import com.gilin.route.global.client.tmap.response.ReverseGeoCodingResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(url = "https://apis.openapi.sk.com/tmap", name = "TMapClient", configuration = TmapClientConfig.class)
 public interface TMapClient {
@@ -14,6 +16,12 @@ public interface TMapClient {
     @PostMapping("/routes/pedestrian?version=1")
     PedestrianPathResponse getPedestrianPath(
         @SpringQueryMap PedestrianPathRequest request);
+
+    @GetMapping("/geo/reversegeocoding?version=1&addressType=A10&coordType=WGS84GEO&appKey=LYNZOdcRPGJSrAh9jkl87asJJ0ScUgS64FySVCDj")
+    ReverseGeoCodingResponse getReverseGeocoding(
+        @RequestParam String lat,
+        @RequestParam String lon
+    );
 
 
 }
