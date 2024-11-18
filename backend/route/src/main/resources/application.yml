@@ -44,8 +44,6 @@ apikey:
     ${PUBLIC_API_CSK}
   metro:
     ${SEOUL_METRO_OPEN_API_DINO}
-  seouls:
-    ${SEOUL_API_SEO}
   kakaos:
     ${KAKAO_API_SEO}
 jwt:
