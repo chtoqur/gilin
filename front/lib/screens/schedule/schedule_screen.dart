@@ -56,6 +56,18 @@ class ScheduleScreen extends ConsumerWidget {
             },
             child: const Text('Go to Failure Page'),
           ),
+          ElevatedButton(
+            onPressed: () {
+              // // ref.read(bottomNavProvider.notifier).updateIndex(3);
+              // // ref.read(arrivalTimeProvider.notifier).setArrivalTime(
+              // //     DateTime.now().add(const Duration(minutes: 10))
+              // // );
+              // print("arrival time");
+              // print(ref.read(arrivalTimeProvider).arrivalTime);
+              context.push('/test');
+            },
+            child: const Text('Go to Arrival Time Test Page'),
+          ),
         ],
       ),
     );
