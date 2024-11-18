@@ -21,9 +21,7 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
   TimeOfDay? arrivalTime;
 
   final TextEditingController _searchController = TextEditingController();
-  final LocalSearchService _searchService = LocalSearchService(
-    apiKey: 'YOUR_NAVER_API_KEY',
-  );
+  final LocalSearchService _searchService = LocalSearchService(apiKey: 'YOUR_NAVER_API_KEY');
 
   List<LocalSearchResult> _searchResults = [];
   bool _isLoading = false;
@@ -37,21 +35,21 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() {
-      if (_debounce?.isActive ?? false) _debounce!.cancel();
-      _debounce = Timer(const Duration(milliseconds: 500), () {
-        _resetSearch();
-        _performSearch(_searchController.text);
-      });
-    });
+    _searchController.addListener(_onSearchTextChanged);
     _scrollController.addListener(_scrollListener);
   }
 
+  void _onSearchTextChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _resetSearch();
+      _performSearch(_searchController.text);
+    });
+  }
+
   void _scrollListener() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      if (!_isLoading && _hasMoreItems) {
-        _loadMoreItems();
-      }
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoading && _hasMoreItems) {
+      _loadMoreItems();
     }
   }
 
@@ -183,7 +181,7 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                           }
 
                           return ListTile(
-                            title: Text(_searchResults[index].title), // 'title'로 수정
+                            title: Text(_searchResults[index].title),
                             subtitle: Text(_searchResults[index].address),
                             onTap: () {
                               setState(() {
@@ -384,7 +382,7 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
       case '기타':
         return Icons.place;
       default:
-        return Icons.help; // 기본 아이콘 추가
+        return Icons.help;
     }
   }
 
@@ -443,7 +441,7 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
       case '기타':
         return 4;
       default:
-        return 1; // 기본 값 추가
+        return 1;
     }
   }
 

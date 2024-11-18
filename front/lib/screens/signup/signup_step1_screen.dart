@@ -40,12 +40,10 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
   Future<bool> _isTokenExpired(String accessToken) async {
     try {
       var tokenInfo = await UserApi.instance.accessTokenInfo();
-      if (tokenInfo != null) {
-        var expirationTime =
-            DateTime.now().millisecondsSinceEpoch + (tokenInfo.expiresIn * 1000);
-        return DateTime.now().millisecondsSinceEpoch >= expirationTime;
-      }
-      return true;
+      var expirationTime =
+          DateTime.now().millisecondsSinceEpoch + (tokenInfo.expiresIn * 1000);
+      return DateTime.now().millisecondsSinceEpoch >= expirationTime;
+          return true;
     } catch (e) {
       print('토큰 만료 확인 중 오류 발생: $e');
       return true;
@@ -79,7 +77,6 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
             signupState.ageGroup.replaceAll(RegExp(r'[^0-9]'), '')) ??
             0;
 
-        // 요청을 보내기 전에 데이터를 출력해 디버깅하기
         print("보낼 데이터:");
         print("닉네임: ${signupState.nickname}");
         print("성별: $gender");

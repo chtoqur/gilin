@@ -48,13 +48,9 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
       var token = await _secureStorage.read(key: 'accessToken');
       if (token != null) {
         var tokenInfo = await UserApi.instance.accessTokenInfo();
-        if (tokenInfo != null) {
-          var kakaoUser = await UserApi.instance.me();
-          state = AsyncValue.data(AuthAuthenticated(kakaoUser));
-        } else {
-          state = AsyncValue.data(AuthUnauthenticated());
-        }
-      } else {
+        var kakaoUser = await UserApi.instance.me();
+        state = AsyncValue.data(AuthAuthenticated(kakaoUser));
+            } else {
         state = AsyncValue.data(AuthUnauthenticated());
       }
     } catch (e) {
