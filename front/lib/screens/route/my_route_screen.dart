@@ -259,7 +259,7 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                       if (selectedDestinationIndex == null) { // 다른 도착지
                         context.push('/route');
                       } else {  // 출발하기
-                        
+
                       }
                     },
                     style: FilledButton.styleFrom(

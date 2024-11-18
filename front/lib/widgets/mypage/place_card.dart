@@ -37,6 +37,10 @@ class PlaceCard extends StatelessWidget {
             width: 145,
             height: 147,
             padding: const EdgeInsets.all(15),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -87,9 +91,13 @@ class PlaceCard extends StatelessWidget {
           radius: const Radius.circular(10),
           padding: EdgeInsets.zero,
           dashPattern: const [3, 2],
-          child: SizedBox(
+          child: Container(
             width: 145,
             height: 147,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(15),
               child: Column(
@@ -187,7 +195,6 @@ class PlaceCard extends StatelessWidget {
         ),
       ),
     );
-
   }
 }
 

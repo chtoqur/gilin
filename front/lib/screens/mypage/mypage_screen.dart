@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../widgets/mypage/place_card.dart';
 
@@ -7,10 +8,9 @@ class MypageScreen extends StatelessWidget {
   MypageScreen({super.key});
 
   static const List<Map<String, String>> menuItems = [
-    {'title': '내 정보 변경', 'route': '/profile'},
-    {'title': '알림 설정', 'route': '/alert'},
-    {'title': '내 장소/경로 수정', 'route': '/payment'},
-    {'title': '회원 탈퇴', 'route': '/support'},
+    {'title': '내 정보 수정', 'route': 'modify_user'},
+    {'title': '알림 설정', 'route': 'notification_setting'},
+    {'title': '내 장소/경로 수정', 'route': 'myplace'},
   ];
 
   // 추후 실제 데이터로 변경
@@ -23,7 +23,7 @@ class MypageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF8F5F0),
+      backgroundColor: const Color(0xff8C9F5F),
       body: SafeArea(
         child: Column(
           children: [
@@ -34,7 +34,7 @@ class MypageScreen extends StatelessWidget {
               padding: const EdgeInsets.all(30),
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: ShapeDecoration(
-                color: Colors.white,
+                color: const Color(0xffF8F5F0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -133,38 +133,38 @@ class MypageScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 30),
-
-            Expanded(  // 전체 영역을 Expanded로 감싸기
+            const Gap(30),
+            Expanded(
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                 ),
-                child: Column(  // Column 추가
+                child: Column(
                   children: [
-                    Expanded(  // ListView를 Expanded로 감싸서 남은 공간 차지
-                      child: SingleChildScrollView(  // SingleChildScrollView로 변경
-                        child: Column(  // 세로 스크롤을 위한 Column
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
                           children: [
                             ListView.separated(
-                              shrinkWrap: true,  // SingleChildScrollView 내부에서는 필요
-                              physics: const NeverScrollableScrollPhysics(),  // 부모 스크롤 사용
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
                               itemCount: menuItems.length,
                               separatorBuilder: (context, index) =>
                               const Divider(height: 1),
                               itemBuilder: (context, index) {
                                 return TextButton(
                                   onPressed: () {
-                                    Navigator.pushNamed(
-                                        context,
-                                        menuItems[index]['route']!
-                                    );
+                                    context.push('/${menuItems[index]['route']}');
+                                    // Navigator.pushNamed(
+                                    //     context,
+                                    //     menuItems[index]['route']!
+                                    // );
                                   },
                                   style: TextButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 8
+                                        horizontal: 25,
+                                        vertical: 20
                                     ),
                                   ),
                                   child: Row(
@@ -175,14 +175,13 @@ class MypageScreen extends StatelessWidget {
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontSize: 16,
-                                          fontFamily: 'Pretendard',
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                       const Icon(
                                         Icons.arrow_forward_ios,
-                                        size: 20,
-                                        color: Colors.grey,
+                                        size: 15,
+                                        color: Color(0xFF989898),
                                       ),
                                     ],
                                   ),
@@ -193,7 +192,6 @@ class MypageScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // 로그아웃 버튼은 항상 하단에 고정
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: TextButton(
@@ -202,7 +200,7 @@ class MypageScreen extends StatelessWidget {
                           '로그아웃',
                           style: TextStyle(
                             color: Color(0xFF6E6E6E),
-                            fontSize: 16,
+                            fontSize: 14,
                             fontFamily: 'Pretendard',
                             fontWeight: FontWeight.w500,
                           ),
