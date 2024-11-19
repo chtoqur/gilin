@@ -222,20 +222,17 @@ public class MetroServiceImpl implements MetroService {
     @Override
     public MetroPositionDto getMetroPosition(String trainNo, String lineName) {
         MetroPositionResponse response = openApiClient.getRealTimePosition(lineName);
-        if (response.getRealtimePositionList() == null) {
-            if (trainNo.equals("0306")) {
-                String[] dummyStations = {"사당", "방배", "교대", "강남", "역삼"};
+        if (trainNo.equals("0306") && lineName.equals("2호선")) {
+            String[] dummyStations = {"사당", "사당", "방배", "방배", "교대", "교대", "강남", "강남", "역삼", "역삼"};
 
-                return MetroPositionDto.builder()
-                                       .line("2호선")
-                                       .stationName(dummyStations[LocalDateTime.now()
-                                                                               .getSecond() % 5])
-                                       .trainNo("0306")
-                                       .trainLineNm("2호선")
-                                       .status("도착")
-                                       .build();
-            }
-            return null;
+            return MetroPositionDto.builder()
+                                   .line("2호선")
+                                   .stationName(dummyStations[LocalDateTime.now()
+                                                                           .getSecond() % 10])
+                                   .trainNo("0306")
+                                   .trainLineNm("2호선")
+                                   .status("도착")
+                                   .build();
         }
         for (RealtimePosition position : response.getRealtimePositionList()) {
             if (position.getTrainNo()
