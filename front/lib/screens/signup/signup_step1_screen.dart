@@ -37,7 +37,9 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
     super.initState();
     _nicknameController.text = "길싸피";
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(signupStateProvider.notifier).updateNickname(_nicknameController.text);
+      ref
+          .read(signupStateProvider.notifier)
+          .updateNickname(_nicknameController.text);
     });
   }
 
@@ -63,7 +65,9 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
         }
 
         // ageGroup에서 숫자만 추출
-        int ageGroup = int.tryParse(signupState.ageGroup.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+        int ageGroup = int.tryParse(
+                signupState.ageGroup.replaceAll(RegExp(r'[^0-9]'), '')) ??
+            0;
 
         var response = await Dio().post(
           'https://k11a306.p.ssafy.io/api/user/register',
@@ -114,7 +118,9 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
               initialItem: ageGroups.indexOf(signupState.ageGroup),
             ),
             onSelectedItemChanged: (int selectedItem) {
-              ref.read(signupStateProvider.notifier).updateAgeGroup(ageGroups[selectedItem]);
+              ref
+                  .read(signupStateProvider.notifier)
+                  .updateAgeGroup(ageGroups[selectedItem]);
             },
             children: List<Widget>.generate(ageGroups.length, (int index) {
               return Center(child: Text(ageGroups[index]));
@@ -147,7 +153,8 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 45, horizontal: 35),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 45, horizontal: 35),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -156,8 +163,7 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                         style: TextStyle(
                             fontSize: 23,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xff463C33)
-                        ),
+                            color: Color(0xff463C33)),
                       ),
                       const Gap(5),
                       const Text(
@@ -175,12 +181,15 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                         style: const TextStyle(fontSize: 16),
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
-                          border: Border.all(color: CupertinoColors.systemGrey4),
+                          border:
+                              Border.all(color: CupertinoColors.systemGrey4),
                           borderRadius: BorderRadius.circular(8),
                           color: CupertinoColors.white,
                         ),
                         onChanged: (value) {
-                          ref.read(signupStateProvider.notifier).updateNickname(value);
+                          ref
+                              .read(signupStateProvider.notifier)
+                              .updateNickname(value);
                         },
                       ),
                       const Gap(40),
@@ -209,7 +218,9 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                             groupValue: signupState.gender,
                             onChanged: (value) {
                               if (value != null) {
-                                ref.read(signupStateProvider.notifier).updateGender(value);
+                                ref
+                                    .read(signupStateProvider.notifier)
+                                    .updateGender(value);
                               }
                             },
                             label: '남성',
@@ -220,7 +231,9 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                             groupValue: signupState.gender,
                             onChanged: (value) {
                               if (value != null) {
-                                ref.read(signupStateProvider.notifier).updateGender(value);
+                                ref
+                                    .read(signupStateProvider.notifier)
+                                    .updateGender(value);
                               }
                             },
                             label: '여성',
@@ -231,7 +244,9 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                             groupValue: signupState.gender,
                             onChanged: (value) {
                               if (value != null) {
-                                ref.read(signupStateProvider.notifier).updateGender(value);
+                                ref
+                                    .read(signupStateProvider.notifier)
+                                    .updateGender(value);
                               }
                             },
                             label: '선택 안 함',
@@ -244,10 +259,10 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                         child: Container(
                           padding: const EdgeInsets.all(15),
                           decoration: BoxDecoration(
-                              border: Border.all(color: CupertinoColors.systemGrey4),
+                              border: Border.all(
+                                  color: CupertinoColors.systemGrey4),
                               borderRadius: BorderRadius.circular(8),
-                              color: Colors.white
-                          ),
+                              color: Colors.white),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -278,16 +293,16 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                     width: double.infinity,
                     child: CupertinoTheme(
                       data: const CupertinoThemeData(
-                        primaryColor: Color(0xFF669358)
-                      ),
+                          primaryColor: Color(0xFF669358)),
                       child: CupertinoButton.filled(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         borderRadius: BorderRadius.zero,
-                        onPressed: signupState.nickname.isEmpty ? null : () {
-                          _submitAdditionalInfo;
-                          context.push('/signup_step2');
-                        },
-
+                        onPressed: signupState.nickname.isEmpty
+                            ? null
+                            : () {
+                                _submitAdditionalInfo;
+                                context.push('/signup_step2');
+                              },
                         disabledColor: const Color(0xFFD9D9D9),
                         child: Text(
                           '회원가입 완료',
@@ -295,9 +310,9 @@ class _SignupStep1ScreenState extends ConsumerState<SignupStep1Screen> {
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
                             color: signupState.nickname.isEmpty
-                              ? const Color(0xFF757575)
-                              : Colors.white,
-                        ),
+                                ? const Color(0xFF757575)
+                                : Colors.white,
+                          ),
                         ),
                       ),
                     ),

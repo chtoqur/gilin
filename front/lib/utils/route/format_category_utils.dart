@@ -3,7 +3,7 @@
 class FormatCategoryUtils {
   static String formatCategory(String category) {
     List<String> parts = category.split(' > ');
-    if (parts.length < 3) return category;  // 구분자가 충분하지 않으면 원본 반환
+    if (parts.length < 3) return category; // 구분자가 충분하지 않으면 원본 반환
 
     return '${parts[1]} > ${parts[2]}'; // 두 번째와 세 번째 부분만 반환
   }

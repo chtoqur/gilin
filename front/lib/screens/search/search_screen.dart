@@ -38,23 +38,24 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-      _searchController.addListener(() {
-        if (_debounce?.isActive ?? false) _debounce!.cancel();
-        _debounce = Timer(const Duration(milliseconds: 500), () {
-          _resetSearch();
-          _performSearch(_searchController.text);
-        });
+    _searchController.addListener(() {
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
+      _debounce = Timer(const Duration(milliseconds: 500), () {
+        _resetSearch();
+        _performSearch(_searchController.text);
       });
-      _scrollController.addListener(_scrollListener);
+    });
+    _scrollController.addListener(_scrollListener);
   }
 
   void _scrollListener() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       if (!_isLoading && _hasMoreItems) {
         _loadMoreItems();
-        }
       }
     }
+  }
 
   // void _resetSearch() {
   //   _currentPage = 1;
@@ -69,7 +70,8 @@ class _SearchScreenState extends State<SearchScreen> {
     await _performSearch(_searchController.text, isLoadingMore: true);
   }
 
-  Future<void> _performSearch(String query, {bool isLoadingMore = false}) async {
+  Future<void> _performSearch(String query,
+      {bool isLoadingMore = false}) async {
     if (query.isEmpty) {
       setState(() {
         _searchResults = [];
@@ -194,7 +196,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     children: [
                       const Gap(70),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 25),
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.7,
                           child: const SavedLocationsWidget(),
@@ -202,7 +205,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       SearchHistoryWidget(
                         savedLocations: savedLocations,
-                        searchController: _searchController,  // searchController 전달
+                        searchController:
+                            _searchController, // searchController 전달
                       ),
                     ],
                   ),
@@ -218,41 +222,43 @@ class _SearchScreenState extends State<SearchScreen> {
                   child: _isLoading && _searchResults.isEmpty
                       ? const Center(child: CircularProgressIndicator())
                       : _error != null
-                      ? Center(child: Text(_error!))
-                      : ListView.builder(
-                          controller: _scrollController,
-                          itemCount: _searchResults.length + (_hasMoreItems ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (index == _searchResults.length) {
-                              return Container(
-                                padding: const EdgeInsets.all(16.0),
-                                alignment: Alignment.center,
-                                child: const CircularProgressIndicator(),
-                              );
-                            }
+                          ? Center(child: Text(_error!))
+                          : ListView.builder(
+                              controller: _scrollController,
+                              itemCount: _searchResults.length +
+                                  (_hasMoreItems ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index == _searchResults.length) {
+                                  return Container(
+                                    padding: const EdgeInsets.all(16.0),
+                                    alignment: Alignment.center,
+                                    child: const CircularProgressIndicator(),
+                                  );
+                                }
 
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SearchResultMap(
-                                      searchResult: _searchResults[index],
-                                    ),
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SearchResultMap(
+                                          searchResult: _searchResults[index],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: SearchResultSheet(
+                                    result: _searchResults[index],
+                                    searchQuery: _searchController.text,
+                                    showBorder:
+                                        index > 0, // 첫 번째 아이템은 border 없음
                                   ),
                                 );
                               },
-                              child: SearchResultSheet(
-                                result: _searchResults[index],
-                                searchQuery: _searchController.text,
-                                showBorder: index > 0,  // 첫 번째 아이템은 border 없음
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                            ),
+                ),
+              ],
+            ),
 
           CustomSearchBar(
             controller: _searchController,

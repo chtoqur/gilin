@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 
-final notificationSettingsProvider = StateNotifierProvider<NotificationSettingsNotifier, NotificationSettings>((ref) {
+final notificationSettingsProvider =
+    StateNotifierProvider<NotificationSettingsNotifier, NotificationSettings>(
+        (ref) {
   return NotificationSettingsNotifier();
 });
 
@@ -94,7 +96,8 @@ class NotificationSettingScreen extends ConsumerWidget {
             children: [
               const Gap(25),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
                 color: Colors.white,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +117,9 @@ class NotificationSettingScreen extends ConsumerWidget {
                           value: settings.pushEnabled,
                           activeColor: const Color(0xFF669358),
                           onChanged: (bool value) {
-                            ref.read(notificationSettingsProvider.notifier).togglePush(value);
+                            ref
+                                .read(notificationSettingsProvider.notifier)
+                                .togglePush(value);
                           },
                         ),
                       ],
@@ -142,7 +147,9 @@ class NotificationSettingScreen extends ConsumerWidget {
                         subtitle: '출발 시간에 맞춰 알림을 받습니다',
                         value: settings.departureAlert,
                         onChanged: (value) {
-                          ref.read(notificationSettingsProvider.notifier).toggleDepartureAlert(value);
+                          ref
+                              .read(notificationSettingsProvider.notifier)
+                              .toggleDepartureAlert(value);
                         },
                       ),
                       const Divider(height: 1, indent: 25, endIndent: 25),
@@ -152,7 +159,9 @@ class NotificationSettingScreen extends ConsumerWidget {
                         subtitle: '경로 변경 시 알림을 받습니다',
                         value: settings.routeAlert,
                         onChanged: (value) {
-                          ref.read(notificationSettingsProvider.notifier).toggleRouteAlert(value);
+                          ref
+                              .read(notificationSettingsProvider.notifier)
+                              .toggleRouteAlert(value);
                         },
                       ),
                       const Divider(height: 1, indent: 25, endIndent: 25),
@@ -162,7 +171,9 @@ class NotificationSettingScreen extends ConsumerWidget {
                         subtitle: '이벤트 및 혜택 알림을 받습니다',
                         value: settings.marketingAlert,
                         onChanged: (value) {
-                          ref.read(notificationSettingsProvider.notifier).toggleMarketingAlert(value);
+                          ref
+                              .read(notificationSettingsProvider.notifier)
+                              .toggleMarketingAlert(value);
                         },
                       ),
                       const Divider(height: 1, indent: 25, endIndent: 25),
@@ -172,7 +183,9 @@ class NotificationSettingScreen extends ConsumerWidget {
                         subtitle: '오후 9시 ~ 오전 8시',
                         value: settings.nightAlert,
                         onChanged: (value) {
-                          ref.read(notificationSettingsProvider.notifier).toggleNightAlert(value);
+                          ref
+                              .read(notificationSettingsProvider.notifier)
+                              .toggleNightAlert(value);
                         },
                       ),
                     ],

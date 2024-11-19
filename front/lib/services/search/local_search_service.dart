@@ -44,7 +44,9 @@ class LocalSearchService {
         Map<String, dynamic> data = json.decode(response.body);
         if (data.containsKey('documents')) {
           List<dynamic> items = data['documents'];
-          return items.map((item) => LocalSearchResult.fromKakaoJson(item)).toList();
+          return items
+              .map((item) => LocalSearchResult.fromKakaoJson(item))
+              .toList();
         }
       }
 

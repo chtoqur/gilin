@@ -89,20 +89,19 @@ class TaxiInfoPopup extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFFF8F5F0),
-                    boxShadow: [
-                      BoxShadow(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFFF8F5F0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF463C33).withOpacity(0.3),
+                          spreadRadius: 0,
+                          blurRadius: 2,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                      border: Border.all(
                         color: const Color(0xFF463C33).withOpacity(0.3),
-                        spreadRadius: 0,
-                        blurRadius: 2,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                    border: Border.all(
-                      color: const Color(0xFF463C33).withOpacity(0.3),
-                    )
-                  ),
+                      )),
                   child: const Icon(
                     Icons.local_taxi,
                     color: Color(0xFF463C33),
@@ -150,11 +149,11 @@ class TaxiInfoPopup extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                                text: estimatedTime,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                              text: estimatedTime,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ],
                         ),

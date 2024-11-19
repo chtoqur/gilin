@@ -3,7 +3,8 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'auth_state.dart';
 
-final authProvider = StateNotifierProvider<AuthNotifier, AsyncValue<AuthState>>((ref) {
+final authProvider =
+    StateNotifierProvider<AuthNotifier, AsyncValue<AuthState>>((ref) {
   return AuthNotifier();
 });
 
@@ -21,7 +22,8 @@ class AuthNotifier extends StateNotifier<AsyncValue<AuthState>> {
       var token = await TokenManagerProvider.instance.manager.getToken();
 
       if (token != null) {
-        await _secureStorage.write(key: 'accessToken', value: token.accessToken);
+        await _secureStorage.write(
+            key: 'accessToken', value: token.accessToken);
       }
 
       state = AsyncValue.data(AuthAuthenticated(kakaoUser));

@@ -37,9 +37,11 @@ class SearchResultSheet extends StatelessWidget {
 
       spans.add(
         TextSpan(
-          text: title.substring(indexOfQuery, indexOfQuery + searchQuery.length),
+          text:
+              title.substring(indexOfQuery, indexOfQuery + searchQuery.length),
           style: TextStyle(
-            backgroundColor: const Color(0xFFFFEB3B).withOpacity(0.3),  // 노란색 하이라이트
+            backgroundColor:
+                const Color(0xFFFFEB3B).withOpacity(0.3), // 노란색 하이라이트
             color: Colors.black,
           ),
         ),
@@ -63,12 +65,14 @@ class SearchResultSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: showBorder ? const Border(
-          top: BorderSide(
-            color: Color(0xFFE5E5E5),
-            width: 1.0,
-          ),
-        ) : null,
+        border: showBorder
+            ? const Border(
+                top: BorderSide(
+                  color: Color(0xFFE5E5E5),
+                  width: 1.0,
+                ),
+              )
+            : null,
         color: Colors.white,
       ),
       padding: const EdgeInsets.all(16.0),
@@ -94,7 +98,8 @@ class SearchResultSheet extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      FormatCategoryUtils.formatCategory(result.category),  // 포맷된 카테고리 사용
+                      FormatCategoryUtils.formatCategory(
+                          result.category), // 포맷된 카테고리 사용
                       style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 14,

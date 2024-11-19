@@ -5,7 +5,6 @@ import 'package:gilin/themes/color.dart';
 import '../../state/auth/auth_provider.dart';
 import '../../state/auth/auth_state.dart';
 
-
 class LoginScreenUI extends ConsumerStatefulWidget {
   const LoginScreenUI({Key? key}) : super(key: key);
 
@@ -107,9 +106,11 @@ class _LoginScreenUIState extends ConsumerState<LoginScreenUI>
                       if (state is AuthAuthenticated) {
                         return Column(
                           children: [
-                            Text('환영합니다, ${state.kakaoUser.kakaoAccount?.profile?.nickname}님'),
+                            Text(
+                                '환영합니다, ${state.kakaoUser.kakaoAccount?.profile?.nickname}님'),
                             ElevatedButton(
-                              onPressed: () => ref.read(authProvider.notifier).signOut(),
+                              onPressed: () =>
+                                  ref.read(authProvider.notifier).signOut(),
                               child: const Text('로그아웃'),
                             ),
                           ],
@@ -118,7 +119,8 @@ class _LoginScreenUIState extends ConsumerState<LoginScreenUI>
                       return FadeTransition(
                         opacity: _fadeAnimation,
                         child: GestureDetector(
-                          onTap: () => ref.read(authProvider.notifier).signInWithKakao(),
+                          onTap: () =>
+                              ref.read(authProvider.notifier).signInWithKakao(),
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),

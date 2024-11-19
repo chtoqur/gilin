@@ -58,7 +58,8 @@ class _TransitScheduleState extends ConsumerState<TransitSchedule> {
           nextStation = widget.segment.passStopList.stations[1].stationName;
         }
 
-        debugPrint('Fetching metro arrivals for ${widget.segment.startName} to $nextStation');
+        debugPrint(
+            'Fetching metro arrivals for ${widget.segment.startName} to $nextStation');
 
         result = await service.getMetroArrival(
           stationName: widget.segment.startName,
@@ -67,7 +68,8 @@ class _TransitScheduleState extends ConsumerState<TransitSchedule> {
       } else if (widget.type == TransitType.BUS) {
         var routeIds = widget.segment.lane.map((l) => l.busLocalBlID).toList();
 
-        debugPrint('Fetching bus arrivals for station ${widget.segment.startLocalStationID}');
+        debugPrint(
+            'Fetching bus arrivals for station ${widget.segment.startLocalStationID}');
         debugPrint('Route IDs: $routeIds');
 
         result = await service.getBusArrival(
@@ -140,9 +142,9 @@ class _TransitScheduleState extends ConsumerState<TransitSchedule> {
       children: [
         const Gap(8),
         ...arrivals.map((info) => Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: _buildArrivalInfo(info),
-        )),
+              padding: const EdgeInsets.only(bottom: 4),
+              child: _buildArrivalInfo(info),
+            )),
       ],
     );
   }
@@ -153,7 +155,9 @@ class _TransitScheduleState extends ConsumerState<TransitSchedule> {
     return Row(
       children: [
         Icon(
-          widget.type == TransitType.METRO ? Icons.subway : Icons.directions_bus,
+          widget.type == TransitType.METRO
+              ? Icons.subway
+              : Icons.directions_bus,
           size: 16,
           color: Colors.grey[600],
         ),
