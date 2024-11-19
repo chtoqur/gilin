@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import '../../models/route/transit_route.dart';
 import '../../services/guide/transit_service.dart';
+import '../../themes/path_color.dart';
 
 final transitServiceProvider = Provider((ref) => TransitService(Dio()));
 
@@ -25,21 +28,39 @@ class _TransitScheduleState extends ConsumerState<TransitSchedule> {
   List<TransitArrivalInfo> arrivals = [];
   bool isLoading = true;
   String? errorMessage;
+  Timer? _refreshTimer;
 
   @override
   void initState() {
     super.initState();
     _fetchArrivalInfo();
+    // 15초마다 자동 갱신
+    _refreshTimer = Timer.periodic(const Duration(seconds: 15), (_) {
+      if (mounted) {
+        _fetchArrivalInfo();
+      }
+    });
   }
 
-  // Add this method to handle segment updates
   @override
   void didUpdateWidget(TransitSchedule oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Fetch new arrival info if segment changes
+    // segment가 변경되면 timer를 리셋하고 새로운 정보를 가져옴
     if (oldWidget.segment != widget.segment) {
+      _refreshTimer?.cancel();
+      _refreshTimer = Timer.periodic(const Duration(seconds: 15), (_) {
+        if (mounted) {
+          _fetchArrivalInfo();
+        }
+      });
       _fetchArrivalInfo();
     }
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _fetchArrivalInfo() async {
@@ -139,47 +160,99 @@ class _TransitScheduleState extends ConsumerState<TransitSchedule> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Gap(8),
-        ...arrivals.map((info) => Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: _buildArrivalInfo(info),
-        )),
+        ...arrivals.map((info) =>
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: _buildArrivalInfo(info),
+            )),
       ],
     );
   }
 
   Widget _buildArrivalInfo(TransitArrivalInfo info) {
     var minutes = (info.arrivalTime / 60).ceil();
+    Widget timeWidget;
 
+    if (minutes <= 0) {
+      timeWidget = const Text(
+        '곧 도착',
+        style: TextStyle(
+          fontSize: 13,
+          color: Color(0xFFFDA868),
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    } else {
+      timeWidget = Text(
+        '$minutes분',
+        style: TextStyle(
+          fontSize: 13,
+          color: Colors.grey[800],
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    }
+
+    // 지하철인 경우
+    if (widget.type == TransitType.METRO) {
+      return Row(
+        children: [
+          Icon(
+            Icons.subway,
+            size: 16,
+            color: Colors.grey[600],
+          ),
+          const SizedBox(width: 8),
+          timeWidget,
+          if (info.destination != null) ...[
+            const SizedBox(width: 4),
+            Text(
+              info.destination!,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ],
+      );
+    }
+
+    // 버스인 경우
     return Row(
       children: [
         Icon(
-          widget.type == TransitType.METRO ? Icons.subway : Icons.directions_bus,
+          Icons.directions_bus,
           size: 16,
           color: Colors.grey[600],
         ),
         const SizedBox(width: 8),
-        Text(
-          '$minutes분',
-          style: TextStyle(
-            fontSize: 13,
-            color: Colors.grey[800],
-            fontWeight: FontWeight.bold,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: PathColors.busColors[widget.segment.lane
+                .firstWhere(
+                  (lane) => lane.busNo == info.vehicleName,
+              orElse: () => widget.segment.lane.first,
+            )
+                .type] ?? PathColors.defaultBusColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            info.vehicleName ?? '',
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
+        const SizedBox(width: 8),
+        timeWidget,
         if (info.remainingStops != null) ...[
           const SizedBox(width: 4),
           Text(
             '(${info.remainingStops}정거장)',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
-        if (info.destination != null) ...[
-          const SizedBox(width: 4),
-          Text(
-            info.destination!,
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey[600],
