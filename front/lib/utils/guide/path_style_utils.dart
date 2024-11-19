@@ -10,7 +10,8 @@ class PathStyleUtils {
       case TransitType.METRO:
         if (segment.lane.isNotEmpty) {
           var subwayCode = segment.lane.first.subwayCode;
-          return PathColors.subwayColors[subwayCode] ?? PathColors.defaultSubwayColor;
+          return PathColors.subwayColors[subwayCode] ??
+              PathColors.defaultSubwayColor;
         }
         return PathColors.defaultSubwayColor;
 
@@ -42,16 +43,18 @@ class PathStyleUtils {
     required double zoomLevel,
   }) {
     if (segment.travelType != TransitType.WALK) {
-      return [NPathOverlay(
-        id: id,
-        coords: coords,
-        color: getPathColor(segment),
-        width: 5,
-        outlineColor: Colors.white,
-        outlineWidth: 2,
-        passedColor: getPathColor(segment).withOpacity(0.5),
-        progress: 0.0,
-      )];
+      return [
+        NPathOverlay(
+          id: id,
+          coords: coords,
+          color: getPathColor(segment),
+          width: 5,
+          outlineColor: Colors.white,
+          outlineWidth: 2,
+          passedColor: getPathColor(segment).withOpacity(0.5),
+          progress: 0.0,
+        )
+      ];
     }
 
     List<NPathOverlay> dashOverlays = [];
@@ -91,11 +94,7 @@ class PathStyleUtils {
   }
 
   static List<NLatLng> _createDashedSegments(
-      NLatLng start,
-      NLatLng end,
-      double dashLength,
-      double gapLength
-      ) {
+      NLatLng start, NLatLng end, double dashLength, double gapLength) {
     List<NLatLng> segments = [];
     var latDiff = end.latitude - start.latitude;
     var lngDiff = end.longitude - start.longitude;

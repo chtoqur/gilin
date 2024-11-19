@@ -19,29 +19,30 @@ class Place {
   });
 }
 
-final placesProvider = StateNotifierProvider<PlacesNotifier, List<Place>>((ref) {
+final placesProvider =
+    StateNotifierProvider<PlacesNotifier, List<Place>>((ref) {
   return PlacesNotifier();
 });
 
 class PlacesNotifier extends StateNotifier<List<Place>> {
   PlacesNotifier()
       : super([
-    Place(
-      name: '집',
-      address: '서울특별시 강남구 삼성로 99길 14',
-      icon: 'home',
-    ),
-    Place(
-      name: '회사',
-      address: '서울 강남구 테헤란로 212 긴 주소 테스트용',
-      icon: 'company',
-    ),
-    Place(
-      name: '라티움',
-      address: '인천 중구 영종대로 106 1층 (운서동)',
-      icon: 'place',
-    ),
-  ]);
+          Place(
+            name: '집',
+            address: '서울특별시 강남구 삼성로 99길 14',
+            icon: 'home',
+          ),
+          Place(
+            name: '회사',
+            address: '서울 강남구 테헤란로 212 긴 주소 테스트용',
+            icon: 'company',
+          ),
+          Place(
+            name: '라티움',
+            address: '인천 중구 영종대로 106 1층 (운서동)',
+            icon: 'place',
+          ),
+        ]);
 
   void addPlace(Place place) {
     state = [...state, place];
@@ -86,7 +87,8 @@ class MyplaceScreen extends ConsumerWidget {
               child: Container(
                 color: Colors.white,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -221,7 +223,8 @@ class MyplaceScreen extends ConsumerWidget {
                             onPressed: () {
                               showCupertinoDialog(
                                 context: context,
-                                builder: (BuildContext context) => CupertinoAlertDialog(
+                                builder: (BuildContext context) =>
+                                    CupertinoAlertDialog(
                                   title: const Text('장소 삭제'),
                                   content: Text('${place.name}을(를) 삭제하시겠습니까?'),
                                   actions: <CupertinoDialogAction>[

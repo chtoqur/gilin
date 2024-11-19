@@ -59,7 +59,8 @@ class _BeforeBusInfoState extends ConsumerState<BeforeBusInfo> {
 
   Widget _buildArrivalInfo(TransitArrivalInfo info) {
     final busType = widget.segment.lane.first.type;
-    final busColor = PathColors.busColors[busType] ?? PathColors.defaultBusColor;
+    final busColor =
+        PathColors.busColors[busType] ?? PathColors.defaultBusColor;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -144,15 +145,15 @@ class _BeforeBusInfoState extends ConsumerState<BeforeBusInfo> {
                 else if (errorMessage != null)
                   Text(errorMessage!, style: const TextStyle(color: Colors.red))
                 else if (arrivals.isEmpty)
-                    const Text('도착 예정 정보가 없습니다')
-                  else
-                    Column(
-                      children: [
-                        _buildArrivalInfo(arrivals.first),
-                        if (_isExpanded)
-                          ...arrivals.skip(1).map(_buildArrivalInfo),
-                      ],
-                    ),
+                  const Text('도착 예정 정보가 없습니다')
+                else
+                  Column(
+                    children: [
+                      _buildArrivalInfo(arrivals.first),
+                      if (_isExpanded)
+                        ...arrivals.skip(1).map(_buildArrivalInfo),
+                    ],
+                  ),
               ],
             ),
           ),
@@ -169,7 +170,9 @@ class _BeforeBusInfoState extends ConsumerState<BeforeBusInfo> {
                   ),
                 ),
                 child: Icon(
-                  _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                  _isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
                   color: Colors.grey[600],
                 ),
               ),

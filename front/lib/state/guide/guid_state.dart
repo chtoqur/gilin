@@ -42,6 +42,7 @@ class GuideStateNotifier extends StateNotifier<GuideState> {
   }
 }
 
-final guideStateProvider = StateNotifierProvider<GuideStateNotifier, GuideState>((ref) {
+final guideStateProvider =
+    StateNotifierProvider<GuideStateNotifier, GuideState>((ref) {
   return GuideStateNotifier();
 });

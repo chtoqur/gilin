@@ -151,11 +151,12 @@ class MypageScreen extends StatelessWidget {
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: menuItems.length,
                               separatorBuilder: (context, index) =>
-                              const Divider(height: 1),
+                                  const Divider(height: 1),
                               itemBuilder: (context, index) {
                                 return TextButton(
                                   onPressed: () {
-                                    context.push('/${menuItems[index]['route']}');
+                                    context
+                                        .push('/${menuItems[index]['route']}');
                                     // Navigator.pushNamed(
                                     //     context,
                                     //     menuItems[index]['route']!
@@ -163,12 +164,11 @@ class MypageScreen extends StatelessWidget {
                                   },
                                   style: TextButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 25,
-                                        vertical: 20
-                                    ),
+                                        horizontal: 25, vertical: 20),
                                   ),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         menuItems[index]['title']!,

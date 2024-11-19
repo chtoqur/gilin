@@ -9,17 +9,20 @@ import '../../../state/guide/metro_provider.dart';
 import '../../../services/guide/transit_service.dart';
 import '../transit_schedule.dart';
 
-final arrivalInfoProvider = StateNotifierProvider<ArrivalInfoNotifier, AsyncValue<List<TransitArrivalInfo>>>((ref) {
+final arrivalInfoProvider = StateNotifierProvider<ArrivalInfoNotifier,
+    AsyncValue<List<TransitArrivalInfo>>>((ref) {
   return ArrivalInfoNotifier();
 });
 
-class ArrivalInfoNotifier extends StateNotifier<AsyncValue<List<TransitArrivalInfo>>> {
+class ArrivalInfoNotifier
+    extends StateNotifier<AsyncValue<List<TransitArrivalInfo>>> {
   ArrivalInfoNotifier() : super(const AsyncValue.loading());
 
-  Future<void> fetchArrivals(TransitService service, String stationName, String nextStationName) async {
+  Future<void> fetchArrivals(TransitService service, String stationName,
+      String nextStationName) async {
     try {
       state = const AsyncValue.loading();
-      final arrivals = await service.getMetroArrival(
+      var arrivals = await service.getMetroArrival(
         stationName: stationName,
         nextStationName: nextStationName,
       );
@@ -33,11 +36,13 @@ class ArrivalInfoNotifier extends StateNotifier<AsyncValue<List<TransitArrivalIn
 class CheckingMetroModal extends ConsumerStatefulWidget {
   final String stationName;
   final String nextStationName;
+  final TransitRoute routeData; // 추가
 
   const CheckingMetroModal({
     Key? key,
     required this.stationName,
     required this.nextStationName,
+    required this.routeData, // 추가
   }) : super(key: key);
 
   @override
@@ -68,38 +73,35 @@ class _CheckingMetroModalState extends ConsumerState<CheckingMetroModal> {
   }
 
   Future<void> _fetchArrivals() async {
-    final transitService = ref.read(transitServiceProvider);
+    var transitService = ref.read(transitServiceProvider);
     await ref.read(arrivalInfoProvider.notifier).fetchArrivals(
-      transitService,
-      widget.stationName,
-      widget.nextStationName,
-    );
+          transitService,
+          widget.stationName,
+          widget.nextStationName,
+        );
   }
 
   void _onConfirm() {
+    print('_onConfirm started');
+
     if (_selectedArrival != null) {
-      // 현재 metroSegment 찾기
-      final guideMainScreen = context.findAncestorWidgetOfExactType<GuideMainScreen>();
-      final metroSegment = guideMainScreen?.routeData.subPath.firstWhere(
-            (segment) => segment.travelType == TransitType.METRO,
+      print('_selectedArrival exists: ${_selectedArrival?.vehicleName}');
+
+      final metroSegment = widget.routeData.subPath.firstWhere(
+        (segment) => segment.travelType == TransitType.METRO,
       );
 
-      if (metroSegment != null) {
-        // guideState 업데이트
-        ref.read(guideStateProvider.notifier).setMetroGuideMode(
-          isMetroGuide: true,
-          metroSegment: metroSegment,
-          selectedTrainNo: _selectedArrival!.vehicleName ?? '',
-        );
+      ref.read(guideStateProvider.notifier).setMetroGuideMode(
+            isMetroGuide: true,
+            metroSegment: metroSegment,
+            selectedTrainNo: _selectedArrival!.vehicleName ?? '',
+          );
 
-        // 디버깅용 출력
-        print('Updating GuideState:');
-        print('trainNo: ${_selectedArrival!.vehicleName}');
-        print('isMetroGuide: true');
+      print('Updating GuideState:');
+      print('trainNo: ${_selectedArrival!.vehicleName}');
+      print('isMetroGuide: true');
 
-        // 모달 닫기
-        Navigator.pop(context);
-      }
+      Navigator.pop(context);
     }
   }
 
@@ -153,7 +155,7 @@ class _CheckingMetroModalState extends ConsumerState<CheckingMetroModal> {
                     title: Text('열차 번호: ${arrival.vehicleName}'),
                     subtitle: Text(
                       '도착 시간: ${arrival.arrivalTime}초 후\n'
-                          '방향: ${arrival.destination}',
+                      '방향: ${arrival.destination}',
                     ),
                     selected: isSelected,
                   );

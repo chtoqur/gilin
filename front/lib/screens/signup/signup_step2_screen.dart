@@ -11,7 +11,6 @@ class SignupStep2Screen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     var locationState = ref.watch(locationsProvider);
     var hasAddress = locationState.homePoint.address.isNotEmpty ||
         locationState.companyPoint.address.isNotEmpty ||
@@ -23,72 +22,69 @@ class SignupStep2Screen extends ConsumerWidget {
         child: Stack(
           children: [
             SingleChildScrollView(
-                child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 45,
-                      left: 35,
-                      right: 35,
-                      bottom: 120,
-                    ),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '자주가는 장소를\n등록해보세요',
-                            style: TextStyle(
-                                fontSize: 23,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xff463C33)
-                            ),
+              child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 45,
+                    left: 35,
+                    right: 35,
+                    bottom: 120,
+                  ),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '자주가는 장소를\n등록해보세요',
+                          style: TextStyle(
+                              fontSize: 23,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xff463C33)),
+                        ),
+                        const Gap(5),
+                        const Text(
+                          '집과 학교/직장 주소를 등록하면 빠른 길찾기가 가능해요',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xff463C33),
                           ),
-                          const Gap(5),
-                          const Text(
-                            '집과 학교/직장 주소를 등록하면 빠른 길찾기가 가능해요',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xff463C33),
-                            ),
-                          ),
-                          const Gap(40),
-                          PlaceInputWidget(
-                            identifier: 'home',
-                            placeName: 'home',
-                            icon: Icons.location_on,
-                            onPlaceNameChanged: (String newName) {
-                              print('New place name: $newName');
-                            },
-                            onTimeChanged: (DateTime newTime) {
-                              print('New time selected: $newTime');
-                            },
-                          ),
-                          const Gap(30),
-                          PlaceInputWidget(
-                            identifier: 'company',
-                            placeName: 'company',
-                            icon: Icons.location_on,
-                            onPlaceNameChanged: (String newName) {
-                              print('New place name: $newName');
-                            },
-                            onTimeChanged: (DateTime newTime) {
-                              print('New time selected: $newTime');
-                            },
-                          ),
-                          const Gap(30),
-                          PlaceInputWidget(
-                            identifier: 'school',
-                            placeName: 'school',
-                            icon: Icons.location_on,
-                            onPlaceNameChanged: (String newName) {
-                              print('New place name: $newName');
-                            },
-                            onTimeChanged: (DateTime newTime) {
-                              print('New time selected: $newTime');
-                            },
-                          )
-                        ]
-                    )
-                ),
+                        ),
+                        const Gap(40),
+                        PlaceInputWidget(
+                          identifier: 'home',
+                          placeName: 'home',
+                          icon: Icons.location_on,
+                          onPlaceNameChanged: (String newName) {
+                            print('New place name: $newName');
+                          },
+                          onTimeChanged: (DateTime newTime) {
+                            print('New time selected: $newTime');
+                          },
+                        ),
+                        const Gap(30),
+                        PlaceInputWidget(
+                          identifier: 'company',
+                          placeName: 'company',
+                          icon: Icons.location_on,
+                          onPlaceNameChanged: (String newName) {
+                            print('New place name: $newName');
+                          },
+                          onTimeChanged: (DateTime newTime) {
+                            print('New time selected: $newTime');
+                          },
+                        ),
+                        const Gap(30),
+                        PlaceInputWidget(
+                          identifier: 'school',
+                          placeName: 'school',
+                          icon: Icons.location_on,
+                          onPlaceNameChanged: (String newName) {
+                            print('New place name: $newName');
+                          },
+                          onTimeChanged: (DateTime newTime) {
+                            print('New time selected: $newTime');
+                          },
+                        )
+                      ])),
             ),
             Positioned(
               bottom: 0,
@@ -123,10 +119,9 @@ class SignupStep2Screen extends ConsumerWidget {
                         child: Text(
                           hasAddress ? '저장하기' : '나중에 할래요',
                           style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white
-                          ),
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white),
                         ),
                       ),
                     ),

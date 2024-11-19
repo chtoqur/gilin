@@ -28,32 +28,30 @@ class CupertinoRadioItem<T> extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: value == groupValue ?
-                  const Color(0xFFF7516C) :
-                  CupertinoColors.systemGrey3,
+                color: value == groupValue
+                    ? const Color(0xFFF7516C)
+                    : CupertinoColors.systemGrey3,
                 width: 1.0,
               ),
             ),
             child: Center(
               child: value == groupValue
                   ? Container(
-                width: 11,
-                height: 11,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFFF7516C),
-                ),
-              )
+                      width: 11,
+                      height: 11,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFFF7516C),
+                      ),
+                    )
                   : null,
             ),
           ),
           const SizedBox(width: 8),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500
-          ),),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          ),
         ],
       ),
     );

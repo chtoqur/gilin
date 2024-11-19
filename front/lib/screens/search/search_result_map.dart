@@ -90,9 +90,10 @@ class _SearchResultMapState extends ConsumerState<SearchResultMap> {
             ),
 
             CustomSearchBar(
-              controller: TextEditingController(text: widget.searchResult.title),
+              controller:
+                  TextEditingController(text: widget.searchResult.title),
               readOnly: true,
-              showSearchButton: false,  // 검색 버튼 숨기기
+              showSearchButton: false, // 검색 버튼 숨기기
               onTap: () => Navigator.of(context).pop(),
             ),
 

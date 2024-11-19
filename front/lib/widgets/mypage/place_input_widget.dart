@@ -14,7 +14,7 @@ class PlaceInputWidget extends ConsumerStatefulWidget {
   final IconData icon;
   final Function(String) onPlaceNameChanged;
   final Function(DateTime) onTimeChanged;
-  final String identifier;  // 'home', 'company', 'school'
+  final String identifier; // 'home', 'company', 'school'
 
   const PlaceInputWidget({
     Key? key,
@@ -38,8 +38,10 @@ class _LocationInputWidgetState extends ConsumerState<PlaceInputWidget> {
   @override
   void initState() {
     super.initState();
-    _placeNameController = TextEditingController(text: widget.placeName == 'other' ? '' : widget.placeName);
-    _selectedTime = DateTime.now().toLocal().add(const Duration(hours: 9)); // 한국 시간 기준 초기화
+    _placeNameController = TextEditingController(
+        text: widget.placeName == 'other' ? '' : widget.placeName);
+    _selectedTime =
+        DateTime.now().toLocal().add(const Duration(hours: 9)); // 한국 시간 기준 초기화
     _textLength = _placeNameController.text.characters.length;
 
     _placeNameController.addListener(() {
@@ -85,7 +87,6 @@ class _LocationInputWidgetState extends ConsumerState<PlaceInputWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -94,55 +95,58 @@ class _LocationInputWidgetState extends ConsumerState<PlaceInputWidget> {
             SizedBox(
               width: 35,
               height: 35,
-              child: Consumer(
-                  builder: (context, ref, child) {
-                    var locationState = ref.watch(locationsProvider);
+              child: Consumer(builder: (context, ref, child) {
+                var locationState = ref.watch(locationsProvider);
 
-                    String address = '';
-                    switch(widget.identifier) {
-                      case 'home':
-                        address = locationState.homePoint.address;
-                        break;
-                      case 'company':
-                        address = locationState.companyPoint.address;
-                        break;
-                      case 'school':
-                        address = locationState.schoolPoint.address;
-                        break;
-                    }
+                String address = '';
+                switch (widget.identifier) {
+                  case 'home':
+                    address = locationState.homePoint.address;
+                    break;
+                  case 'company':
+                    address = locationState.companyPoint.address;
+                    break;
+                  case 'school':
+                    address = locationState.schoolPoint.address;
+                    break;
+                }
 
-                    String iconPath = address.isNotEmpty
-                        ? 'assets/images/icons/check.svg'
-                        : switch (widget.identifier) {
-                      'home' => 'assets/images/streamline/home.svg',
-                      'company' => 'assets/images/streamline/company.svg',
-                      'school' => 'assets/images/streamline/school.svg',
-                      _ => 'assets/images/streamline/place.svg',
-                    };
+                String iconPath = address.isNotEmpty
+                    ? 'assets/images/icons/check.svg'
+                    : switch (widget.identifier) {
+                        'home' => 'assets/images/streamline/home.svg',
+                        'company' => 'assets/images/streamline/company.svg',
+                        'school' => 'assets/images/streamline/school.svg',
+                        _ => 'assets/images/streamline/place.svg',
+                      };
 
-                    return Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: address.isNotEmpty ? const Color(0xFF579F3E) : Colors.transparent,
-                        border: Border.all(
-                          color: address.isNotEmpty ? Colors.transparent : const Color(0xFF000000),
-                          width: 1,
-                        ),
-                      ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          iconPath,
-                          width: 20,
-                          height: 20,
-                          // address가 있을 때는 아이콘 색상을 흰색으로 변경
-                          colorFilter: address.isNotEmpty
-                              ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
-                              : null,
-                        ),
-                      ),
-                    );
-                  }
-              ),
+                return Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: address.isNotEmpty
+                        ? const Color(0xFF579F3E)
+                        : Colors.transparent,
+                    border: Border.all(
+                      color: address.isNotEmpty
+                          ? Colors.transparent
+                          : const Color(0xFF000000),
+                      width: 1,
+                    ),
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      iconPath,
+                      width: 20,
+                      height: 20,
+                      // address가 있을 때는 아이콘 색상을 흰색으로 변경
+                      colorFilter: address.isNotEmpty
+                          ? const ColorFilter.mode(
+                              Colors.white, BlendMode.srcIn)
+                          : null,
+                    ),
+                  ),
+                );
+              }),
             ),
             const Gap(14),
             if (widget.placeName == 'other') ...[
@@ -158,10 +162,9 @@ class _LocationInputWidgetState extends ConsumerState<PlaceInputWidget> {
                   decoration: const InputDecoration(
                     hintText: '장소명을 입력하세요',
                     hintStyle: TextStyle(
-                      color: Color(0xFF777777),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400
-                    ),
+                        color: Color(0xFF777777),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400),
                     border: InputBorder.none,
                     counterText: '',
                   ),
@@ -184,7 +187,7 @@ class _LocationInputWidgetState extends ConsumerState<PlaceInputWidget> {
                     'home' => '집',
                     'company' => '회사',
                     'school' => '학교',
-                    _ => widget.placeName,  // 기본값
+                    _ => widget.placeName, // 기본값
                   },
                   style: const TextStyle(
                     fontSize: 16,
@@ -203,7 +206,9 @@ class _LocationInputWidgetState extends ConsumerState<PlaceInputWidget> {
           child: GestureDetector(
             onTap: () {
               ref.read(routeProvider.notifier).setCurrentScreen('signup_step2');
-              ref.read(locationsProvider.notifier).setSelectedWidget(widget.identifier);
+              ref
+                  .read(locationsProvider.notifier)
+                  .setSelectedWidget(widget.identifier);
               context.push('/search');
             },
             child: Container(
@@ -213,7 +218,7 @@ class _LocationInputWidgetState extends ConsumerState<PlaceInputWidget> {
                   var locationState = ref.watch(locationsProvider);
 
                   String address = '';
-                  switch(widget.identifier) {
+                  switch (widget.identifier) {
                     case 'home':
                       address = locationState.homePoint.address;
                       break;
@@ -226,12 +231,14 @@ class _LocationInputWidgetState extends ConsumerState<PlaceInputWidget> {
                   }
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.max,  // 추가
+                    mainAxisSize: MainAxisSize.max, // 추가
                     children: [
                       Text(
                         address.isNotEmpty ? address : '주소를 등록해주세요',
                         style: TextStyle(
-                          color: address.isNotEmpty ? Colors.black : const Color(0xFF777777),
+                          color: address.isNotEmpty
+                              ? Colors.black
+                              : const Color(0xFF777777),
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
@@ -276,15 +283,16 @@ class _LocationInputWidgetState extends ConsumerState<PlaceInputWidget> {
               GestureDetector(
                 onTap: _showTimePicker,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
                     '${_selectedTime.hour < 12 ? "오전" : "오후"} '
-                        '${(_selectedTime.hour > 12 ? _selectedTime.hour - 12 : _selectedTime.hour).toString().padLeft(2, '0')}:'
-                        '${_selectedTime.minute.toString().padLeft(2, '0')}',
+                    '${(_selectedTime.hour > 12 ? _selectedTime.hour - 12 : _selectedTime.hour).toString().padLeft(2, '0')}:'
+                    '${_selectedTime.minute.toString().padLeft(2, '0')}',
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,

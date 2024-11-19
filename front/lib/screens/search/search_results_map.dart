@@ -27,7 +27,8 @@ class _SearchResultsMapState extends ConsumerState<SearchResultsMap> {
     super.initState();
   }
 
-  Future<void> initializeMarkersAndInfoWindows(NaverMapController controller) async {
+  Future<void> initializeMarkersAndInfoWindows(
+      NaverMapController controller) async {
     for (var result in widget.searchResults) {
       try {
         var lat = result.y;
@@ -72,7 +73,7 @@ class _SearchResultsMapState extends ConsumerState<SearchResultsMap> {
       await controller.updateCamera(
         NCameraUpdate.fitBounds(
           bounds,
-          padding: const EdgeInsets.all(50),  // EdgeInsets 타입으로 수정
+          padding: const EdgeInsets.all(50), // EdgeInsets 타입으로 수정
         ),
       );
     }

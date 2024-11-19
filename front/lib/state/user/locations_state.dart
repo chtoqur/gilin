@@ -64,7 +64,7 @@ class LocationNotifier extends StateNotifier<LocationState> {
   }
 
   void updateLocation(String title, double x, double y, String address) {
-    switch(state.selectedWidget) {
+    switch (state.selectedWidget) {
       case 'home':
         state = state.copyWith(
           homePoint: RouteLocation(
@@ -99,6 +99,7 @@ class LocationNotifier extends StateNotifier<LocationState> {
   }
 }
 
-final locationsProvider = StateNotifierProvider<LocationNotifier, LocationState>((ref) {
+final locationsProvider =
+    StateNotifierProvider<LocationNotifier, LocationState>((ref) {
   return LocationNotifier();
 });

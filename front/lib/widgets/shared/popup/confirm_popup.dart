@@ -54,11 +54,10 @@ class ConfirmPopupWidget extends StatelessWidget {
                 child: Text(
                   popupData.subtitle,
                   style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                    height: 1.2
-                  ),
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                      height: 1.2),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -125,19 +124,18 @@ class ConfirmPopupWidget extends StatelessWidget {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: popupData.iconBackgroundColor,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
-                    offset: const Offset(0, 4),
-                    blurRadius: 4,
-                  ),
-                ],
-                border: Border.all(
-                  color: const Color(0xFFD1D1D1),
-                )
-              ),
+                  color: popupData.iconBackgroundColor,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.25),
+                      offset: const Offset(0, 4),
+                      blurRadius: 4,
+                    ),
+                  ],
+                  border: Border.all(
+                    color: const Color(0xFFD1D1D1),
+                  )),
               child: Icon(
                 popupData.icon,
                 color: Colors.white,

@@ -40,10 +40,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
         (isDragging
             ? currentDragHeight.clamp(minHeight, maxHeight)
             : (currentHeight == SheetHeight.min
-            ? minHeight
-            : currentHeight == SheetHeight.mid
-            ? midHeight
-            : maxHeight));
+                ? minHeight
+                : currentHeight == SheetHeight.mid
+                    ? midHeight
+                    : maxHeight));
 
     return Positioned(
       left: 0,
@@ -57,8 +57,8 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
           currentDragHeight = currentHeight == SheetHeight.min
               ? minHeight
               : currentHeight == SheetHeight.mid
-              ? midHeight
-              : maxHeight;
+                  ? midHeight
+                  : maxHeight;
         },
         onVerticalDragUpdate: (details) {
           if (scrollController.offset <= 0) {
@@ -67,10 +67,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
 
             setState(() {
               currentDragHeight = (currentHeight == SheetHeight.min
-                  ? minHeight
-                  : currentHeight == SheetHeight.mid
-                  ? midHeight
-                  : maxHeight) +
+                      ? minHeight
+                      : currentHeight == SheetHeight.mid
+                          ? midHeight
+                          : maxHeight) +
                   heightDelta;
             });
           }
@@ -120,15 +120,15 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                 child: SingleChildScrollView(
                   controller: scrollController,
                   physics: (currentHeight == SheetHeight.min ||
-                      currentHeight == SheetHeight.mid)
+                          currentHeight == SheetHeight.mid)
                       ? const NeverScrollableScrollPhysics()
                       : const ClampingScrollPhysics(),
                   child: Column(
                     children: widget.searchResults
                         .map((result) => GestureDetector(
-                      onTap: () => widget.onResultTap(result),
-                      child: SearchResultItem(result: result),
-                    ))
+                              onTap: () => widget.onResultTap(result),
+                              child: SearchResultItem(result: result),
+                            ))
                         .toList(),
                   ),
                 ),

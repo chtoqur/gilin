@@ -47,7 +47,8 @@ class CustomSearchBar extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(width: 8),
-            IconButton(  // GestureDetector 대신 IconButton 사용
+            IconButton(
+              // GestureDetector 대신 IconButton 사용
               onPressed: () => context.pop(),
               icon: const Icon(
                 Icons.arrow_back,
@@ -80,7 +81,8 @@ class CustomSearchBar extends StatelessWidget {
                 ),
               ),
             ),
-            if (showSearchButton) ...[  // 검색 버튼을 조건부로 표시
+            if (showSearchButton) ...[
+              // 검색 버튼을 조건부로 표시
               GestureDetector(
                 onTap: () {
                   if (onSubmitted != null && controller != null) {
@@ -89,7 +91,8 @@ class CustomSearchBar extends StatelessWidget {
                 },
                 child: Container(
                   margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFF6D9),
                     borderRadius: BorderRadius.circular(20),

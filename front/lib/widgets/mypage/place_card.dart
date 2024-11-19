@@ -221,13 +221,13 @@ class PlaceList extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           ...places.map((place) => Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: PlaceCard(
-              place: place,
-              onEdit: () => onEdit(place),
-              onDelete: () => onDelete(place),
-            ),
-          )),
+                padding: const EdgeInsets.only(right: 12),
+                child: PlaceCard(
+                  place: place,
+                  onEdit: () => onEdit(place),
+                  onDelete: () => onDelete(place),
+                ),
+              )),
           // 추가하기 카드
           PlaceCard(
             onAdd: onAdd,
