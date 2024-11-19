@@ -83,11 +83,13 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
   bool _showingPopup = false;
   final warningPopupVisibilityProvider = StateProvider<bool>((ref) => false);
   final taxiPopupVisibilityProvider = StateProvider<bool>((ref) => false);
+  List<bool> trackingPointChecked = [];
 
   @override
   void initState() {
     super.initState();
     _setupTrackingPoints();
+    trackingPointChecked = List.filled(trackingPoints.length, false);
     _setupLocationTracking();
     _startTrackingTimer();
 
@@ -132,6 +134,8 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
   Future<void> _checkCurrentTrackingPoint(Position userPosition) async {
     if (currentTrackingIndex >= trackingPoints.length || _showingPopup) return;
 
+    // 이미 체크한 포인트면 스킵
+    if (trackingPointChecked[currentTrackingIndex]) return;
     _isProcessingPoint = true;
 
     try {
@@ -147,7 +151,10 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
       print('Distance: ${distance.toStringAsFixed(2)}m');
 
       if (distance <= 100 && !_showingPopup) {
-        setState(() => _showingPopup = true);
+        setState(() {
+          _showingPopup = true;
+          trackingPointChecked[currentTrackingIndex] = true;  // 체크 표시
+        });
         _showTrackingPopup(currentPoint);
       }
     } finally {
