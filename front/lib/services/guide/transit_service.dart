@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
+import 'package:xml/xml.dart' as xml;
 
 class TransitArrivalInfo {
   final String? vehicleName;
@@ -147,28 +148,31 @@ class TransitService {
       debugPrint('ARS ID: $arsId');
       debugPrint('Route IDs: $routeIds');
 
-      var response = await _dio
-          .get('https://k11a306.p.ssafy.io/api/arrivalTime', queryParameters: {
-        'stationId': stationId,
-        'arsId': arsId,
-        'routeIds[]': routeIds, // 배열 파라미터 형식 수정
-      });
+      String routeIdsQuery = routeIds.map((id) => 'routeIds=$id').join('&');
+      String url = '/arrivalTime?stationId=$stationId&arsId=$arsId&$routeIdsQuery';
+
+      debugPrint('Request URL: $url');
+
+      var response = await _dio.get(
+        url,
+        options: Options(
+          validateStatus: (status) => status! < 500,
+        ),
+      );
 
       debugPrint('\n====== Bus API Response ======');
       debugPrint('Status Code: ${response.statusCode}');
-      debugPrint('Headers: ${response.headers}');
-      debugPrint('Data: ${_prettyPrintJson(response.data)}');
-      debugPrint('==============================\n');
+      debugPrint('Response Data: ${response.data}');
 
-      if (response.data is List) {
-        var dataList = response.data as List;
-        return dataList
-            .map((data) => TransitArrivalInfo(
-                  vehicleName: data['busName'] as String?,
-                  arrivalTime: (data['predictTimeSecond'] as num).toInt(),
-                  remainingStops: (data['remainStation'] as num?)?.toInt(),
-                ))
-            .toList();
+      if (response.statusCode == 200 && response.data is List) {
+        // JSON 리스트를 TransitArrivalInfo 리스트로 변환
+        return (response.data as List).map((item) => TransitArrivalInfo(
+          vehicleName: item['busName']?.toString(),
+          arrivalTime: (item['predictTimeSecond'] as num).toInt(),
+          remainingStops: item['remainStation'] != null
+              ? (item['remainStation'] as num).toInt()
+              : null,
+        )).toList();
       }
 
       return [];
@@ -176,8 +180,7 @@ class TransitService {
       debugPrint('\n====== Bus API Error ======');
       debugPrint('Error: $e');
       debugPrint('Stack trace: $stackTrace');
-      debugPrint('==========================\n');
-      return [];
+      rethrow;
     }
   }
 }
