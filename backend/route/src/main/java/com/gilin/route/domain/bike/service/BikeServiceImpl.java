@@ -224,7 +224,7 @@ public class BikeServiceImpl implements BikeService {
      * @return
      */
     public int calculateEstimatedBikeTime(SearchKakaoCarDirectionResponse.RouteResponse route) {
-        double averageBikeSpeedMetersPerSecond = 15_000.0 / 3600.0;
+        double averageBikeSpeedMetersPerSecond = 20_000.0 / 3600.0;
 
         int totalDuration = 0;
 

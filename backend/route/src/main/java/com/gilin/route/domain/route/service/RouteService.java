@@ -139,7 +139,7 @@ public class RouteService {
         for (RouteResponse.SubPathh subPathh : subPathhList) {
             bikeSubPathhTime += subPathh.getSectionTime();
         }
-        return (bikeSubPathhTime + 5 < walkSubPathh.getSectionTime()) ? subPathhList : walkSubPathhList;
+        return (bikeSubPathhTime < walkSubPathh.getSectionTime()) ? subPathhList : walkSubPathhList;
     }
 
 }
