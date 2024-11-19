@@ -5,5 +5,4 @@ class UserService {
   static const String baseUrl = 'https://k11a306.p.ssafy.io/api';
 
   // UserService() : _dio = Dio();
-
 }

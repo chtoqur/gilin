@@ -64,10 +64,9 @@ class SuccessScreen extends StatelessWidget {
                   const Text(
                     '다음 여정도 길인과 함께해요.',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600
-                    ),
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600),
                     textAlign: TextAlign.center,
                   ),
                   const Gap(32),

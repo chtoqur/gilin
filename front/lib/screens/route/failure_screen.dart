@@ -16,30 +16,27 @@ class FailureScreen extends StatelessWidget {
       body: Stack(
         children: [
           Positioned(
-            top: 30,
+            top: 60,
             left: 0,
             right: 0,
-            height: screenSize.height * 0.4, // 화면 높이의 40% 정도를 차지
+            height: screenSize.height * 0.5, // 화면 높이의 40% 정도를 차지
             child: Lottie.asset(
               'assets/lottie/failure.json',
               fit: BoxFit.contain,
               repeat: true,
             ),
           ),
-
           Positioned.fill(
               child: Container(
-                color: Colors.black.withOpacity(0.5),
-              )
-          ),
-
+            color: Colors.black.withOpacity(0.5),
+          )),
           Positioned.fill(
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    const Spacer(flex: 3), // 위쪽 공간 더 늘림
+                    const Spacer(flex: 5), // 위쪽 공간 더 늘림
 
                     const Text(
                       '수고하셨어요',
@@ -55,8 +52,7 @@ class FailureScreen extends StatelessWidget {
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
-                          fontWeight: FontWeight.w600
-                      ),
+                          fontWeight: FontWeight.w600),
                       textAlign: TextAlign.center,
                     ),
                     const Gap(32),

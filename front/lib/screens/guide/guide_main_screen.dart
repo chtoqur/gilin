@@ -2,6 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gilin/screens/route/route_screen.dart';
+import 'package:gilin/widgets/guide/modals/tracking_popup.dart';
+import 'package:gilin/widgets/shared/popup/confirm_popup.dart';
+import 'package:gilin/widgets/shared/popup/confirm_popup_type.dart';
+import 'package:gilin/widgets/shared/popup/taxi_info_popup.dart';
+import 'package:gilin/widgets/shared/popup/warning_background.dart';
 import 'package:go_router/go_router.dart';
 import '../../models/route/transit_route.dart';
 import '../../state/guide/guid_state.dart';
@@ -15,9 +21,38 @@ import 'package:geolocator/geolocator.dart';
 import '../../widgets/guide/modals/checking_metro.dart';
 import 'metro_guide_view.dart';
 
+class TrackingPoint {
+  final TransitType travelType;
+  final double x;
+  final double y;
+  final String? name;
+  final String? lineInfo;
+
+  TrackingPoint({
+    required this.travelType,
+    required this.x,
+    required this.y,
+    this.name,
+    this.lineInfo,
+  });
+
+  @override
+  String toString() {
+    return 'TrackingPoint('
+        'type: $travelType, '
+        'x: $x, '
+        'y: $y'
+        '${name != null ? ', name: $name' : ''}'
+        '${lineInfo != null ? ', lineInfo: $lineInfo' : ''}'
+        ')';
+  }
+}
+
+// ConsumerStatefulWidget 정의
 class GuideMainScreen extends ConsumerStatefulWidget {
   final TransitRoute routeData;
   final RouteState routeState;
+
 
   const GuideMainScreen({
     Key? key,
@@ -33,48 +68,290 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
   NaverMapController? mapController;
   final Map<String, NPathOverlay> _activeOverlays = {};
   List<NMarker> markers = [];
-  final ValueNotifier<TransitSegment?> _selectedSegmentNotifier = ValueNotifier(null);
+  final ValueNotifier<TransitSegment?> _selectedSegmentNotifier =
+      ValueNotifier(null);
   final ValueNotifier<bool> _isSidebarVisible = ValueNotifier(true);
   Timer? _debounceTimer;
+  Timer? _trackingTimer;
   StreamSubscription<Position>? _positionStreamSubscription;
   bool _isTrackingMode = true;
-  bool _isShowingBusInfo = false;  // Add this
-  bool _isShowingSubwayInfo = false;  // _isShowingBusInfo 옆에 추가
-
-
-  // double _lastZoomLevel = 0; // 추가
+  bool _isShowingBusInfo = false;
+  bool _isShowingSubwayInfo = false;
+  List<TrackingPoint> trackingPoints = [];
+  int currentTrackingIndex = 0;
+  bool _isProcessingPoint = false;
+  bool _showingPopup = false;
+  final warningPopupVisibilityProvider = StateProvider<bool>((ref) => false);
+  final taxiPopupVisibilityProvider = StateProvider<bool>((ref) => false);
 
   @override
   void initState() {
     super.initState();
+    _setupTrackingPoints();
     _setupLocationTracking();
+    _startTrackingTimer();
 
     final metroSegment = widget.routeData.subPath.firstWhere(
-          (segment) => segment.travelType == TransitType.METRO,
-
+      (segment) => segment.travelType == TransitType.METRO,
+      orElse: () => widget.routeData.subPath.first,
     );
 
-    if (metroSegment != null && metroSegment.passStopList.stations.length > 1) {
+    if (metroSegment.travelType == TransitType.METRO &&
+        metroSegment.passStopList.stations.length > 1) {
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
           showModalBottomSheet(
             context: context,
             builder: (context) => CheckingMetroModal(
               stationName: metroSegment.startName,
-              nextStationName: metroSegment.passStopList.stations[1].stationName,
-              routeData: widget.routeData,  // 추가
-
+              nextStationName:
+                  metroSegment.passStopList.stations[1].stationName,
+              routeData: widget.routeData,
             ),
           );
         }
       });
     }
+
+    print('=== Tracking Points ===');
+    for (var i = 0; i < trackingPoints.length; i++) {
+      print('Point $i: ${trackingPoints[i]}');
+    }
+    print('=====================');
+  }
+
+  void _startTrackingTimer() {
+    _trackingTimer = Timer.periodic(const Duration(seconds: 10), (timer) async {
+      if (_isProcessingPoint) return;
+
+      Position position = await Geolocator.getCurrentPosition();
+      _checkCurrentTrackingPoint(position);
+    });
+  }
+
+  Future<void> _checkCurrentTrackingPoint(Position userPosition) async {
+    if (currentTrackingIndex >= trackingPoints.length || _showingPopup) return;
+
+    _isProcessingPoint = true;
+
+    try {
+      var currentPoint = trackingPoints[currentTrackingIndex];
+      var distance = await Geolocator.distanceBetween(
+          userPosition.latitude,
+          userPosition.longitude,
+          currentPoint.y,
+          currentPoint.x
+      );
+
+      print('=== Location Check ===');
+      print('Distance: ${distance.toStringAsFixed(2)}m');
+
+      if (distance <= 100 && !_showingPopup) {
+        setState(() => _showingPopup = true);
+        _showTrackingPopup(currentPoint);
+      }
+    } finally {
+      _isProcessingPoint = false;
+    }
+  }
+
+  void _showTrackingPopup(TrackingPoint point) {
+    setState(() {
+      _overlayEntry = OverlayEntry(
+        builder: (context) => Consumer(
+          builder: (context, ref, child) {
+            final isWarningVisible = ref.watch(warningPopupVisibilityProvider);
+            final isTaxiVisible = ref.watch(taxiPopupVisibilityProvider);
+
+            return Stack(
+              children: [
+                TrackingPopup(
+                  travelType: point.travelType,
+                  name: point.name,
+                  lineInfo: point.lineInfo,
+                  onConfirm: () {
+                    setState(() {
+                      _showingPopup = false;
+                      currentTrackingIndex++;
+                    });
+                    _overlayEntry?.remove();
+                    _overlayEntry = null;
+
+                    if (currentTrackingIndex == trackingPoints.length - 1) {
+                      _showDestinationReachedDialog();
+                    }
+                  },
+                  onCancel: () {
+                    // 경고 팝업 표시
+                    ref.read(warningPopupVisibilityProvider.notifier).state = true;
+                  },
+                ),
+                if (isWarningVisible) ...[
+                  WarningBackground(
+                    child: Container(),
+                  ),
+                  Positioned(
+                    top: MediaQuery.of(context).padding.top + 60,
+                    left: 40,
+                    right: 40,
+                    child: ConfirmPopupWidget(
+                      popupType: PopupType.warningLate,
+                      onConfirmPressed: () {
+                        // 경고 팝업 닫기
+                        ref.read(warningPopupVisibilityProvider.notifier).state = false;
+                        // 기존 팝업 닫기
+                        setState(() => _showingPopup = false);
+                        _overlayEntry?.remove();
+                        _overlayEntry = null;
+
+                        // 현재 필요한 데이터 미리 가져오기
+                        final startPointTitle = ref.read(routeProvider).startPoint.title;
+                        final arrivalTime = ref.read(routeProvider).arrivalTime;
+
+                        // 택시 팝업 생성
+                        _overlayEntry = OverlayEntry(
+                          builder: (BuildContext overlayContext) => Stack(
+                            children: [
+                              Positioned(
+                                top: MediaQuery.of(overlayContext).padding.top + 60,
+                                left: 20,
+                                right: 20,
+                                child: Material(  // Material 위젯의 위치 변경
+                                  type: MaterialType.transparency,
+                                  child: TaxiInfoPopup(
+                                    location: startPointTitle,
+                                    estimatedTime: _formatTime(arrivalTime),
+                                    estimatedCost: 5700,
+                                    onClose: () {
+                                      setState(() {
+                                        _overlayEntry?.remove();
+                                        _overlayEntry = null;
+                                        _showingPopup = false;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        // 새로운 오버레이 삽입
+                        if (mounted) {
+                          Overlay.of(context).insert(_overlayEntry!);
+                        }
+                      },
+                      onCancelPressed: () {
+                        // 경고 팝업만 닫기
+                        ref.read(warningPopupVisibilityProvider.notifier).state = false;
+                      },
+                    ),
+                  ),
+                ],
+              ],
+            );
+          },
+        ),
+      );
+    });
+
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  String _formatTime(DateTime? time) {
+    if (time == null) return '';
+
+    String period = time.hour < 12 ? '오전' : '오후';
+    int hour = time.hour <= 12 ? time.hour : time.hour - 12;
+    return '$period $hour시 ${time.minute}분';
+  }
+
+  // 목적지 도착 모달
+  void _showDestinationReachedDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: ConfirmPopupWidget(
+            popupType: PopupType.arrivalCheck,
+            onConfirmPressed: () {
+              context.push('/success');
+            },
+            onCancelPressed: () {
+              context.push('/failure');
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  void _setupTrackingPoints() {
+    for (var segment in widget.routeData.subPath) {
+      switch (segment.travelType) {
+        case TransitType.METRO:
+          trackingPoints.add(TrackingPoint(
+            travelType: TransitType.METRO,
+            x: segment.startX,
+            y: segment.startY,
+            name: segment.startName,
+            lineInfo: segment.lane.isNotEmpty ? segment.lane.first.name : null,
+          ));
+          break;
+
+        case TransitType.BUS:
+          trackingPoints.add(TrackingPoint(
+            travelType: TransitType.BUS,
+            x: segment.startX,
+            y: segment.startY,
+            name: segment.startName,
+            lineInfo: segment.lane.isNotEmpty ? segment.lane.first.busNo : null,
+          ));
+          break;
+
+        case TransitType.WALK:
+          trackingPoints.add(TrackingPoint(
+            travelType: TransitType.WALK,
+            x: segment.startX,
+            y: segment.startY,
+          ));
+          trackingPoints.add(TrackingPoint(
+            travelType: TransitType.WALK,
+            x: segment.endX,
+            y: segment.endY,
+          ));
+          break;
+
+        default:
+          break;
+      }
+    }
+  }
+
+  TransitSegment? _findNextTransitSegment(TransitType type) {
+    for (int i = 0; i < widget.routeData.subPath.length; i++) {
+      if (widget.routeData.subPath[i].travelType == type) {
+        return widget.routeData.subPath[i];
+      }
+    }
+    return null;
+  }
+
+  TransitSegment? _findNextBusSegment() {
+    for (int i = 0; i < widget.routeData.subPath.length; i++) {
+      if (widget.routeData.subPath[i].travelType == TransitType.BUS) {
+        return widget.routeData.subPath[i];
+      }
+    }
+    return null;
   }
 
   Future<void> _setupLocationTracking() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // 위치 서비스가 비활성화된 경우 처리
       return;
     }
 
@@ -93,30 +370,12 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
       ),
     ).listen(_onLocationUpdate);
   }
-  TransitSegment? _findNextTransitSegment(TransitType type) {
-    for (int i = 0; i < widget.routeData.subPath.length; i++) {
-      if (widget.routeData.subPath[i].travelType == type) {
-        return widget.routeData.subPath[i];
-      }
-    }
-    return null;
-  }
-  TransitSegment? _findNextBusSegment() {
-    for (int i = 0; i < widget.routeData.subPath.length; i++) {
-      if (widget.routeData.subPath[i].travelType == TransitType.BUS) {
-        return widget.routeData.subPath[i];
-      }
-    }
-    return null;
-  }
 
-  // Update _onLocationUpdate
   void _onLocationUpdate(Position position) async {
     if (!_isTrackingMode || mapController == null) return;
 
     var userLocation = NLatLng(position.latitude, position.longitude);
 
-    // 다음 지하철 세그먼트 찾기
     var nextSubwaySegment = _findNextTransitSegment(TransitType.METRO);
 
     if (nextSubwaySegment != null && !_isShowingSubwayInfo) {
@@ -125,10 +384,8 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
           userLocation.latitude,
           userLocation.longitude,
           subwayStationLocation.latitude,
-          subwayStationLocation.longitude
-      );
+          subwayStationLocation.longitude);
 
-      // 지하철역 200m 이내에 접근하면 정보 표시
       if (distance <= 200) {
         setState(() => _isShowingSubwayInfo = true);
         await showModalBottomSheet(
@@ -137,6 +394,7 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
         ).whenComplete(() => setState(() => _isShowingSubwayInfo = false));
       }
     }
+
     var nextBusSegment = _findNextBusSegment();
 
     if (nextBusSegment != null && !_isShowingBusInfo) {
@@ -145,8 +403,7 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
           userLocation.latitude,
           userLocation.longitude,
           busStopLocation.latitude,
-          busStopLocation.longitude
-      );
+          busStopLocation.longitude);
 
       if (distance <= 100) {
         setState(() => _isShowingBusInfo = true);
@@ -166,7 +423,9 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
         bearing: position.heading,
       ),
     );
-  }  Future<void> _safeAddOverlay(NPathOverlay overlay) async {
+  }
+
+  Future<void> _safeAddOverlay(NPathOverlay overlay) async {
     try {
       await mapController?.addOverlay(overlay);
       _activeOverlays[overlay.info.id] = overlay;
@@ -175,18 +434,16 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
     }
   }
 
-
   Future<void> _initializeMapAndPath(NaverMapController controller) async {
     try {
       List<NLatLng> allCoordinates = [];
 
-      // 경로 오버레이를 한 번만 생성
       for (var segment in widget.routeData.subPath) {
         var overlays = PathStyleUtils.createPathOverlay(
           id: 'path_overlay_${widget.routeData.subPath.indexOf(segment)}',
           coords: segment.pathGraph,
           segment: segment,
-          zoomLevel: 17, // 기본 줌 레벨 사용
+          zoomLevel: 17,
         );
 
         for (var overlay in overlays) {
@@ -194,31 +451,15 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
         }
       }
 
-      // 나머지 마커 및 카메라 설정 코드...
-      var startPoint = NLatLng(widget.routeState.startPoint.y, widget.routeState.startPoint.x);
-      var endPoint = NLatLng(widget.routeState.endPoint.y, widget.routeState.endPoint.x);
-
-      // var startMarker = NMarker(
-      //   id: 'start_marker',
-      //   position: startPoint,
-      //   icon: const NOverlayImage.fromAssetImage('assets/images/guide/dot_pattern.png'),
-      // );
-      //
-      // var endMarker = NMarker(
-      //   id: 'end_marker',
-      //   position: endPoint,
-      //   icon: const NOverlayImage.fromAssetImage('assets/images/dot_pattern.png'),
-      // );
-      //
-      // await controller.addOverlay(startMarker);
-      // await controller.addOverlay(endMarker);
-      // markers.addAll([startMarker, endMarker]);
+      var startPoint = NLatLng(
+          widget.routeState.startPoint.y, widget.routeState.startPoint.x);
+      var endPoint =
+          NLatLng(widget.routeState.endPoint.y, widget.routeState.endPoint.x);
 
       for (var segment in widget.routeData.subPath) {
         allCoordinates.addAll(segment.pathGraph);
       }
 
-      // 초기 위치 설정
       Position position = await Geolocator.getCurrentPosition();
       await controller.updateCamera(
         NCameraUpdate.withParams(
@@ -253,7 +494,6 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
               mapController = controller;
               _initializeMapAndPath(controller);
             },
-            // GuideMainScreen의 경우 tracking mode를 위해서만 사용
             onCameraChange: (reason, animated) {
               if (reason == NCameraUpdateReason.gesture) {
                 setState(() {
@@ -267,7 +507,6 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
             builder: (context, isVisible, child) {
               return Stack(
                 children: [
-                  // RouteInfoBox - 사이드바가 열려있을 때만 표시
                   if (isVisible)
                     Positioned(
                       left: 16,
@@ -283,9 +522,10 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
                         },
                       ),
                     ),
-                  // 사이드바
                   Positioned(
-                    right: isVisible ? 0 : -(MediaQuery.of(context).size.width * 0.25),
+                    right: isVisible
+                        ? 0
+                        : -(MediaQuery.of(context).size.width * 0.25),
                     top: 0,
                     bottom: 0,
                     child: SizedBox(
@@ -309,11 +549,11 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
                           setState(() {
                             _isTrackingMode = true;
                           });
-                          // 현재 위치로 이동
                           var position = await Geolocator.getCurrentPosition();
                           await mapController?.updateCamera(
                             NCameraUpdate.withParams(
-                              target: NLatLng(position.latitude, position.longitude),
+                              target: NLatLng(
+                                  position.latitude, position.longitude),
                               zoom: 17,
                               bearing: position.heading,
                             ),
@@ -324,7 +564,6 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
                       ),
                     ),
                   ),
-                  // 토글 버튼
                   if (!isVisible)
                     Positioned(
                       right: 0,
@@ -363,7 +602,6 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
               );
             },
           ),
-          // 현재 위치 추적 모드 토글 버튼
           if (guideState.isMetroGuide && guideState.metroSegment != null)
             Positioned.fill(
               child: Container(
@@ -379,9 +617,13 @@ class _GuideMainScreenState extends ConsumerState<GuideMainScreen> {
     );
   }
 
+  OverlayEntry? _overlayEntry;
+
   @override
   void dispose() {
+    _overlayEntry?.remove();
     _debounceTimer?.cancel();
+    _trackingTimer?.cancel();
     _positionStreamSubscription?.cancel();
     for (var overlay in _activeOverlays.values) {
       try {

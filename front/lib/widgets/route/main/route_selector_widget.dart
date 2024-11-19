@@ -12,12 +12,11 @@ class RouteSelectorWidget extends ConsumerStatefulWidget {
   ConsumerState<RouteSelectorWidget> createState() => _RoutePickerWidgetState();
 }
 
-
 class _RoutePickerWidgetState extends ConsumerState<RouteSelectorWidget> {
   @override
   void initState() {
     super.initState();
-      _getCurrentLocation();
+    _getCurrentLocation();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -35,11 +34,10 @@ class _RoutePickerWidgetState extends ConsumerState<RouteSelectorWidget> {
       );
 
       ref.read(routeProvider.notifier).setLocation(
-        "내 위치",
-        position.longitude,
-        position.latitude,
-
-      );
+            "내 위치",
+            position.longitude,
+            position.latitude,
+          );
     } catch (e) {
       print('위치 가져오기 실패: $e');
     }
@@ -86,11 +84,15 @@ class _RoutePickerWidgetState extends ConsumerState<RouteSelectorWidget> {
                 const Gap(5),
                 GestureDetector(
                   onTap: () {
-                    ref.read(routeProvider.notifier).setInputMode(RouteInputMode.start);
+                    ref
+                        .read(routeProvider.notifier)
+                        .setInputMode(RouteInputMode.start);
                     context.push('/search');
                   },
                   child: Text(
-                    routeState.startPoint.title.isEmpty ? "내 위치" : routeState.startPoint.title,
+                    routeState.startPoint.title.isEmpty
+                        ? "내 위치"
+                        : routeState.startPoint.title,
                     style: const TextStyle(
                       color: Color(0xFF463C33),
                       fontSize: 16,
@@ -121,11 +123,15 @@ class _RoutePickerWidgetState extends ConsumerState<RouteSelectorWidget> {
                 const Gap(5),
                 GestureDetector(
                   onTap: () {
-                    ref.read(routeProvider.notifier).setInputMode(RouteInputMode.end);
+                    ref
+                        .read(routeProvider.notifier)
+                        .setInputMode(RouteInputMode.end);
                     context.push('/search');
                   },
                   child: Text(
-                    routeState.endPoint.title.isEmpty ? "목적지를 선택해주세요." : routeState.endPoint.title,
+                    routeState.endPoint.title.isEmpty
+                        ? "목적지를 선택해주세요."
+                        : routeState.endPoint.title,
                     style: const TextStyle(
                       color: Color(0xFF463C33),
                       fontSize: 16,

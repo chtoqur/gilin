@@ -8,19 +8,18 @@ import '../../state/guide/transit_provider.dart';
 import '../../themes/path_color.dart';
 import '../../services/guide/transit_service.dart';
 
-final metroPositionProvider = StreamProvider.autoDispose.family<String, ({String trainNo, String lineName})>(
-        (ref, params) async* {
-      final transitService = ref.watch(transitServiceProvider);
-      while (true) {
-        final position = await transitService.getMetroPosition(
-          trainNo: params.trainNo,
-          lineName: params.lineName,
-        );
-        yield position?.stationName ?? '';
-        await Future.delayed(const Duration(seconds: 1));
-      }
-    }
-);
+final metroPositionProvider = StreamProvider.autoDispose
+    .family<String, ({String trainNo, String lineName})>((ref, params) async* {
+  final transitService = ref.watch(transitServiceProvider);
+  while (true) {
+    final position = await transitService.getMetroPosition(
+      trainNo: params.trainNo,
+      lineName: params.lineName,
+    );
+    yield position?.stationName ?? '';
+    await Future.delayed(const Duration(seconds: 1));
+  }
+});
 
 class MetroGuideView extends ConsumerStatefulWidget {
   final TransitSegment metroSegment;
@@ -61,15 +60,16 @@ class _MetroGuideViewState extends ConsumerState<MetroGuideView> {
   Widget build(BuildContext context) {
     final stations = widget.metroSegment.passStopList.stations;
     final subwayCode = widget.metroSegment.lane.first.subwayCode;
-    final lineColor = PathColors.subwayColors[subwayCode] ?? PathColors.defaultSubwayColor;
+    final lineColor =
+        PathColors.subwayColors[subwayCode] ?? PathColors.defaultSubwayColor;
 
-    final currentStation = ref.watch(
-        metroPositionProvider(
-            (trainNo: widget.selectedTrainNo, lineName: widget.metroSegment.lane.first.name)
-        )
-    );
+    final currentStation = ref.watch(metroPositionProvider((
+      trainNo: widget.selectedTrainNo,
+      lineName: widget.metroSegment.lane.first.name
+    )));
 
-    final currentIndex = stations.indexWhere((s) => s.stationName == currentStation.value);
+    final currentIndex =
+        stations.indexWhere((s) => s.stationName == currentStation.value);
     final remainingStations = stations.length - currentIndex - 1;
 
     if (currentIndex >= 0) {

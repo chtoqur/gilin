@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 
-final arrivalTimerProvider = StateNotifierProvider<ArrivalTimerNotifier, TimerState>((ref) {
+final arrivalTimerProvider =
+    StateNotifierProvider<ArrivalTimerNotifier, TimerState>((ref) {
   return ArrivalTimerNotifier();
 });
 

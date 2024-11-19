@@ -45,9 +45,7 @@ class BookmarkContainer extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500
-                  ),
+                      fontSize: 15, fontWeight: FontWeight.w500),
                 ),
                 const Text(
                   '서울특별시 노원구 석계로',

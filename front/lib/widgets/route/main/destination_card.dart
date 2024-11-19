@@ -40,7 +40,8 @@ class DestinationCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: const Color(0xffF8F5F0),
-                    border: Border.all(color: const Color(0xff463C33), width: 1),
+                    border:
+                        Border.all(color: const Color(0xff463C33), width: 1),
                   ),
                   child: Center(
                     child: SvgPicture.asset(
@@ -63,10 +64,7 @@ class DestinationCard extends StatelessWidget {
             const Gap(5),
             Text(
               destination.address,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400
-              ),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.start,
             ),

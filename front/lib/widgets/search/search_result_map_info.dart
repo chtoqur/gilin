@@ -27,7 +27,8 @@ class SearchResultMapInfo extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16), // 좌우 패딩 최적화
+      padding:
+          const EdgeInsets.symmetric(vertical: 24, horizontal: 16), // 좌우 패딩 최적화
       decoration: const BoxDecoration(
         color: Color(0xffF8F5F0),
         borderRadius: BorderRadius.vertical(
@@ -42,7 +43,7 @@ class SearchResultMapInfo extends ConsumerWidget {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,  // 좌우 끝 정렬
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // 좌우 끝 정렬
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // 왼쪽
@@ -92,43 +93,43 @@ class SearchResultMapInfo extends ConsumerWidget {
               if (currentScreen == 'signup_step2') {
                 if (searchResult.roadAddress == '') {
                   ref.read(locationsProvider.notifier).updateLocation(
-                    searchResult.title,
-                    searchResult.x,
-                    searchResult.y,
-                    searchResult.title,
-                  );
+                        searchResult.title,
+                        searchResult.x,
+                        searchResult.y,
+                        searchResult.title,
+                      );
                 } else {
                   ref.read(locationsProvider.notifier).updateLocation(
-                    searchResult.title,
-                    searchResult.x,
-                    searchResult.y,
-                    searchResult.roadAddress,
-                  );
+                        searchResult.title,
+                        searchResult.x,
+                        searchResult.y,
+                        searchResult.roadAddress,
+                      );
                 }
                 context.push('/signup_step2');
               } else if (currentScreen == 'add_myplace') {
                 if (searchResult.roadAddress == '') {
                   ref.read(locationProvider.notifier).updateLocation(
-                    searchResult.title,
-                    searchResult.x,
-                    searchResult.y,
-                    searchResult.title,
-                  );
+                        searchResult.title,
+                        searchResult.x,
+                        searchResult.y,
+                        searchResult.title,
+                      );
                 } else {
                   ref.read(locationProvider.notifier).updateLocation(
-                    searchResult.title,
-                    searchResult.x,
-                    searchResult.y,
-                    searchResult.roadAddress,
-                  );
+                        searchResult.title,
+                        searchResult.x,
+                        searchResult.y,
+                        searchResult.roadAddress,
+                      );
                 }
                 context.go('/add_myplace');
               } else {
                 ref.read(routeProvider.notifier).setLocation(
-                  searchResult.title,
-                  searchResult.x,
-                  searchResult.y,
-                );
+                      searchResult.title,
+                      searchResult.x,
+                      searchResult.y,
+                    );
                 context.go('/route');
               }
             },

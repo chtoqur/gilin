@@ -7,10 +7,12 @@ class TransportSelectorWidget extends ConsumerStatefulWidget {
   const TransportSelectorWidget({super.key});
 
   @override
-  ConsumerState<TransportSelectorWidget> createState() => _TransportModeSelectorState();
+  ConsumerState<TransportSelectorWidget> createState() =>
+      _TransportModeSelectorState();
 }
 
-class _TransportModeSelectorState extends ConsumerState<TransportSelectorWidget> {
+class _TransportModeSelectorState
+    extends ConsumerState<TransportSelectorWidget> {
   final Map<String, IconData> transportIcons = {
     '지하철': Icons.subway,
     '버스': Icons.directions_bus,
@@ -49,7 +51,8 @@ class _TransportModeSelectorState extends ConsumerState<TransportSelectorWidget>
             children: [
               GestureDetector(
                 onTap: () {
-                  List<String> newTransports = List.from(routeState.selectedTransports);
+                  List<String> newTransports =
+                      List.from(routeState.selectedTransports);
                   if (isSelected) {
                     newTransports.remove(mode);
                   } else {
@@ -66,21 +69,21 @@ class _TransportModeSelectorState extends ConsumerState<TransportSelectorWidget>
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: isSelected
                         ? [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
-                        offset: const Offset(0, 2),
-                        blurRadius: 4,
-                        spreadRadius: -1,
-                      ),
-                    ]
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.25),
+                              offset: const Offset(0, 2),
+                              blurRadius: 4,
+                              spreadRadius: -1,
+                            ),
+                          ]
                         : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
-                        offset: const Offset(0, 2),
-                        blurRadius: 4,
-                        spreadRadius: 0,
-                      ),
-                    ],
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.25),
+                              offset: const Offset(0, 2),
+                              blurRadius: 4,
+                              spreadRadius: 0,
+                            ),
+                          ],
                   ),
                   child: Icon(
                     icon,
@@ -95,9 +98,7 @@ class _TransportModeSelectorState extends ConsumerState<TransportSelectorWidget>
               Text(
                 mode,
                 style: TextStyle(
-                  color: isSelected
-                      ? const Color(0xFF463C33)
-                      : Colors.grey,
+                  color: isSelected ? const Color(0xFF463C33) : Colors.grey,
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 ),

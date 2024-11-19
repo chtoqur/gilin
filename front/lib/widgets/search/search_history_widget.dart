@@ -50,16 +50,18 @@ class SearchHistoryItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          border: showBorder ? const Border(
-            top: BorderSide(
-              color: Color(0xFFE5E5E5),
-              width: 1.0,
-            ),
-            bottom: BorderSide(
-              color: Color(0xFFE5E5E5),
-              width: 1.0,
-            ),
-          ) : null,
+          border: showBorder
+              ? const Border(
+                  top: BorderSide(
+                    color: Color(0xFFE5E5E5),
+                    width: 1.0,
+                  ),
+                  bottom: BorderSide(
+                    color: Color(0xFFE5E5E5),
+                    width: 1.0,
+                  ),
+                )
+              : null,
           color: Colors.white,
         ),
         child: Padding(

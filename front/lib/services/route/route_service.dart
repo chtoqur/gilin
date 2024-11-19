@@ -40,7 +40,8 @@ class RouteService {
 
         print('\nRoute Info:');
         print('Total Time: ${response.data['info']['totalTime']} minutes');
-        print('Total Distance: ${response.data['info']['totalDistance']} meters');
+        print(
+            'Total Distance: ${response.data['info']['totalDistance']} meters');
         print('Payment: ${response.data['info']['payment']} won');
 
         print('\nSegment Details:');
@@ -81,5 +82,3 @@ class RouteService {
     }
   }
 }
-
-

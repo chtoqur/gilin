@@ -207,14 +207,18 @@ class TransitSegment {
   factory TransitSegment.fromJson(Map<String, dynamic> json) {
     var pathGraphList = (json['pathGraph'] as List? ?? []).map((point) {
       return NLatLng(
-        (point['y'] is String) ? double.parse(point['y']) : (point['y'] ?? 0).toDouble(),
-        (point['x'] is String) ? double.parse(point['x']) : (point['x'] ?? 0).toDouble(),
+        (point['y'] is String)
+            ? double.parse(point['y'])
+            : (point['y'] ?? 0).toDouble(),
+        (point['x'] is String)
+            ? double.parse(point['x'])
+            : (point['x'] ?? 0).toDouble(),
       );
     }).toList();
 
     return TransitSegment(
       travelType: TransitType.values.firstWhere(
-            (e) => e.toString().split('.').last == json['travelType'],
+        (e) => e.toString().split('.').last == json['travelType'],
         orElse: () => TransitType.WALK,
       ),
       pathGraph: pathGraphList,
@@ -253,26 +257,27 @@ class TransitSegment {
       startExitNo: json['startExitNo'],
       startExitX: json['startExitX'] != null
           ? ((json['startExitX'] is String)
-          ? double.parse(json['startExitX'])
-          : json['startExitX'].toDouble())
+              ? double.parse(json['startExitX'])
+              : json['startExitX'].toDouble())
           : null,
       startExitY: json['startExitY'] != null
           ? ((json['startExitY'] is String)
-          ? double.parse(json['startExitY'])
-          : json['startExitY'].toDouble())
+              ? double.parse(json['startExitY'])
+              : json['startExitY'].toDouble())
           : null,
       endExitNo: json['endExitNo'],
       endExitX: json['endExitX'] != null
           ? ((json['endExitX'] is String)
-          ? double.parse(json['endExitX'])
-          : json['endExitX'].toDouble())
+              ? double.parse(json['endExitX'])
+              : json['endExitX'].toDouble())
           : null,
       endExitY: json['endExitY'] != null
           ? ((json['endExitY'] is String)
-          ? double.parse(json['endExitY'])
-          : json['endExitY'].toDouble())
+              ? double.parse(json['endExitY'])
+              : json['endExitY'].toDouble())
           : null,
-      passStopList: PassStopList.fromJson(json['passStopList'] ?? {'stations': []}),
+      passStopList:
+          PassStopList.fromJson(json['passStopList'] ?? {'stations': []}),
     );
   }
 }

@@ -78,13 +78,13 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
         children: [
           ...List.generate(
             destinations.length,
-                (index) => DestinationCard(
+            (index) => DestinationCard(
               destination: destinations[index],
               isSelected: selectedDestinationIndex == index,
               onTap: () {
                 setState(() {
                   selectedDestinationIndex =
-                  selectedDestinationIndex == index ? null : index;
+                      selectedDestinationIndex == index ? null : index;
                 });
               },
             ),
@@ -111,7 +111,8 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: const Color(0xffF8F5F0),
-                      border: Border.all(color: const Color(0xff463C33), width: 1),
+                      border:
+                          Border.all(color: const Color(0xff463C33), width: 1),
                     ),
                     child: Center(
                       child: SvgPicture.asset(
@@ -218,7 +219,6 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
                         margin: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-
                         ),
                         child: const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,14 +252,16 @@ class _MyRouteScreenState extends State<MyRouteScreen> {
               top: false,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: SizedBox(  // SizedBox로 감싸서 전체 너비 지정
+                child: SizedBox(
+                  // SizedBox로 감싸서 전체 너비 지정
                   width: double.infinity,
                   child: FilledButton(
                     onPressed: () {
-                      if (selectedDestinationIndex == null) { // 다른 도착지
+                      if (selectedDestinationIndex == null) {
+                        // 다른 도착지
                         context.push('/route');
-                      } else {  // 출발하기
-
+                      } else {
+                        // 출발하기
                       }
                     },
                     style: FilledButton.styleFrom(
