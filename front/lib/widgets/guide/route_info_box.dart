@@ -35,27 +35,6 @@ class RouteInfoBox extends StatelessWidget {
           type: TransitType.BUS,
         ),
         const Gap(8),
-        Wrap(
-          spacing: 8,
-          children: segment.lane.map((lane) {
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: PathColors.busColors[lane.type] ??
-                    PathColors.defaultBusColor,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Text(
-                lane.busNo,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-        const Gap(8),
         Text(
           '${segment.sectionTime}분, ${segment.stationCount}개 정류장 이동',
           style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),

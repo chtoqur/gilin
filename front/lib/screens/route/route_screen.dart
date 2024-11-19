@@ -4,10 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gilin/widgets/route/main/route_selector_widget.dart';
 import 'package:gilin/widgets/route/main/transport_selector_widget.dart';
 import 'package:gap/gap.dart';
+import 'package:gilin/widgets/shared/popup/taxi_info_popup.dart';
 
 import '../../state/route/route_state.dart';
 import '../../state/route/service_providers.dart';
 import '../guide/guide_preview_screen.dart';
+
+final taxiPopupVisibilityProvider = StateProvider<bool>((ref) => false);
 
 class RouteScreen extends ConsumerStatefulWidget {
   const RouteScreen({Key? key}) : super(key: key);
@@ -72,6 +75,7 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
   @override
   Widget build(BuildContext context) {
     ref.watch(routeProvider);
+    var isPopupVisible = ref.watch(taxiPopupVisibilityProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFF8C9F5F),
@@ -133,6 +137,20 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
               ),
             ),
           ),
+          if (isPopupVisible)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 60,
+              left: 20,
+              right: 20,
+              child: TaxiInfoPopup(
+                location: ref.read(routeProvider).startPoint.title,
+                estimatedTime: _formatTime(ref.read(routeProvider).arrivalTime),
+                estimatedCost: 5700, // 예시 금액, 데이터로 반환
+                onClose: () {
+                  ref.read(taxiPopupVisibilityProvider.notifier).state = false;
+                },
+              ),
+            ),
         ],
       ),
       bottomNavigationBar: Container(
@@ -150,6 +168,9 @@ class _RouteScreenState extends ConsumerState<RouteScreen> {
         child: SafeArea(
           child: GestureDetector(
             onTap: () {
+              // 팝업 표시
+              ref.read(taxiPopupVisibilityProvider.notifier).state = true;
+
               var routeState = ref.read(routeProvider);
               _requestRoute();
             },
