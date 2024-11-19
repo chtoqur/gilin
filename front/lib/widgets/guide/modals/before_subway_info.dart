@@ -137,62 +137,63 @@ class _BeforeSubwayInfoState extends ConsumerState<BeforeSubwayInfo> {
                 else if (errorMessage != null)
                   Text(errorMessage!, style: const TextStyle(color: Colors.red))
                 else if (arrivals.isEmpty)
-                    const Text('도착 예정 정보가 없습니다')
-                  else
-                    Column(
-                      children: arrivals.map((info) {
-                        final arrivalTime = DateTime.now().add(
-                          Duration(seconds: info.arrivalTime),
-                        );
+                  const Text('도착 예정 정보가 없습니다')
+                else
+                  Column(
+                    children: arrivals.map((info) {
+                      final arrivalTime = DateTime.now().add(
+                        Duration(seconds: info.arrivalTime),
+                      );
 
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    '${arrivalTime.hour}:${arrivalTime.minute.toString().padLeft(2, '0')}',
-                                    style: const TextStyle(
-                                      fontSize: 24,
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${arrivalTime.hour}:${arrivalTime.minute.toString().padLeft(2, '0')}',
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Gap(8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF5F5F5),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    '${(info.arrivalTime / 60).floor()}분',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const Gap(8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFF5F5F5),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Text(
-                                      '${(info.arrivalTime / 60).floor()}분',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              if (info.destination != null) ...[
-                                const Gap(4),
-                                Text(
-                                  info.destination!,
-                                  style: const TextStyle(fontSize: 14),
                                 ),
                               ],
+                            ),
+                            if (info.destination != null) ...[
+                              const Gap(4),
+                              Text(
+                                info.destination!,
+                                style: const TextStyle(fontSize: 14),
+                              ),
                             ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                if (widget.segment.door != null && widget.segment.door != 'null') ...[
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                if (widget.segment.door != null &&
+                    widget.segment.door != 'null') ...[
                   const Gap(16),
                   Text(
                     '빠른 하차 ${widget.segment.door}',

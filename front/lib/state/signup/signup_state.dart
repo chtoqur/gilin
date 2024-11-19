@@ -40,6 +40,7 @@ class SignupStateNotifier extends StateNotifier<SignupState> {
   }
 }
 
-final signupStateProvider = StateNotifierProvider<SignupStateNotifier, SignupState>((ref) {
+final signupStateProvider =
+    StateNotifierProvider<SignupStateNotifier, SignupState>((ref) {
   return SignupStateNotifier();
 });

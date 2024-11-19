@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 enum PopupType {
   arrivalCheck,
   warningLate,
+  changeRoute
 }
 
 class PopupData {
@@ -39,6 +40,14 @@ class PopupConfig {
       icon: Icons.warning,
       iconBackgroundColor: Color(0xFFFF5F5F),
       confirmButtonText: '택시타기',
+      cancelButtonText: '기존 경로 안내',
+    ),
+    PopupType.changeRoute: PopupData(
+      title: '빠른 경로 발견',
+      subtitle: '새로운 경로로 변경해서 안내할까요?',
+      icon: Icons.check,
+      iconBackgroundColor: Color(0xFF4777AF),
+      confirmButtonText: '안내하기',
       cancelButtonText: '기존 경로 안내',
     ),
   };

@@ -86,19 +86,20 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                            color: const Color(0xFF463C33),
-                            width: 2
-                        )
-                    ),
+                            color: const Color(0xFF463C33), width: 2)),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: IntrinsicHeight(
                         child: Row(
                           children: [
-                            _buildTabButton(ref, 'home', '집', 'home', selectedTab),
-                            _buildTabButton(ref, 'company', '회사', 'company', selectedTab),
-                            _buildTabButton(ref, 'school', '학교', 'school', selectedTab),
-                            _buildTabButton(ref, 'other', '기타', 'place', selectedTab),
+                            _buildTabButton(
+                                ref, 'home', '집', 'home', selectedTab),
+                            _buildTabButton(
+                                ref, 'company', '회사', 'company', selectedTab),
+                            _buildTabButton(
+                                ref, 'school', '학교', 'school', selectedTab),
+                            _buildTabButton(
+                                ref, 'other', '기타', 'place', selectedTab),
                           ],
                         ),
                       ),
@@ -112,12 +113,15 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
                         Container(
                           width: double.infinity,
                           height: 50,
-                          padding: const EdgeInsets.symmetric(horizontal: 15),  // vertical 패딩 제거
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15), // vertical 패딩 제거
                           color: const Color(0xFFECECEC),
-                          child: Center(  // Center 위젯 추가
+                          child: Center(
+                            // Center 위젯 추가
                             child: TextField(
                               onChanged: (value) {
-                                ref.read(placeNameProvider.notifier).state = value;
+                                ref.read(placeNameProvider.notifier).state =
+                                    value;
                               },
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
@@ -145,11 +149,14 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
                   Container(
                     width: double.infinity,
                     height: 50,
-                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                     color: const Color(0xFFECECEC),
                     child: GestureDetector(
                       onTap: () {
-                        ref.read(routeProvider.notifier).setCurrentScreen('add_myplace');
+                        ref
+                            .read(routeProvider.notifier)
+                            .setCurrentScreen('add_myplace');
                         context.push('/search');
                       },
                       child: Container(
@@ -158,7 +165,9 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              locationState.point.title.isNotEmpty ?  locationState.point.address : "주소를 등록해주세요",
+                              locationState.point.title.isNotEmpty
+                                  ? locationState.point.address
+                                  : "주소를 등록해주세요",
                               style: const TextStyle(
                                 color: Color(0xFF777777),
                                 fontSize: 14,
@@ -180,7 +189,8 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
                   Container(
                     width: double.infinity,
                     height: 50,
-                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                     color: const Color(0xFFECECEC),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -202,18 +212,20 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
                         GestureDetector(
                           onTap: _showTimePicker,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: Consumer(
                               builder: (context, ref, child) {
-                                var selectedTime = ref.watch(selectedTimeProvider);
+                                var selectedTime =
+                                    ref.watch(selectedTimeProvider);
                                 return Text(
                                   '${selectedTime.hour < 12 ? "오전" : "오후"} '
-                                      '${(selectedTime.hour > 12 ? selectedTime.hour - 12 : selectedTime.hour).toString().padLeft(2, '0')}:'
-                                      '${selectedTime.minute.toString().padLeft(2, '0')}',
+                                  '${(selectedTime.hour > 12 ? selectedTime.hour - 12 : selectedTime.hour).toString().padLeft(2, '0')}:'
+                                  '${selectedTime.minute.toString().padLeft(2, '0')}',
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -236,7 +248,9 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
               right: 0,
               child: Container(
                 decoration: BoxDecoration(
-                  color: hasInput ? const Color(0xFF669358) : const Color(0xFFD9D9D9),
+                  color: hasInput
+                      ? const Color(0xFF669358)
+                      : const Color(0xFFD9D9D9),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -257,7 +271,8 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: hasInput ? Colors.white : const Color(0xFF757575),
+                          color:
+                              hasInput ? Colors.white : const Color(0xFF757575),
                         ),
                       ),
                     ),
@@ -271,7 +286,8 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
     );
   }
 
-  Widget _buildTabButton(WidgetRef ref, String value, String label, String icon, String selectedTab) {
+  Widget _buildTabButton(WidgetRef ref, String value, String label, String icon,
+      String selectedTab) {
     var isSelected = value == selectedTab;
 
     return Expanded(
@@ -283,12 +299,14 @@ class _AddMyPlaceScreenState extends ConsumerState<AddMyPlaceScreen> {
           height: 44,
           decoration: BoxDecoration(
             color: isSelected ? const Color(0xFFE5DCCF) : null,
-            border: value != 'other' ? const Border(
-              right: BorderSide(
-                color: Color(0xFF463C33),
-                width: 2,
-              ),
-            ) : null,
+            border: value != 'other'
+                ? const Border(
+                    right: BorderSide(
+                      color: Color(0xFF463C33),
+                      width: 2,
+                    ),
+                  )
+                : null,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

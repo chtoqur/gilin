@@ -33,7 +33,6 @@ class SearchResultItem extends StatelessWidget {
                 fontSize: 14,
               ),
             ),
-
             const SizedBox(height: 8),
             Text(
               '도로명: ${result.roadAddress}',

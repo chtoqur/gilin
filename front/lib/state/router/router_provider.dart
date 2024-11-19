@@ -76,7 +76,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const SearchScreen(),
           ),
           GoRoute(
-            path: '/login',  // 로그인 경로 추가
+            path: '/login', // 로그인 경로 추가
             builder: (context, state) => const LoginScreenUI(),
           ),
           GoRoute(

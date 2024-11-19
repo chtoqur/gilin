@@ -12,21 +12,22 @@ class GuideSidebar extends StatefulWidget {
   final VoidCallback? onGuideEnd; // 추가: 안내 종료 콜백
   final RouteState? routeState;
 
-  const GuideSidebar({
-    Key? key,
-    required this.routeData,
-    required this.onSegmentTap,
-    this.onClose,
-    this.isGuideMode = false, // 기본값 false
-    this.onGuideEnd,
-    this.routeState
-  }) : super(key: key);
+  const GuideSidebar(
+      {Key? key,
+      required this.routeData,
+      required this.onSegmentTap,
+      this.onClose,
+      this.isGuideMode = false, // 기본값 false
+      this.onGuideEnd,
+      this.routeState})
+      : super(key: key);
 
   @override
   State<GuideSidebar> createState() => _GuideSidebarState();
 }
 
-class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderStateMixin {
+class _GuideSidebarState extends State<GuideSidebar>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _slideAnimation;
   bool _isOpen = true;
@@ -84,11 +85,11 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
     if (segment.travelType == TransitType.TRANSFER) {
       return const SizedBox.shrink();
     }
-    bool isSelected = widget.routeData.subPath.indexOf(segment) == _selectedSegmentIndex;
+    bool isSelected =
+        widget.routeData.subPath.indexOf(segment) == _selectedSegmentIndex;
 
     return Column(
       children: [
-
         InkWell(
           onTap: () {
             setState(() {
@@ -108,7 +109,9 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                       height: 40,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isSelected ? const Color(0xFFF8F5F0) : Colors.transparent,
+                        color: isSelected
+                            ? const Color(0xFFF8F5F0)
+                            : Colors.transparent,
                         border: Border.all(
                           color: const Color(0xFFF8F5F0),
                           width: 2,
@@ -116,7 +119,9 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                       ),
                       child: Icon(
                         _getTransitIcon(segment.travelType),
-                        color: isSelected ? const Color(0xFF8DA05D) : const Color(0xFFF8F5F0),
+                        color: isSelected
+                            ? const Color(0xFF8DA05D)
+                            : const Color(0xFFF8F5F0),
                         size: 20,
                       ),
                     ),
@@ -188,7 +193,9 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           children: [
-                            for (int i = 0; i < widget.routeData.subPath.length; i++)
+                            for (int i = 0;
+                                i < widget.routeData.subPath.length;
+                                i++)
                               _buildTimelineItem(
                                 widget.routeData.subPath[i],
                                 i == widget.routeData.subPath.length - 1,
@@ -205,14 +212,14 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                           onPressed: widget.isGuideMode
                               ? widget.onGuideEnd
                               : () {
-                            // Preview 모드일 때: 안내 시작
-                            if (widget.routeState != null) {
-                              context.push('/guide/main', extra: {
-                                'routeData': widget.routeData,
-                                'routeState': widget.routeState,
-                              });
-                            }
-                          },
+                                  // Preview 모드일 때: 안내 시작
+                                  if (widget.routeState != null) {
+                                    context.push('/guide/main', extra: {
+                                      'routeData': widget.routeData,
+                                      'routeState': widget.routeState,
+                                    });
+                                  }
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFF8F5F0),
                             foregroundColor: const Color(0xFF8DA05D),
@@ -221,7 +228,7 @@ class _GuideSidebarState extends State<GuideSidebar> with SingleTickerProviderSt
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child:  Text(
+                          child: Text(
                             widget.isGuideMode ? '안내 종료' : '안내 시작',
                             style: const TextStyle(
                               fontSize: 14,

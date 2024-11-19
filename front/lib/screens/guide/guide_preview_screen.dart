@@ -9,7 +9,6 @@ import '../../widgets/guide/route_info_box.dart';
 import '../../widgets/guide/sidebar.dart';
 import '../../utils/guide/path_style_utils.dart';
 
-
 class GuidePreviewScreen extends ConsumerStatefulWidget {
   final TransitRoute routeData;
   final RouteState routeState;
@@ -28,7 +27,8 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
   NaverMapController? mapController;
   final Map<String, NPathOverlay> _activeOverlays = {};
   List<NMarker> markers = [];
-  final ValueNotifier<TransitSegment?> _selectedSegmentNotifier = ValueNotifier(null);
+  final ValueNotifier<TransitSegment?> _selectedSegmentNotifier =
+      ValueNotifier(null);
   final ValueNotifier<bool> _isSidebarVisible = ValueNotifier(true);
   Timer? _debounceTimer;
   // double _lastZoomLevel = 0; // 추가
@@ -78,18 +78,22 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
       }
 
       // 나머지 마커 및 카메라 설정 코드...
-      var startPoint = NLatLng(widget.routeState.startPoint.y, widget.routeState.startPoint.x);
-      var endPoint = NLatLng(widget.routeState.endPoint.y, widget.routeState.endPoint.x);
+      var startPoint = NLatLng(
+          widget.routeState.startPoint.y, widget.routeState.startPoint.x);
+      var endPoint =
+          NLatLng(widget.routeState.endPoint.y, widget.routeState.endPoint.x);
       var startMarker = NMarker(
         id: 'start_marker',
         position: startPoint,
-        icon: const NOverlayImage.fromAssetImage('assets/images/start_marker.png'),
+        icon: const NOverlayImage.fromAssetImage(
+            'assets/images/start_marker.png'),
       );
 
       var endMarker = NMarker(
         id: 'end_marker',
         position: endPoint,
-        icon: const NOverlayImage.fromAssetImage('assets/images/end_marker.png'),
+        icon:
+            const NOverlayImage.fromAssetImage('assets/images/end_marker.png'),
       );
 
       var startInfoWindow = NInfoWindow.onMarker(
@@ -180,11 +184,11 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
                 return RouteInfoBox(
                   selectedSegment: selectedSegment,
                   routeInfo: widget.routeData.info,
-                  transitRoute: widget.routeData,  // 추가된 부분
+                  transitRoute: widget.routeData, // 추가된 부분
                 );
               },
             ),
-          ),          // 사이드바와 시작 버튼
+          ), // 사이드바와 시작 버튼
           // GuidePreviewScreen의 build 메서드 내 Stack children에서 sidebar 부분만 수정
           ValueListenableBuilder<bool>(
             valueListenable: _isSidebarVisible,
@@ -209,7 +213,9 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
                     ),
                   // 사이드바
                   Positioned(
-                    right: isVisible ? 0 : -(MediaQuery.of(context).size.width * 0.25),
+                    right: isVisible
+                        ? 0
+                        : -(MediaQuery.of(context).size.width * 0.25),
                     top: 0,
                     bottom: 0,
                     child: SizedBox(
@@ -268,7 +274,8 @@ class _GuidePreviewScreenState extends ConsumerState<GuidePreviewScreen> {
                 ],
               );
             },
-          ),        ],
+          ),
+        ],
       ),
     );
   }

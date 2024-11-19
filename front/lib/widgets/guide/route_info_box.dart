@@ -54,7 +54,8 @@ class RouteInfoBox extends StatelessWidget {
 
   Widget _buildSubwaySegment(TransitSegment segment) {
     var currentIndex = transitRoute.subPath.indexOf(segment);
-    var prevSegment = currentIndex > 0 ? transitRoute.subPath[currentIndex - 1] : null;
+    var prevSegment =
+        currentIndex > 0 ? transitRoute.subPath[currentIndex - 1] : null;
     var isTransfer = prevSegment?.travelType == TransitType.TRANSFER;
 
     String getSubwayDisplay(int code) {
@@ -80,7 +81,9 @@ class RouteInfoBox extends StatelessWidget {
           children: [
             ...segment.lane.map((lane) {
               return Container(
-                width: lane.subwayCode >= 100 ? 48 : 24,  // 특수 노선은 더 넓게                height: 24,
+                width: lane.subwayCode >= 100
+                    ? 48
+                    : 24, // 특수 노선은 더 넓게                height: 24,
                 height: 24,
                 margin: const EdgeInsets.only(right: 8),
                 decoration: BoxDecoration(
@@ -93,7 +96,7 @@ class RouteInfoBox extends StatelessWidget {
                     getSubwayDisplay(lane.subwayCode),
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: lane.subwayCode >= 100 ? 8 : 12,  // 특수 노선은 더 작게
+                      fontSize: lane.subwayCode >= 100 ? 8 : 12, // 특수 노선은 더 작게
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -102,8 +105,9 @@ class RouteInfoBox extends StatelessWidget {
             }),
             Expanded(
               child: Text(
-                '${segment.startName}역 ${isTransfer ? '환승' : '승차'}',  // 여기 수정
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                '${segment.startName}역 ${isTransfer ? '환승' : '승차'}', // 여기 수정
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -144,9 +148,8 @@ class RouteInfoBox extends StatelessWidget {
     var nextSegment = currentIndex < transitRoute.subPath.length - 1
         ? transitRoute.subPath[currentIndex + 1]
         : null;
-    var prevSegment = currentIndex > 0
-        ? transitRoute.subPath[currentIndex - 1]
-        : null;
+    var prevSegment =
+        currentIndex > 0 ? transitRoute.subPath[currentIndex - 1] : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,16 +166,16 @@ class RouteInfoBox extends StatelessWidget {
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           )
         else if (prevSegment?.travelType == TransitType.METRO &&
-              segment.endExitNo != null)
-            Text(
-              '${segment.endExitNo}번 출구로 나와서',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            )
-          else if (nextSegment == null)
-              const Text(
-                '목적지까지',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+            segment.endExitNo != null)
+          Text(
+            '${segment.endExitNo}번 출구로 나와서',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          )
+        else if (nextSegment == null)
+          const Text(
+            '목적지까지',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         const Gap(8),
         Text(
           '${segment.sectionTime}분, ${DistanceFormatter.format(segment.distance)} 걷기',
@@ -208,8 +211,7 @@ class RouteInfoBox extends StatelessWidget {
         ),
         const Gap(8),
         Text(
-          '${segment.sectionTime}분, ${DistanceFormatter.format(
-              segment.distance)}',
+          '${segment.sectionTime}분, ${DistanceFormatter.format(segment.distance)}',
           style: const TextStyle(fontSize: 14),
         ),
       ],

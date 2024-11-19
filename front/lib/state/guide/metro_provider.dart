@@ -25,8 +25,7 @@ class MetroState {
 }
 
 class MetroNotifier extends StateNotifier<MetroState> {
-  MetroNotifier()
-      : super(MetroState(trainNo: '', lineName: ''));
+  MetroNotifier() : super(MetroState(trainNo: '', lineName: ''));
 
   void updateTrainInfo({
     required String trainNo,
@@ -44,7 +43,8 @@ final metroProvider = StateNotifierProvider<MetroNotifier, MetroState>((ref) {
 });
 
 // 지하철 위치 정보를 위한 provider
-final metroPositionProvider = FutureProvider.autoDispose.family<MetroPositionInfo?, MetroState>((ref, metroState) async {
+final metroPositionProvider = FutureProvider.autoDispose
+    .family<MetroPositionInfo?, MetroState>((ref, metroState) async {
   final transitService = ref.watch(transitServiceProvider);
   if (metroState.trainNo.isEmpty || metroState.lineName.isEmpty) {
     return null;

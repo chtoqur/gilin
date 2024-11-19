@@ -61,51 +61,50 @@ class TransitService {
     required String stationName,
     required String nextStationName,
   }) async {
-      try {
-        debugPrint('\n====== Metro API Request ======');
-        debugPrint('Station: $stationName');
-        debugPrint('Next Station: $nextStationName');
+    try {
+      debugPrint('\n====== Metro API Request ======');
+      debugPrint('Station: $stationName');
+      debugPrint('Next Station: $nextStationName');
 
-        var response = await _dio.get('/metro/station/arrival',
-            queryParameters: {
-              'stationName': stationName,
-              'nextStationName': nextStationName,
-            }
-        );
+      var response = await _dio.get('/metro/station/arrival', queryParameters: {
+        'stationName': stationName,
+        'nextStationName': nextStationName,
+      });
 
-        debugPrint('\n====== Metro API Response ======');
-        debugPrint('Status Code: ${response.statusCode}');
-        debugPrint('Data: ${_prettyPrintJson(response.data)}');
+      debugPrint('\n====== Metro API Response ======');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Data: ${_prettyPrintJson(response.data)}');
 
-        if (response.data is List) {
-          var dataList = response.data as List;
-          return dataList.map((data) =>
-              TransitArrivalInfo(
-                vehicleName: data['trainNo'] as String?,
-                arrivalTime: (data['time'] as num).toInt(),
-                destination: data['trainLineNm'] as String?,
-              )).toList();
-        } else if (response.data is Map) {
-          var data = response.data as Map<String, dynamic>;
-          return [
-            TransitArrivalInfo(
-              vehicleName: data['trainNo'] as String?,
-              arrivalTime: (data['time'] as num).toInt(),
-              destination: data['trainLineNm'] as String?,
-            )
-          ];
-        }
-
-        return [];
-      } catch (e, stackTrace) {
-        debugPrint('\n====== Metro API Error ======');
-        debugPrint('Error: $e');
-        debugPrint('Stack trace: $stackTrace');
-        return [];
+      if (response.data is List) {
+        var dataList = response.data as List;
+        return dataList
+            .map((data) => TransitArrivalInfo(
+                  vehicleName: data['trainNo'] as String?,
+                  arrivalTime: (data['time'] as num).toInt(),
+                  destination: data['trainLineNm'] as String?,
+                ))
+            .toList();
+      } else if (response.data is Map) {
+        var data = response.data as Map<String, dynamic>;
+        return [
+          TransitArrivalInfo(
+            vehicleName: data['trainNo'] as String?,
+            arrivalTime: (data['time'] as num).toInt(),
+            destination: data['trainLineNm'] as String?,
+          )
+        ];
       }
-    }
 
-    // 지하철 현재 위치
+      return [];
+    } catch (e, stackTrace) {
+      debugPrint('\n====== Metro API Error ======');
+      debugPrint('Error: $e');
+      debugPrint('Stack trace: $stackTrace');
+      return [];
+    }
+  }
+
+  // 지하철 현재 위치
   Future<MetroPositionInfo?> getMetroPosition({
     required String trainNo,
     required String lineName,
@@ -116,12 +115,10 @@ class TransitService {
       debugPrint('Line Name: $lineName');
       var formattedLineName = lineName.replaceAll(RegExp(r'^수도권\s+'), '');
 
-      var response = await _dio.get('/metro/pos',
-          queryParameters: {
-            'trainNo': trainNo,
-            'lineName': formattedLineName,
-          }
-      );
+      var response = await _dio.get('/metro/pos', queryParameters: {
+        'trainNo': trainNo,
+        'lineName': formattedLineName,
+      });
 
       debugPrint('\n====== Metro Position API Response ======');
       debugPrint('Status Code: ${response.statusCode}');

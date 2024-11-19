@@ -9,6 +9,7 @@ class NavigationService {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   Future<void> navigateToLogin() async {
-    await navigatorKey.currentState?.pushNamedAndRemoveUntil('/login', (route) => false);
+    await navigatorKey.currentState
+        ?.pushNamedAndRemoveUntil('/login', (route) => false);
   }
 }
