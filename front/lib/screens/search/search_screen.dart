@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gap/gap.dart';
 import 'package:gilin/screens/search/search_result_sheet.dart';
 import 'package:gilin/widgets/route/main/saved_locations_widget.dart';
@@ -19,25 +19,30 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  late final LocalSearchService _searchService;
   final TextEditingController _searchController = TextEditingController();
-  final LocalSearchService _searchService = LocalSearchService(
-    apiKey: '4611747a9ec4e2703671ba7df3cb5ca9',
-  );
+  final ScrollController _scrollController = ScrollController();
 
   List<LocalSearchResult> _searchResults = [];
   bool _isLoading = false;
   String? _error;
-
   int _currentPage = 1;
   static const int _itemsPerPage = 15;
   bool _hasMoreItems = true;
-  final ScrollController _scrollController = ScrollController();
-
   Timer? _debounce;
+  bool _isEnvLoaded = false;
+
+  final List<String> savedLocations = [
+    "삼성전자",
+    "멀티캠퍼스 역삼",
+    "선릉역 2번 출구",
+    "갤럭시"
+  ]; // 추후 실제 데이터로 교체
 
   @override
   void initState() {
     super.initState();
+    _initializeEnv();
     _searchController.addListener(() {
       if (_debounce?.isActive ?? false) _debounce!.cancel();
       _debounce = Timer(const Duration(milliseconds: 500), () {
@@ -46,6 +51,22 @@ class _SearchScreenState extends State<SearchScreen> {
       });
     });
     _scrollController.addListener(_scrollListener);
+  }
+
+  Future<void> _initializeEnv() async {
+    try {
+      await dotenv.load();
+      String apiKey = dotenv.get("PROJECT_API_KEY");
+      _searchService = LocalSearchService(apiKey: apiKey);
+
+      setState(() {
+        _isEnvLoaded = true;
+      });
+    } catch (e) {
+      setState(() {
+        _error = '환경 변수를 불러오지 못했습니다: $e';
+      });
+    }
   }
 
   void _scrollListener() {
@@ -57,12 +78,6 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  // void _resetSearch() {
-  //   _currentPage = 1;
-  //   _hasMoreItems = true;
-  //   _searchResults = [];
-  // }
-
   Future<void> _loadMoreItems() async {
     if (_searchController.text.isEmpty) return;
 
@@ -70,8 +85,7 @@ class _SearchScreenState extends State<SearchScreen> {
     await _performSearch(_searchController.text, isLoadingMore: true);
   }
 
-  Future<void> _performSearch(String query,
-      {bool isLoadingMore = false}) async {
+  Future<void> _performSearch(String query, {bool isLoadingMore = false}) async {
     if (query.isEmpty) {
       setState(() {
         _searchResults = [];
@@ -120,7 +134,6 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  // 지도로 이동하는 검색 메소드
   Future<void> _executeSearch(String query) async {
     if (query.isEmpty) return;
 
@@ -169,12 +182,13 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchResults = [];
   }
 
-  final List<String> savedLocations = [
-    "삼성전자",
-    "멀티캠퍼스 역삼",
-    "선릉역 2번 출구",
-    "갤럭시"
-  ]; // 추후 실제 데이터로 교체
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -182,9 +196,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
+      body: _isEnvLoaded
+          ? Stack(
         children: [
-          // 검색어가 없을 때: 기본 화면
           if (!hasSearchQuery)
             Column(
               children: [
@@ -205,15 +219,13 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       SearchHistoryWidget(
                         savedLocations: savedLocations,
-                        searchController:
-                            _searchController, // searchController 전달
+                        searchController: _searchController,
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-          // 검색어가 있을 때: 검색 결과 화면 표시
           if (hasSearchQuery)
             Column(
               children: [
@@ -222,44 +234,45 @@ class _SearchScreenState extends State<SearchScreen> {
                   child: _isLoading && _searchResults.isEmpty
                       ? const Center(child: CircularProgressIndicator())
                       : _error != null
-                          ? Center(child: Text(_error!))
-                          : ListView.builder(
-                              controller: _scrollController,
-                              itemCount: _searchResults.length +
-                                  (_hasMoreItems ? 1 : 0),
-                              itemBuilder: (context, index) {
-                                if (index == _searchResults.length) {
-                                  return Container(
-                                    padding: const EdgeInsets.all(16.0),
-                                    alignment: Alignment.center,
-                                    child: const CircularProgressIndicator(),
-                                  );
-                                }
+                      ? Center(child: Text(_error!))
+                      : ListView.builder(
+                    controller: _scrollController,
+                    itemCount: _searchResults.length +
+                        (_hasMoreItems ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == _searchResults.length) {
+                        return Container(
+                          padding: const EdgeInsets.all(16.0),
+                          alignment: Alignment.center,
+                          child:
+                          const CircularProgressIndicator(),
+                        );
+                      }
 
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SearchResultMap(
-                                          searchResult: _searchResults[index],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: SearchResultSheet(
-                                    result: _searchResults[index],
-                                    searchQuery: _searchController.text,
-                                    showBorder:
-                                        index > 0, // 첫 번째 아이템은 border 없음
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  SearchResultMap(
+                                    searchResult:
+                                    _searchResults[index],
                                   ),
-                                );
-                              },
                             ),
+                          );
+                        },
+                        child: SearchResultSheet(
+                          result: _searchResults[index],
+                          searchQuery: _searchController.text,
+                          showBorder: index > 0,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
-
           CustomSearchBar(
             controller: _searchController,
             readOnly: false,
@@ -268,15 +281,10 @@ class _SearchScreenState extends State<SearchScreen> {
             hintText: '장소를 검색해보세요',
           ),
         ],
+      )
+          : const Center(
+        child: CircularProgressIndicator(),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    _searchController.dispose();
-    _scrollController.dispose();
-    super.dispose();
   }
 }

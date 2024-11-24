@@ -60,6 +60,7 @@ dependencies:
 
   geolocator: ^10.0.1
   geocoding: ^2.1.0
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -108,6 +109,7 @@ flutter:
     - assets/images/buttons/
     - assets/images/guide/
     - assets/images/guide/gilin_in_metro.png
+    - .env
 
 
   #    - assets/font/pdf/
